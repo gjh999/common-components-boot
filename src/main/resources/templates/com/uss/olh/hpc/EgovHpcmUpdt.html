@@ -19,7 +19,7 @@
             <legend class="krds-form-section-title" th:text="#{i4.47}">도움말 제목</legend>
             <div class="row g-3">
                 <div class="col-md-6"><label class="form-label"><span th:text="#{c3.7}">구분</span> <span class="frm-rq">*</span></label>
-                    <select class="krds-input" th:field="*{hpcmSeCode}" required>
+                    <select class="krds-input" th:field="*{hpcmSeCode}">
                         <option value="" th:text="#{c3.6}">선택</option>
                         <option th:each="code : ${hpcmSeCode}" th:value="${code.code}" th:text="${code.codeNm}">구분</option>
                     </select></div>

@@ -20,7 +20,7 @@
                 <div class="col-12"><label class="form-label"><span th:text="#{i2.65}">회의실명</span> <span class="frm-rq">*</span></label>
                     <input class="krds-input" type="text" th:field="*{mtgPlaceNm}" maxlength="255" required/></div>
                 <div class="col-md-6"><label class="form-label"><span th:text="#{c1.8}">위치구분</span> <span class="frm-rq">*</span></label>
-                    <select class="krds-input" th:field="*{lcSe}" required>
+                    <select class="krds-input" th:field="*{lcSe}">
                         <option value="" th:text="#{c1.12}">선택</option>
                         <option th:each="code : ${lcSeCode}" th:value="${code.code}" th:text="${code.codeNm}">위치</option>
                     </select></div>

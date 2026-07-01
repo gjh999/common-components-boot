@@ -32,7 +32,7 @@
                 <div class="col-md-6"><label class="form-label" th:text="#{i1.56}">신청자</label>
                     <input class="krds-input" type="text" th:value="*{applcntNm}" readonly/></div>
                 <div class="col-md-6"><label class="form-label"><span th:text="#{i1.204}">휴가구분</span> <span class="frm-rq">*</span></label>
-                    <select class="krds-form-select" th:field="*{vcatnSe}" required>
+                    <select class="krds-form-select" th:field="*{vcatnSe}">
                         <option value="" th:text="#{i1.50}">전체</option>
                         <option th:each="code : ${vcatnSeCode}" th:value="${code.code}" th:text="${code.codeNm}">구분</option>
                     </select></div>

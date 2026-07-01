@@ -26,7 +26,7 @@
                 <div class="col-md-6"><label class="form-label"><span th:text="#{c3.4}">주제영역</span> <span class="frm-rq">*</span></label>
                     <input class="krds-input" type="text" th:field="*{themaRelm}" maxlength="255" required/></div>
                 <div class="col-md-6"><label class="form-label"><span th:text="#{c3.5}">용어구분</span> <span class="frm-rq">*</span></label>
-                    <select class="krds-input" th:field="*{wordDomn}" required>
+                    <select class="krds-input" th:field="*{wordDomn}">
                         <option value="" th:text="#{c3.6}">선택</option>
                         <option th:each="code : ${wordSeCode}" th:value="${code.code}" th:text="${code.codeNm}">구분</option>
                     </select></div>

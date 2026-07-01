@@ -24,7 +24,7 @@
                 <div class="col-12"><label class="form-label"><span th:text="#{c2.1}">사이트 설명</span> <span class="frm-rq">*</span></label>
                     <textarea class="krds-input" th:field="*{siteDc}" rows="4" maxlength="1000" required></textarea></div>
                 <div class="col-md-6"><label class="form-label"><span th:text="#{c2.3}">주제 분류</span> <span class="frm-rq">*</span></label>
-                    <select class="krds-form-select" th:field="*{siteThemaClCode}" required>
+                    <select class="krds-form-select" th:field="*{siteThemaClCode}">
                         <option value="" th:text="#{c2.4}">선택</option>
                         <option th:each="code : ${siteThemaClCode}" th:value="${code.code}" th:text="${code.codeNm}">분류</option>
                     </select></div>

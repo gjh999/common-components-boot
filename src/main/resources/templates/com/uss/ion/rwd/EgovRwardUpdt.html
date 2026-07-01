@@ -25,7 +25,7 @@
                 <div class="col-12"><label class="form-label"><span th:text="#{i1.240}">포상명</span> <span class="frm-rq">*</span></label>
                     <input class="krds-input" type="text" th:field="*{rwardNm}" maxlength="255" required/></div>
                 <div class="col-md-6"><label class="form-label"><span th:text="#{c5.6}">포상코드</span> <span class="frm-rq">*</span></label>
-                    <select class="krds-form-select" th:field="*{rwardCd}" required>
+                    <select class="krds-form-select" th:field="*{rwardCd}">
                         <option value="" th:text="#{i1.50}">전체</option>
                         <option th:each="code : ${rwardCodeList}" th:value="${code.code}" th:text="${code.codeNm}">코드</option>
                     </select></div>

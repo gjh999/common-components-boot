@@ -25,7 +25,7 @@
                 <div class="col-md-6"><label class="form-label"><span th:text="#{i2.11}">종료일</span> <span class="frm-rq">*</span></label>
                     <input class="krds-input" type="date" th:field="*{pollEndDe}" required/></div>
                 <div class="col-md-4"><label class="form-label"><span th:text="#{c4.3}">투표 종류</span> <span class="frm-rq">*</span></label>
-                    <select class="krds-form-select" th:field="*{pollKindCode}" required>
+                    <select class="krds-form-select" th:field="*{pollKindCode}">
                         <option value="" th:text="#{c4.10}">선택</option>
                         <option th:each="c : ${pollKindCodeList}" th:value="${c.code}" th:text="${c.codeNm}">종류</option>
                     </select></div>

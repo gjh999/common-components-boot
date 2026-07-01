@@ -21,7 +21,7 @@
                 <div class="col-12"><label class="form-label"><span th:text="#{i4.14}">기념일명</span> <span class="frm-rq">*</span></label>
                     <input class="krds-input" type="text" th:field="*{annvrsryNm}" maxlength="255" required/></div>
                 <div class="col-md-6"><label class="form-label"><span th:text="#{c1.1}">기념일구분</span> <span class="frm-rq">*</span></label>
-                    <select class="krds-input" th:field="*{annvrsrySe}" required>
+                    <select class="krds-input" th:field="*{annvrsrySe}">
                         <option value="" th:text="#{c1.12}">선택</option>
                         <option th:each="code : ${annvrsrySeCode}" th:value="${code.code}" th:text="${code.codeNm}">구분</option>
                     </select></div>

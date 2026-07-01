@@ -18,7 +18,7 @@
             <legend class="krds-form-section-title" th:text="#{i2.26}">행사 내용</legend>
             <div class="row g-3">
                 <div class="col-md-6"><label class="form-label"><span th:text="#{i2.21}">행사유형</span> <span class="frm-rq">*</span></label>
-                    <select class="krds-form-select" th:field="*{eventTyCode}" required>
+                    <select class="krds-form-select" th:field="*{eventTyCode}">
                         <option value="" th:text="#{i2.16}">선택</option>
                         <option th:each="code : ${eventTyCode}" th:value="${code.code}" th:text="${code.codeNm}">유형</option>
                     </select></div>

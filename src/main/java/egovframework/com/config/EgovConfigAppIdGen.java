@@ -187,7 +187,7 @@ public class EgovConfigAppIdGen {
 			.setTable("COMTECOPSEQ")
 			.setTableName("ROUGHMAP_ID")
 			.setPreFix("ROUGHMAP_")
-			.setCipers(14)
+			.setCipers(11)
 			.setFillChar('0')
 			.build();
 	}

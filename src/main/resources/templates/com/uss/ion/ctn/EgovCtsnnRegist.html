@@ -21,7 +21,7 @@
                 <div class="col-md-6"><label class="form-label"><span th:text="#{i1.54}">경조명</span> <span class="frm-rq">*</span></label>
                     <input class="krds-input" type="text" th:field="*{ctsnnNm}" maxlength="255" required/></div>
                 <div class="col-md-6"><label class="form-label"><span th:text="#{c5.2}">경조코드</span> <span class="frm-rq">*</span></label>
-                    <select class="krds-form-select" th:field="*{ctsnnCd}" required>
+                    <select class="krds-form-select" th:field="*{ctsnnCd}">
                         <option value="" th:text="#{i1.50}">전체</option>
                         <option th:each="code : ${ctsnnCodeList}" th:value="${code.code}" th:text="${code.codeNm}">코드</option>
                     </select></div>
@@ -34,7 +34,7 @@
                 <div class="col-md-6"><label class="form-label"><span th:text="#{i1.58}">발생일</span> <span class="frm-rq">*</span></label>
                     <input class="krds-input" type="date" th:field="*{occrrDe}" required/></div>
                 <div class="col-md-6"><label class="form-label"><span th:text="#{c5.4}">관계</span> <span class="frm-rq">*</span></label>
-                    <select class="krds-form-select" th:field="*{relate}" required>
+                    <select class="krds-form-select" th:field="*{relate}">
                         <option value="" th:text="#{i1.50}">전체</option>
                         <option th:each="code : ${relateCodeList}" th:value="${code.code}" th:text="${code.codeNm}">관계</option>
                     </select></div>

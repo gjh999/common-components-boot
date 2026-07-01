@@ -20,7 +20,7 @@
                 <div class="col-12"><label class="form-label"><span th:text="#{i2.54}">매뉴얼명</span> <span class="frm-rq">*</span></label>
                     <input class="krds-input" type="text" th:field="*{onlineMnlNm}" maxlength="255" required/></div>
                 <div class="col-md-6"><label class="form-label"><span th:text="#{i2.55}">구분</span> <span class="frm-rq">*</span></label>
-                    <select class="krds-input" th:field="*{onlineMnlSeCode}" required>
+                    <select class="krds-input" th:field="*{onlineMnlSeCode}">
                         <option value="" th:text="#{c3.6}">선택</option>
                         <option th:each="code : ${onlineMnlSeCode}" th:value="${code.code}" th:text="${code.codeNm}">구분</option>
                     </select></div>

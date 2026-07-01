@@ -20,7 +20,7 @@
                 <div class="col-md-8"><label class="form-label"><span th:text="#{i2.9}">행사명</span> <span class="frm-rq">*</span></label>
                     <input class="krds-input" type="text" th:field="*{eventNm}" maxlength="60" required/></div>
                 <div class="col-md-4"><label class="form-label"><span th:text="#{c4.11}">행사 구분</span> <span class="frm-rq">*</span></label>
-                    <select class="krds-form-select" th:field="*{eventSe}" required>
+                    <select class="krds-form-select" th:field="*{eventSe}">
                         <option value="" th:text="#{c4.10}">선택</option>
                         <option th:each="c : ${eventSeCode}" th:value="${c.code}" th:text="${c.codeNm}">구분</option>
                     </select></div>
