@@ -1,3 +1,50 @@
+-- === 공통코드·채번 기반테이블(정합 보강: portal 정의 이식) ===
+CREATE TABLE IDS  (
+  TABLE_NAME varchar(60) NOT NULL,  -- 대상 테이블명
+  NEXT_ID numeric(30,0)DEFAULT 0 NOT NULL,  -- 다음 ID 값
+  CONSTRAINT IDS_PK PRIMARY KEY (TABLE_NAME)
+);
+CREATE TABLE COMTECOPSEQ (
+  TABLE_NAME varchar(20) DEFAULT '' NOT NULL,  -- 대상 테이블명
+  NEXT_ID numeric(30,0) DEFAULT 0 NOT NULL,  -- 다음 ID 값
+  CONSTRAINT COMTECOPSEQ_PK PRIMARY KEY (TABLE_NAME)
+) ;
+CREATE TABLE TB_CMMN_CL_CODE (
+  CL_CODE char(3) NOT NULL,  -- 분류코드
+  CL_CODE_NM varchar(180),  -- 분류코드명
+  CL_CODE_DC varchar(600),  -- 분류코드 설명
+  USE_AT char(1),  -- 사용여부(Y/N)
+  FRST_REGIST_PNTTM DATETIME,  -- 최초등록시각
+  FRST_REGISTER_ID varchar(60),  -- 최초등록자ID
+  LAST_UPDT_PNTTM DATETIME,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar(60),  -- 최종수정자ID
+  CONSTRAINT TB_CMMN_CL_CODE_PK PRIMARY KEY (CL_CODE)
+) ;
+CREATE TABLE TB_CMMN_CODE (
+  CODE_ID varchar(18) NOT NULL,  -- 코드ID
+  CODE_ID_NM varchar(180),  -- 코드ID명
+  CODE_ID_DC varchar(600),  -- 코드ID 설명
+  USE_AT char(1),  -- 사용여부(Y/N)
+  CL_CODE char(3),  -- 분류코드
+  FRST_REGIST_PNTTM DATETIME,  -- 최초등록시각
+  FRST_REGISTER_ID varchar(60),  -- 최초등록자ID
+  LAST_UPDT_PNTTM DATETIME,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar(60),  -- 최종수정자ID
+  CONSTRAINT TB_CMMN_CODE_PK PRIMARY KEY (CODE_ID)
+) ;
+CREATE TABLE TB_CMMN_DETAIL_CODE (
+  CODE_ID varchar(18) NOT NULL,  -- 코드ID
+  CODE varchar(45) NOT NULL,  -- 상세코드
+  CODE_NM varchar(180),  -- 상세코드명
+  CODE_DC varchar(600),  -- 상세코드 설명
+  USE_AT char(1),  -- 사용여부(Y/N)
+  FRST_REGIST_PNTTM DATETIME,  -- 최초등록시각
+  FRST_REGISTER_ID varchar(60),  -- 최초등록자ID
+  LAST_UPDT_PNTTM DATETIME,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar(60),  -- 최종수정자ID
+  CONSTRAINT TB_CMMN_DETAIL_CODE_PK PRIMARY KEY (CODE_ID,CODE)
+) ;
+
 -- 개정이력: 2026.06.30  구재호  전 DBMS TB_ 표준 명명 현행화(공통컴포넌트)
 -- ============================================================
 -- common-components-boot Cubrid DDL (shtdb.sql HSQL 정본에서 생성)
@@ -71,504 +118,883 @@ DROP TABLE IF EXISTS TB_ROLE_INFO;
 DROP TABLE IF EXISTS TB_ROLES_HIERARCHY;
 
 CREATE TABLE TB_ROLES_HIERARCHY (
-PARNTS_ROLE varchar(30) NOT NULL,
-  CHLDRN_ROLE varchar(30) NOT NULL,
+  PARNTS_ROLE varchar(30) NOT NULL,  -- 부모롤
+  CHLDRN_ROLE varchar(30) NOT NULL,  -- 자식롤
   PRIMARY KEY (PARNTS_ROLE,CHLDRN_ROLE)
 );
 CREATE TABLE TB_ROLE_INFO (
-ROLE_CODE varchar(50) DEFAULT '' NOT NULL,
-  ROLE_NM varchar(60) NOT NULL,
-  ROLE_PTTRN varchar(300) DEFAULT NULL,
-  ROLE_DC varchar(200) DEFAULT NULL,
-  ROLE_TY varchar(80) DEFAULT NULL,
-  ROLE_SORT varchar(10) DEFAULT NULL,
-  ROLE_CREAT_DE char(20) NOT NULL,
+  ROLE_CODE varchar(50) DEFAULT '' NOT NULL,  -- 역할코드
+  ROLE_NM varchar(60) NOT NULL,  -- 역할명
+  ROLE_PTTRN varchar(300) DEFAULT NULL,  -- 롤PTTRN
+  ROLE_DC varchar(200) DEFAULT NULL,  -- 역할설명
+  ROLE_TY varchar(80) DEFAULT NULL,  -- 역할유형
+  ROLE_SORT varchar(10) DEFAULT NULL,  -- 역할정렬
+  ROLE_CREAT_DE char(20) NOT NULL,  -- 롤생성일자
   PRIMARY KEY (ROLE_CODE)
 );
 CREATE TABLE TB_AUTHOR_ROLE_RELATE (
-AUTHOR_CODE varchar(30) NOT NULL,
-  ROLE_CODE varchar(50) NOT NULL,
-  CREAT_DT timestamp DEFAULT NULL,
+  AUTHOR_CODE varchar(30) NOT NULL,  -- 권한코드
+  ROLE_CODE varchar(50) NOT NULL,  -- 역할코드
+  CREAT_DT timestamp DEFAULT NULL,  -- 생성시각
   PRIMARY KEY (AUTHOR_CODE,ROLE_CODE)
 );
 CREATE TABLE TB_ZIP (
-ZIP varchar(6) NOT NULL,
-  SN NUMERIC(10,0) DEFAULT '0' NOT NULL,
-  CTPRVN_NM varchar(20) DEFAULT NULL,
-  SIGNGU_NM varchar(20) DEFAULT NULL,
-  EMD_NM varchar(60) DEFAULT NULL,
-  LI_BULD_NM varchar(60) DEFAULT NULL,
-  LNBR_DONG_HO varchar(20) DEFAULT NULL,
-  FRST_REGIST_PNTTM timestamp DEFAULT NULL,
-  FRST_REGISTER_ID varchar(20) DEFAULT NULL,
-  LAST_UPDT_PNTTM timestamp DEFAULT NULL,
-  LAST_UPDUSR_ID varchar(20) DEFAULT NULL,
+  ZIP varchar(6) NOT NULL,  -- 우편번호
+  SN NUMERIC(10,0) DEFAULT '0' NOT NULL,  -- 일련번호
+  CTPRVN_NM varchar(20) DEFAULT NULL,  -- 시도명
+  SIGNGU_NM varchar(20) DEFAULT NULL,  -- 시군구명
+  EMD_NM varchar(60) DEFAULT NULL,  -- 읍면동명
+  LI_BULD_NM varchar(60) DEFAULT NULL,  -- 리건물명
+  LNBR_DONG_HO varchar(20) DEFAULT NULL,  -- 지번동호
+  FRST_REGIST_PNTTM timestamp DEFAULT NULL,  -- 최초등록시각
+  FRST_REGISTER_ID varchar(20) DEFAULT NULL,  -- 최초등록자ID
+  LAST_UPDT_PNTTM timestamp DEFAULT NULL,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar(20) DEFAULT NULL,  -- 최종수정자ID
   PRIMARY KEY (ZIP,SN)
 );
 CREATE TABLE TB_BANNER (
-BANNER_ID char(20) DEFAULT '' NOT NULL,
-  BANNER_NM varchar(60) NOT NULL,
-  LINK_URL varchar(255) DEFAULT NULL,
-  BANNER_IMAGE varchar(60) DEFAULT NULL,
-  BANNER_DC varchar(200) DEFAULT NULL,
-  REFLCT_AT char(1) NOT NULL,
-  FRST_REGISTER_ID varchar(20) DEFAULT NULL,
-  FRST_REGIST_PNTTM timestamp DEFAULT NULL,
-  LAST_UPDUSR_ID varchar(20) DEFAULT NULL,
-  LAST_UPDT_PNTTM timestamp DEFAULT NULL,
-  BANNER_IMAGE_FILE varchar(60) DEFAULT NULL,
-  SORT_ORDR NUMERIC(8,0) DEFAULT NULL,
-  BANNER_TY varchar(10) DEFAULT 'MAIN',
-  POPUP_LEFT INT DEFAULT NULL,
-  POPUP_TOP INT DEFAULT NULL,
-  POPUP_WIDTH INT DEFAULT NULL,
-  POPUP_HEIGHT INT DEFAULT NULL,
-  POPUP_GROUP_AT char(1) DEFAULT 'N',
-  EXPSR_BGNDE DATE DEFAULT NULL,
-  EXPSR_ENDDE DATE DEFAULT NULL,
+  BANNER_ID char(20) DEFAULT '' NOT NULL,  -- 배너ID
+  BANNER_NM varchar(60) NOT NULL,  -- 배너명
+  LINK_URL varchar(255) DEFAULT NULL,  -- 연계URL
+  BANNER_IMAGE varchar(60) DEFAULT NULL,  -- 배너이미지
+  BANNER_DC varchar(200) DEFAULT NULL,  -- 배너설명
+  REFLCT_AT char(1) NOT NULL,  -- REFLCT여부
+  FRST_REGISTER_ID varchar(20) DEFAULT NULL,  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp DEFAULT NULL,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20) DEFAULT NULL,  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp DEFAULT NULL,  -- 최종수정시각
+  BANNER_IMAGE_FILE varchar(60) DEFAULT NULL,  -- 배너이미지파일
+  SORT_ORDR NUMERIC(8,0) DEFAULT NULL,  -- 정렬순서
+  BANNER_TY varchar(10) DEFAULT 'MAIN',  -- 배너유형
+  POPUP_LEFT INT DEFAULT NULL,  -- 팝업LEFT
+  POPUP_TOP INT DEFAULT NULL,  -- 팝업TOP
+  POPUP_WIDTH INT DEFAULT NULL,  -- 팝업너비
+  POPUP_HEIGHT INT DEFAULT NULL,  -- 팝업HEIGHT
+  POPUP_GROUP_AT char(1) DEFAULT 'N',  -- 팝업그룹여부
+  EXPSR_BGNDE DATE DEFAULT NULL,  -- 노출시작일자
+  EXPSR_ENDDE DATE DEFAULT NULL,  -- 노출종료일자
   PRIMARY KEY (BANNER_ID)
 );
 CREATE TABLE TB_INDVDL_INFO_POLICY (
-INDVDL_INFO_POLICY_ID char(20) DEFAULT '' NOT NULL,
-  INDVDL_INFO_POLICY_CN varchar(2500) DEFAULT NULL,
-  INDVDL_INFO_POLICY_AGRE_AT char(1) DEFAULT NULL,
-  VER varchar(20) DEFAULT NULL,
-  APLC_DE varchar(8) DEFAULT NULL,
-  REPRSNT_AT char(1) DEFAULT 'N',
-  USE_AT char(1) DEFAULT 'Y',
-  FRST_REGISTER_ID varchar(20) DEFAULT NULL,
-  FRST_REGIST_PNTTM timestamp DEFAULT NULL,
-  LAST_UPDUSR_ID varchar(20) DEFAULT NULL,
-  LAST_UPDT_PNTTM timestamp DEFAULT NULL,
-  INDVDL_INFO_POLICY_NM varchar(255) DEFAULT NULL,
+  INDVDL_INFO_POLICY_ID char(20) DEFAULT '' NOT NULL,  -- 개인정보정책ID
+  INDVDL_INFO_POLICY_CN varchar(2500) DEFAULT NULL,  -- 개인정보정책내용
+  INDVDL_INFO_POLICY_AGRE_AT char(1) DEFAULT NULL,  -- 개인정보정책동의여부
+  VER varchar(20) DEFAULT NULL,  -- 버전
+  APLC_DE varchar(8) DEFAULT NULL,  -- 응용일자
+  REPRSNT_AT char(1) DEFAULT 'N',  -- REPRSNT여부
+  USE_AT char(1) DEFAULT 'Y',  -- 사용여부(Y/N)
+  FRST_REGISTER_ID varchar(20) DEFAULT NULL,  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp DEFAULT NULL,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20) DEFAULT NULL,  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp DEFAULT NULL,  -- 최종수정시각
+  INDVDL_INFO_POLICY_NM varchar(255) DEFAULT NULL,  -- 개인정보정책명
   PRIMARY KEY (INDVDL_INFO_POLICY_ID)
 );
 CREATE TABLE TB_PROGRM_LIST (
-PROGRM_FILE_NM varchar(60) DEFAULT '' NOT NULL,
-  PROGRM_STRE_PATH varchar(100) NOT NULL,
-  PROGRM_KOREAN_NM varchar(60) DEFAULT NULL,
-  PROGRM_DC varchar(200) DEFAULT NULL,
-  URL varchar(100) NOT NULL,
+  PROGRM_FILE_NM varchar(60) DEFAULT '' NOT NULL,  -- 프로그램파일명
+  PROGRM_STRE_PATH varchar(100) NOT NULL,  -- 프로그램STRE경로
+  PROGRM_KOREAN_NM varchar(60) DEFAULT NULL,  -- 프로그램KOREAN명
+  PROGRM_DC varchar(200) DEFAULT NULL,  -- 프로그램설명
+  URL varchar(100) NOT NULL,  -- URL
   PRIMARY KEY (PROGRM_FILE_NM)
 );
 CREATE TABLE TB_MENU_INFO (
-MENU_NM varchar(60) NOT NULL,
-  PROGRM_FILE_NM varchar(60) NOT NULL,
-  MENU_NO NUMERIC(20,0) NOT NULL,
-  UPPER_MENU_NO NUMERIC(20,0) DEFAULT NULL,
-  MENU_ORDR NUMERIC(5,0) NOT NULL,
-  MENU_DC varchar(250) DEFAULT NULL,
-  RELATE_IMAGE_PATH varchar(100) DEFAULT NULL,
-  RELATE_IMAGE_NM varchar(60) DEFAULT NULL,
+  MENU_NM varchar(60) NOT NULL,  -- 메뉴명
+  PROGRM_FILE_NM varchar(60) NOT NULL,  -- 프로그램파일명
+  MENU_NO NUMERIC(20,0) NOT NULL,  -- 메뉴번호
+  UPPER_MENU_NO NUMERIC(20,0) DEFAULT NULL,  -- UPPER메뉴번호
+  MENU_ORDR NUMERIC(5,0) NOT NULL,  -- 메뉴순서
+  MENU_DC varchar(250) DEFAULT NULL,  -- 메뉴설명
+  RELATE_IMAGE_PATH varchar(100) DEFAULT NULL,  -- 관련이미지경로
+  RELATE_IMAGE_NM varchar(60) DEFAULT NULL,  -- 관련이미지명
   PRIMARY KEY (MENU_NO)
 );
 CREATE TABLE TB_MENU_CREAT_DTLS (
-MENU_NO NUMERIC(20,0) NOT NULL,
-  AUTHOR_CODE varchar(30) NOT NULL,
-  MAPNG_CREAT_ID varchar(30) DEFAULT NULL,
+  MENU_NO NUMERIC(20,0) NOT NULL,  -- 메뉴번호
+  AUTHOR_CODE varchar(30) NOT NULL,  -- 권한코드
+  MAPNG_CREAT_ID varchar(30) DEFAULT NULL,  -- MAPNG생성ID
   PRIMARY KEY (MENU_NO,AUTHOR_CODE)
 );
 CREATE TABLE TB_QUSTNR_TMPLAT (
-QUSTNR_TMPLAT_ID char(20) NOT NULL,
-  QUSTNR_TMPLAT_TY varchar(100) DEFAULT NULL,
-  QUSTNR_TMPLAT_DC varchar(2000) DEFAULT NULL,
-  QUSTNR_TMPLAT_PATH_NM varchar(100) DEFAULT NULL,
-  FRST_REGIST_PNTTM timestamp DEFAULT NULL,
-  FRST_REGISTER_ID varchar(20) DEFAULT NULL,
-  LAST_UPDT_PNTTM timestamp DEFAULT NULL,
-  LAST_UPDUSR_ID varchar(20) DEFAULT NULL,
-  QUSTNR_TMPLAT_IMAGE_INFO blob,
+  QUSTNR_TMPLAT_ID char(20) NOT NULL,  -- 설문템플릿ID
+  QUSTNR_TMPLAT_TY varchar(100) DEFAULT NULL,  -- 설문템플릿유형
+  QUSTNR_TMPLAT_DC varchar(2000) DEFAULT NULL,  -- 설문템플릿설명
+  QUSTNR_TMPLAT_PATH_NM varchar(100) DEFAULT NULL,  -- 설문템플릿경로명
+  FRST_REGIST_PNTTM timestamp DEFAULT NULL,  -- 최초등록시각
+  FRST_REGISTER_ID varchar(20) DEFAULT NULL,  -- 최초등록자ID
+  LAST_UPDT_PNTTM timestamp DEFAULT NULL,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar(20) DEFAULT NULL,  -- 최종수정자ID
+  QUSTNR_TMPLAT_IMAGE_INFO blob,  -- 설문템플릿이미지정보
   PRIMARY KEY (QUSTNR_TMPLAT_ID)
 );
 CREATE TABLE TB_QESTNR_INFO (
-QUSTNR_TMPLAT_ID char(20) NOT NULL,
-  QESTNR_ID char(20) NOT NULL,
-  QUSTNR_SJ varchar(255) DEFAULT NULL,
-  QUSTNR_PURPS varchar(1000) DEFAULT NULL,
-  QUSTNR_WRITNG_GUIDANCE_CN varchar(2000) DEFAULT NULL,
-  QUSTNR_TRGET varchar(1000) DEFAULT NULL,
-  QUSTNR_BGNDE char(20)  DEFAULT NULL,
-  QUSTNR_ENDDE char(20) DEFAULT NULL,
-  FRST_REGIST_PNTTM timestamp DEFAULT NULL,
-  FRST_REGISTER_ID varchar(20) DEFAULT NULL,
-  LAST_UPDT_PNTTM timestamp DEFAULT NULL,
-  LAST_UPDUSR_ID varchar(20) DEFAULT NULL,
+  QUSTNR_TMPLAT_ID char(20) NOT NULL,  -- 설문템플릿ID
+  QESTNR_ID char(20) NOT NULL,  -- QESTNRID
+  QUSTNR_SJ varchar(255) DEFAULT NULL,  -- 설문제목
+  QUSTNR_PURPS varchar(1000) DEFAULT NULL,  -- 설문목적
+  QUSTNR_WRITNG_GUIDANCE_CN varchar(2000) DEFAULT NULL,  -- 설문작성안내내용
+  QUSTNR_TRGET varchar(1000) DEFAULT NULL,  -- 설문대상
+  QUSTNR_BGNDE char(20)  DEFAULT NULL,  -- 설문시작일자
+  QUSTNR_ENDDE char(20) DEFAULT NULL,  -- 설문종료일자
+  FRST_REGIST_PNTTM timestamp DEFAULT NULL,  -- 최초등록시각
+  FRST_REGISTER_ID varchar(20) DEFAULT NULL,  -- 최초등록자ID
+  LAST_UPDT_PNTTM timestamp DEFAULT NULL,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar(20) DEFAULT NULL,  -- 최종수정자ID
   PRIMARY KEY (QUSTNR_TMPLAT_ID,QESTNR_ID)
 );
 CREATE TABLE TB_QUSTNR_QESITM (
-QESTNR_ID char(20) NOT NULL,
-  QUSTNR_QESITM_ID char(20) NOT NULL,
-  QUSTNR_TMPLAT_ID char(20) NOT NULL,
-  QESTN_SN NUMERIC(10,0) DEFAULT NULL,
-  QESTN_TY_CODE char(1) DEFAULT NULL,
-  QESTN_CN varchar(2500) DEFAULT NULL,
-  MXMM_CHOISE_CO NUMERIC(5,0) DEFAULT NULL,
-  FRST_REGIST_PNTTM timestamp NOT NULL,
-  FRST_REGISTER_ID varchar(20) NOT NULL,
-  LAST_UPDT_PNTTM timestamp NOT NULL,
-  LAST_UPDUSR_ID varchar(20) NOT NULL,
+  QESTNR_ID char(20) NOT NULL,  -- QESTNRID
+  QUSTNR_QESITM_ID char(20) NOT NULL,  -- 설문QESITMID
+  QUSTNR_TMPLAT_ID char(20) NOT NULL,  -- 설문템플릿ID
+  QESTN_SN NUMERIC(10,0) DEFAULT NULL,  -- 질문일련번호
+  QESTN_TY_CODE char(1) DEFAULT NULL,  -- 질문유형상세코드
+  QESTN_CN varchar(2500) DEFAULT NULL,  -- 질문내용
+  MXMM_CHOISE_CO NUMERIC(5,0) DEFAULT NULL,  -- MXMMCHOISE수
+  FRST_REGIST_PNTTM timestamp NOT NULL,  -- 최초등록시각
+  FRST_REGISTER_ID varchar(20) NOT NULL,  -- 최초등록자ID
+  LAST_UPDT_PNTTM timestamp NOT NULL,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar(20) NOT NULL,  -- 최종수정자ID
   PRIMARY KEY (QESTNR_ID,QUSTNR_QESITM_ID,QUSTNR_TMPLAT_ID)
 );
 CREATE TABLE TB_QUSTNR_IEM (
-QUSTNR_TMPLAT_ID char(20) NOT NULL,
-  QESTNR_ID char(20) NOT NULL,
-  QUSTNR_QESITM_ID char(20) NOT NULL,
-  QUSTNR_IEM_ID varchar(20) NOT NULL,
-  IEM_SN NUMERIC(5,0) DEFAULT NULL,
-  IEM_CN varchar(1000) DEFAULT NULL,
-  ETC_ANSWER_AT char(1) DEFAULT NULL,
-  FRST_REGIST_PNTTM timestamp DEFAULT NULL,
-  FRST_REGISTER_ID varchar(20) DEFAULT NULL,
-  LAST_UPDT_PNTTM timestamp DEFAULT NULL,
-  LAST_UPDUSR_ID varchar(20) DEFAULT NULL,
+  QUSTNR_TMPLAT_ID char(20) NOT NULL,  -- 설문템플릿ID
+  QESTNR_ID char(20) NOT NULL,  -- QESTNRID
+  QUSTNR_QESITM_ID char(20) NOT NULL,  -- 설문QESITMID
+  QUSTNR_IEM_ID varchar(20) NOT NULL,  -- 설문항목ID
+  IEM_SN NUMERIC(5,0) DEFAULT NULL,  -- 항목일련번호
+  IEM_CN varchar(1000) DEFAULT NULL,  -- 항목내용
+  ETC_ANSWER_AT char(1) DEFAULT NULL,  -- 기타답변여부
+  FRST_REGIST_PNTTM timestamp DEFAULT NULL,  -- 최초등록시각
+  FRST_REGISTER_ID varchar(20) DEFAULT NULL,  -- 최초등록자ID
+  LAST_UPDT_PNTTM timestamp DEFAULT NULL,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar(20) DEFAULT NULL,  -- 최종수정자ID
   PRIMARY KEY (QUSTNR_TMPLAT_ID,QESTNR_ID,QUSTNR_QESITM_ID,QUSTNR_IEM_ID)
 );
 CREATE TABLE TB_QUSTNR_RESPOND_INFO (
-QUSTNR_TMPLAT_ID char(20) NOT NULL,
-  QESTNR_ID char(20) NOT NULL,
-  QUSTNR_RESPOND_ID char(20) NOT NULL,
-  SEXDSTN_CODE char(1) DEFAULT NULL,
-  OCCP_TY_CODE varchar(10) DEFAULT NULL,
-  RESPOND_NM varchar(50) DEFAULT NULL,
-  BRTHDY char(20) DEFAULT NULL,
-  AREA_NO varchar(4) DEFAULT NULL,
-  MIDDLE_TELNO varchar(4) DEFAULT NULL,
-  END_TELNO varchar(4) DEFAULT NULL,
-  FRST_REGIST_PNTTM timestamp DEFAULT NULL,
-  FRST_REGISTER_ID varchar(20) DEFAULT NULL,
-  LAST_UPDT_PNTTM timestamp DEFAULT NULL,
-  LAST_UPDUSR_ID varchar(20) DEFAULT NULL,
+  QUSTNR_TMPLAT_ID char(20) NOT NULL,  -- 설문템플릿ID
+  QESTNR_ID char(20) NOT NULL,  -- QESTNRID
+  QUSTNR_RESPOND_ID char(20) NOT NULL,  -- 설문응답ID
+  SEXDSTN_CODE char(1) DEFAULT NULL,  -- 성별코드
+  OCCP_TY_CODE varchar(10) DEFAULT NULL,  -- 직업유형상세코드
+  RESPOND_NM varchar(50) DEFAULT NULL,  -- 응답명
+  BRTHDY char(20) DEFAULT NULL,  -- 생년월일
+  AREA_NO varchar(4) DEFAULT NULL,  -- 지역번호
+  MIDDLE_TELNO varchar(4) DEFAULT NULL,  -- 전화 중간번호
+  END_TELNO varchar(4) DEFAULT NULL,  -- 전화 끝번호
+  FRST_REGIST_PNTTM timestamp DEFAULT NULL,  -- 최초등록시각
+  FRST_REGISTER_ID varchar(20) DEFAULT NULL,  -- 최초등록자ID
+  LAST_UPDT_PNTTM timestamp DEFAULT NULL,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar(20) DEFAULT NULL,  -- 최종수정자ID
   PRIMARY KEY (QUSTNR_TMPLAT_ID,QESTNR_ID,QUSTNR_RESPOND_ID)
 );
 CREATE TABLE TB_QUSTNR_RSPNS_RESULT (
-QUSTNR_RSPNS_RESULT_ID char(20) NOT NULL,
-  QESTNR_ID char(20) NOT NULL,
-  QUSTNR_QESITM_ID char(20) NOT NULL,
-  QUSTNR_TMPLAT_ID char(20) NOT NULL,
-  RESPOND_ANSWER_CN varchar(1000) DEFAULT NULL,
-  ETC_ANSWER_CN varchar(1000) DEFAULT NULL,
-  RESPOND_NM varchar(50) DEFAULT NULL,
-  FRST_REGIST_PNTTM timestamp DEFAULT NULL,
-  FRST_REGISTER_ID varchar(20) DEFAULT NULL,
-  LAST_UPDT_PNTTM timestamp DEFAULT NULL,
-  LAST_UPDUSR_ID varchar(20) DEFAULT NULL,
-  QUSTNR_IEM_ID varchar(20) DEFAULT NULL,
+  QUSTNR_RSPNS_RESULT_ID char(20) NOT NULL,  -- 설문응답결과ID
+  QESTNR_ID char(20) NOT NULL,  -- QESTNRID
+  QUSTNR_QESITM_ID char(20) NOT NULL,  -- 설문QESITMID
+  QUSTNR_TMPLAT_ID char(20) NOT NULL,  -- 설문템플릿ID
+  RESPOND_ANSWER_CN varchar(1000) DEFAULT NULL,  -- 응답답변내용
+  ETC_ANSWER_CN varchar(1000) DEFAULT NULL,  -- 기타답변내용
+  RESPOND_NM varchar(50) DEFAULT NULL,  -- 응답명
+  FRST_REGIST_PNTTM timestamp DEFAULT NULL,  -- 최초등록시각
+  FRST_REGISTER_ID varchar(20) DEFAULT NULL,  -- 최초등록자ID
+  LAST_UPDT_PNTTM timestamp DEFAULT NULL,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar(20) DEFAULT NULL,  -- 최종수정자ID
+  QUSTNR_IEM_ID varchar(20) DEFAULT NULL,  -- 설문항목ID
   PRIMARY KEY (QUSTNR_RSPNS_RESULT_ID,QESTNR_ID,QUSTNR_QESITM_ID,QUSTNR_TMPLAT_ID)
 );
 CREATE TABLE TB_STPLAT_INFO (
-USE_STPLAT_ID char(20) NOT NULL,
-  USE_STPLAT_NM varchar(100) DEFAULT NULL,
+  USE_STPLAT_ID char(20) NOT NULL,  -- 이용약관ID
+  USE_STPLAT_NM varchar(100) DEFAULT NULL,  -- 이용약관명
   USE_STPLAT_CN string,
   INFO_PROVD_AGRE_CN string,
-  VER varchar(20) DEFAULT NULL,
-  APLC_DE varchar(8) DEFAULT NULL,
-  REPRSNT_AT char(1) DEFAULT 'N',
-  USE_AT char(1) DEFAULT 'Y',
-  FRST_REGIST_PNTTM timestamp DEFAULT NULL,
-  FRST_REGISTER_ID varchar(20) DEFAULT NULL,
-  LAST_UPDT_PNTTM timestamp DEFAULT NULL,
-  LAST_UPDUSR_ID varchar(20) DEFAULT NULL,
+  VER varchar(20) DEFAULT NULL,  -- 버전
+  APLC_DE varchar(8) DEFAULT NULL,  -- 응용일자
+  REPRSNT_AT char(1) DEFAULT 'N',  -- REPRSNT여부
+  USE_AT char(1) DEFAULT 'Y',  -- 사용여부(Y/N)
+  FRST_REGIST_PNTTM timestamp DEFAULT NULL,  -- 최초등록시각
+  FRST_REGISTER_ID varchar(20) DEFAULT NULL,  -- 최초등록자ID
+  LAST_UPDT_PNTTM timestamp DEFAULT NULL,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar(20) DEFAULT NULL,  -- 최종수정자ID
   PRIMARY KEY (USE_STPLAT_ID)
 );
 CREATE TABLE TB_CTSNN_MANAGE (
-CTSNN_ID char(20) NOT NULL,
-  USER_ID varchar(20) DEFAULT NULL,
-  CTSNN_CODE varchar(6) DEFAULT NULL,
-  REQST_DE varchar(20) DEFAULT NULL,
-  CTSNN_NM varchar(100) DEFAULT NULL,
-  TRGTER_NM varchar(50) DEFAULT NULL,
-  BRTHDY varchar(20) DEFAULT NULL,
-  OCCRRNC_DE varchar(20) DEFAULT NULL,
-  RELATE varchar(6) DEFAULT NULL,
+  CTSNN_ID char(20) NOT NULL,  -- 경조사ID
+  USER_ID varchar(20) DEFAULT NULL,  -- 사용자아이디
+  CTSNN_CODE varchar(6) DEFAULT NULL,  -- 경조사상세코드
+  REQST_DE varchar(20) DEFAULT NULL,  -- REQST일자
+  CTSNN_NM varchar(100) DEFAULT NULL,  -- 경조사명
+  TRGTER_NM varchar(50) DEFAULT NULL,  -- 대상자명
+  BRTHDY varchar(20) DEFAULT NULL,  -- 생년월일
+  OCCRRNC_DE varchar(20) DEFAULT NULL,  -- 발생일자
+  RELATE varchar(6) DEFAULT NULL,  -- 관련
   RM string,
-  SANCTNER_ID varchar(20) DEFAULT NULL,
-  CONFM_AT char(1) DEFAULT 'N',
-  SANCTN_DT varchar(20) DEFAULT NULL,
-  RETURN_RESN varchar(2000) DEFAULT NULL,
-  INFRML_SANCTN_ID varchar(20) DEFAULT NULL,
-  FRST_REGISTER_ID varchar(20) DEFAULT NULL,
-  FRST_REGIST_PNTTM timestamp DEFAULT NULL,
-  LAST_UPDUSR_ID varchar(20) DEFAULT NULL,
-  LAST_UPDT_PNTTM timestamp DEFAULT NULL,
+  SANCTNER_ID varchar(20) DEFAULT NULL,  -- SANCTNERID
+  CONFM_AT char(1) DEFAULT 'N',  -- 승인여부
+  SANCTN_DT varchar(20) DEFAULT NULL,  -- 결재일시
+  RETURN_RESN varchar(2000) DEFAULT NULL,  -- RETURN사유
+  INFRML_SANCTN_ID varchar(20) DEFAULT NULL,  -- INFRML결재ID
+  FRST_REGISTER_ID varchar(20) DEFAULT NULL,  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp DEFAULT NULL,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20) DEFAULT NULL,  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp DEFAULT NULL,  -- 최종수정시각
   PRIMARY KEY (CTSNN_ID)
 );
 CREATE TABLE TB_RSS (
-RSS_ID varchar(20) NOT NULL, TRGET_SVC_NM varchar(100), TRGET_SVC_TABLE varchar(100),
-  TRGET_SVC_LIST_CO numeric(6), HDER_TITLE varchar(200), HDER_LINK varchar(200), HDER_DC varchar(500),
-  HDER_TAG varchar(200), HDER_ETC varchar(200), BDT_TITLE varchar(200), BDT_LINK varchar(200),
-  BDT_DC varchar(500), BDT_TAG varchar(200), BDT_ETC_TAG varchar(200),
-  FRST_REGIST_PNTTM timestamp, FRST_REGISTER_ID varchar(20), LAST_UPDT_PNTTM timestamp, LAST_UPDUSR_ID varchar(20),
+  RSS_ID varchar(20) NOT NULL,  -- RSSID
+  TRGET_SVC_NM varchar(100),  -- 대상서비스명
+  TRGET_SVC_TABLE varchar(100),  -- 대상서비스TABLE
+  TRGET_SVC_LIST_CO numeric(6),  -- 대상서비스목록수
+  HDER_TITLE varchar(200),  -- 헤더제목
+  HDER_LINK varchar(200),  -- 헤더링크
+  HDER_DC varchar(500),  -- 헤더설명
+  HDER_TAG varchar(200),  -- 헤더태그
+  HDER_ETC varchar(200),  -- 헤더기타
+  BDT_TITLE varchar(200),  -- 본문제목
+  BDT_LINK varchar(200),  -- 본문링크
+  BDT_DC varchar(500),  -- 본문설명
+  BDT_TAG varchar(200),  -- 본문태그
+  BDT_ETC_TAG varchar(200),  -- 본문기타태그
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
   PRIMARY KEY (RSS_ID)
 );
 CREATE TABLE TB_NTFC_INFO (
-NTCN_NO NUMERIC(10) NOT NULL, NTCN_SJ varchar(200), NTCN_CN string, NTCN_TM varchar(20),
-  BH_NTCN_INTRVL varchar(100), FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp,
-  LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp, PRIMARY KEY (NTCN_NO)
+  NTCN_NO NUMERIC(10) NOT NULL,  -- 알림번호
+  NTCN_SJ varchar(200),  -- 알림제목
+  NTCN_CN string,
+  NTCN_TM varchar(20),  -- 알림시각
+  BH_NTCN_INTRVL varchar(100),  -- BH알림INTRVL
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
+  PRIMARY KEY (NTCN_NO)
 );
 CREATE TABLE TB_INTNET_SVC (
-INTNET_SVC_ID varchar(20) NOT NULL, INTNET_SVC_NM varchar(200), INTNET_SVC_DC string,
-  REFLCT_AT varchar(1) DEFAULT 'N', FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp,
-  LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp, PRIMARY KEY (INTNET_SVC_ID)
+  INTNET_SVC_ID varchar(20) NOT NULL,  -- 인터넷서비스ID
+  INTNET_SVC_NM varchar(200),  -- 인터넷서비스명
+  INTNET_SVC_DC string,
+  REFLCT_AT varchar(1) DEFAULT 'N',  -- REFLCT여부
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
+  PRIMARY KEY (INTNET_SVC_ID)
 );
 CREATE TABLE TB_RECOMEND_SITE_INFO (
-RECOMEND_SITE_ID varchar(20) NOT NULL, RECOMEND_SITE_URL varchar(300), RECOMEND_SITE_NM varchar(200),
-  RECOMEND_SITE_DC string, RECOMEND_RESN_CN string, RECOMEND_CONFM_AT varchar(1) DEFAULT 'N',
-  CONFM_DE varchar(20), FRST_REGIST_PNTTM timestamp, FRST_REGISTER_ID varchar(20),
-  LAST_UPDT_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), PRIMARY KEY (RECOMEND_SITE_ID)
+  RECOMEND_SITE_ID varchar(20) NOT NULL,  -- 추천사이트ID
+  RECOMEND_SITE_URL varchar(300),  -- 추천사이트URL
+  RECOMEND_SITE_NM varchar(200),  -- 추천사이트명
+  RECOMEND_SITE_DC string,
+  RECOMEND_RESN_CN string,
+  RECOMEND_CONFM_AT varchar(1) DEFAULT 'N',  -- 추천승인여부
+  CONFM_DE varchar(20),  -- 승인일자
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  PRIMARY KEY (RECOMEND_SITE_ID)
 );
 CREATE TABLE TB_ROUGHMAP (
-ROUGHMAP_ID varchar(20) NOT NULL, ROUGHMAPSJ varchar(200), ROUGHMAPADDRESS varchar(300),
-  LA varchar(30), LO varchar(30), MARKERLA varchar(30), MARKERLO varchar(30), INFOWINDOW string, ZOOMLEVEL varchar(5),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  ROUGHMAP_ID varchar(20) NOT NULL,  -- 약도ID
+  ROUGHMAPSJ varchar(200),  -- ROUGHMAPSJ
+  ROUGHMAPADDRESS varchar(300),  -- ROUGHMAPADDRESS
+  LA varchar(30),  -- 위도
+  LO varchar(30),  -- 경도
+  MARKERLA varchar(30),  -- MARKERLA
+  MARKERLO varchar(30),  -- MARKERLO
+  INFOWINDOW string,
+  ZOOMLEVEL varchar(5),  -- ZOOMLEVEL
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (ROUGHMAP_ID)
 );
 CREATE TABLE TB_UNITY_LINK (
-UNITY_LINK_ID varchar(20) NOT NULL, UNITY_LINK_SE_CODE varchar(20), UNITY_LINK_NM varchar(200),
-  UNITY_LINK_URL varchar(300), UNITY_LINK_DC string,
-  FRST_REGIST_PNTTM timestamp, FRST_REGISTER_ID varchar(20), LAST_UPDT_PNTTM timestamp, LAST_UPDUSR_ID varchar(20),
+  UNITY_LINK_ID varchar(20) NOT NULL,  -- 통합링크ID
+  UNITY_LINK_SE_CODE varchar(20),  -- 통합링크구분상세코드
+  UNITY_LINK_NM varchar(200),  -- 통합링크명
+  UNITY_LINK_URL varchar(300),  -- 통합링크URL
+  UNITY_LINK_DC string,
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
   PRIMARY KEY (UNITY_LINK_ID)
 );
 CREATE TABLE TB_SITE_LIST (
-SITE_ID varchar(20) NOT NULL, SITE_URL varchar(300), SITE_NM varchar(200), SITE_DC string,
-  SITE_THEMA_CL_CODE varchar(20), ACTVTY_AT varchar(1) DEFAULT 'Y', USE_AT varchar(1) DEFAULT 'Y',
-  FRST_REGIST_PNTTM timestamp, FRST_REGISTER_ID varchar(20), LAST_UPDT_PNTTM timestamp, LAST_UPDUSR_ID varchar(20),
+  SITE_ID varchar(20) NOT NULL,  -- 사이트ID
+  SITE_URL varchar(300),  -- 사이트URL
+  SITE_NM varchar(200),  -- 사이트명
+  SITE_DC string,
+  SITE_THEMA_CL_CODE varchar(20),  -- 사이트THEMACL상세코드
+  ACTVTY_AT varchar(1) DEFAULT 'Y',  -- 활성여부
+  USE_AT varchar(1) DEFAULT 'Y',  -- 사용여부(Y/N)
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
   PRIMARY KEY (SITE_ID)
 );
 CREATE TABLE TB_POPUP_MANAGE (
-POPUP_ID varchar(20) NOT NULL, POPUP_SJ_NM varchar(200), FILE_URL varchar(300),
-  POPUP_VRTICL_LC varchar(10), POPUP_WIDTH_LC varchar(10), POPUP_VRTICL_SIZE varchar(10), POPUP_WIDTH_SIZE varchar(10),
-  NTCE_BGNDE varchar(20), NTCE_ENDDE varchar(20), STOPVEW_SETUP_AT varchar(1) DEFAULT 'N', NTCE_AT varchar(1) DEFAULT 'Y',
-  FRST_REGIST_PNTTM timestamp, FRST_REGISTER_ID varchar(20), LAST_UPDT_PNTTM timestamp, LAST_UPDUSR_ID varchar(20),
+  POPUP_ID varchar(20) NOT NULL,  -- 팝업ID
+  POPUP_SJ_NM varchar(200),  -- 팝업제목명
+  FILE_URL varchar(300),  -- 파일URL
+  POPUP_VRTICL_LC varchar(10),  -- 팝업세로위치
+  POPUP_WIDTH_LC varchar(10),  -- 팝업너비위치
+  POPUP_VRTICL_SIZE varchar(10),  -- 팝업세로크기
+  POPUP_WIDTH_SIZE varchar(10),  -- 팝업너비크기
+  NTCE_BGNDE varchar(20),  -- 공지 시작일시
+  NTCE_ENDDE varchar(20),  -- 공지 종료일시
+  STOPVEW_SETUP_AT varchar(1) DEFAULT 'N',  -- STOPVEW설정여부
+  NTCE_AT varchar(1) DEFAULT 'Y',  -- 게시여부
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
   PRIMARY KEY (POPUP_ID)
 );
 CREATE TABLE TB_WIKI_BKMK (
-WIKI_BKMK_ID varchar(20) NOT NULL, USER_ID varchar(20), WIKI_BKMK_NM varchar(200),
-  FRST_REGIST_PNTTM timestamp, FRST_REGISTER_ID varchar(20), LAST_UPDT_PNTTM timestamp, LAST_UPDUSR_ID varchar(20),
+  WIKI_BKMK_ID varchar(20) NOT NULL,  -- 위키북마크ID
+  USER_ID varchar(20),  -- 사용자아이디
+  WIKI_BKMK_NM varchar(200),  -- 위키북마크명
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
   PRIMARY KEY (WIKI_BKMK_ID)
 );
 CREATE TABLE TB_EVENT_MANAGE (
-EVENT_ID varchar(20) NOT NULL, EVENT_SE varchar(20), EVENT_NM varchar(200), EVENT_PURPS string,
-  EVENT_BGNDE varchar(20), EVENT_ENDDE varchar(20), EVENT_AUSPC_INSTT_NM varchar(100), EVENT_MNGT_INSTT_NM varchar(100),
-  EVENT_PLACE varchar(200), EVENT_CN string, CT_OCCRRNC_AT varchar(1) DEFAULT 'N', PARTCPT_CT varchar(100),
-  PSNCPA varchar(100), REFRN_URL varchar(300), RCEPT_BGNDE varchar(20), RCEPT_ENDDE varchar(20),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  EVENT_ID varchar(20) NOT NULL,  -- 행사ID
+  EVENT_SE varchar(20),  -- 행사구분
+  EVENT_NM varchar(200),  -- 행사명
+  EVENT_PURPS string,
+  EVENT_BGNDE varchar(20),  -- 행사시작일자
+  EVENT_ENDDE varchar(20),  -- 행사종료일자
+  EVENT_AUSPC_INSTT_NM varchar(100),  -- 행사AUSPC기관명
+  EVENT_MNGT_INSTT_NM varchar(100),  -- 행사관리기관명
+  EVENT_PLACE varchar(200),  -- 행사장소
+  EVENT_CN string,
+  CT_OCCRRNC_AT varchar(1) DEFAULT 'N',  -- 법원발생여부
+  PARTCPT_CT varchar(100),  -- PARTCPT법원
+  PSNCPA varchar(100),  -- PSNCPA
+  REFRN_URL varchar(300),  -- REFRNURL
+  RCEPT_BGNDE varchar(20),  -- RCEPT시작일자
+  RCEPT_ENDDE varchar(20),  -- RCEPT종료일자
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (EVENT_ID)
 );
 CREATE TABLE TB_RWARD_MANAGE (
-RWARD_ID varchar(20) NOT NULL, RWARDWNR_ID varchar(20), RWARD_CODE varchar(20), RWARD_DE varchar(20), RWARD_NM varchar(200),
-  PBLEN_CN string, SANCTNER_ID varchar(20), CONFM_AT varchar(1) DEFAULT 'N', SANCTN_DT varchar(20), RETURN_RESN string,
-  ATCH_FILE_ID varchar(20), INFRML_SANCTN_ID varchar(20),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  RWARD_ID varchar(20) NOT NULL,  -- 포상ID
+  RWARDWNR_ID varchar(20),  -- RWARDWNRID
+  RWARD_CODE varchar(20),  -- 포상상세코드
+  RWARD_DE varchar(20),  -- 포상일자
+  RWARD_NM varchar(200),  -- 포상명
+  PBLEN_CN string,
+  SANCTNER_ID varchar(20),  -- SANCTNERID
+  CONFM_AT varchar(1) DEFAULT 'N',  -- 승인여부
+  SANCTN_DT varchar(20),  -- 결재일시
+  RETURN_RESN string,
+  ATCH_FILE_ID varchar(20),  -- 첨부파일 묶음ID
+  INFRML_SANCTN_ID varchar(20),  -- INFRML결재ID
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (RWARD_ID)
 );
 CREATE TABLE TB_NEWS_INFO (
-NEWS_ID varchar(20) NOT NULL, NEWS_SJ varchar(200), NEWS_CN string, NEWS_ORIGIN varchar(200),
-  NTCE_DE varchar(20), ATCH_FILE_ID varchar(20),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  NEWS_ID varchar(20) NOT NULL,  -- 뉴스ID
+  NEWS_SJ varchar(200),  -- 뉴스제목
+  NEWS_CN string,
+  NEWS_ORIGIN varchar(200),  -- 뉴스ORIGIN
+  NTCE_DE varchar(20),  -- 게시일자
+  ATCH_FILE_ID varchar(20),  -- 첨부파일 묶음ID
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (NEWS_ID)
 );
 CREATE TABLE TB_MAIN_IMAGE (
-IMAGE_ID varchar(20) NOT NULL, IMAGE_NM varchar(200), IMAGE varchar(300), IMAGE_FILE varchar(300),
-  IMAGE_DC string, REFLCT_AT varchar(1) DEFAULT 'N',
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  IMAGE_ID varchar(20) NOT NULL,  -- 이미지ID
+  IMAGE_NM varchar(200),  -- 이미지명
+  IMAGE varchar(300),  -- 이미지
+  IMAGE_FILE varchar(300),  -- 이미지파일
+  IMAGE_DC string,
+  REFLCT_AT varchar(1) DEFAULT 'N',  -- REFLCT여부
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (IMAGE_ID)
 );
 CREATE TABLE TB_LOGIN_SCRIN_IMAGE (
-IMAGE_ID varchar(20) NOT NULL, IMAGE_NM varchar(200), IMAGE varchar(300), IMAGE_FILE varchar(300),
-  IMAGE_DC string, REFLCT_AT varchar(1) DEFAULT 'N',
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  IMAGE_ID varchar(20) NOT NULL,  -- 이미지ID
+  IMAGE_NM varchar(200),  -- 이미지명
+  IMAGE varchar(300),  -- 이미지
+  IMAGE_FILE varchar(300),  -- 이미지파일
+  IMAGE_DC string,
+  REFLCT_AT varchar(1) DEFAULT 'N',  -- REFLCT여부
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (IMAGE_ID)
 );
 CREATE TABLE TB_MTG_PLACE_MANAGE (
-MTGRUM_ID varchar(20) NOT NULL, MTGRUM_NM varchar(200), OPN_BEGIN_TM varchar(10), OPN_END_TM varchar(10),
-  ACEPTNC_POSBL_NMPR numeric(6), LC_SE varchar(20), LC_DETAIL varchar(300), ATCH_FILE_ID varchar(20),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  MTGRUM_ID varchar(20) NOT NULL,  -- 회의실ID
+  MTGRUM_NM varchar(200),  -- 회의실명
+  OPN_BEGIN_TM varchar(10),  -- 개방시작시각
+  OPN_END_TM varchar(10),  -- 개방종료시각
+  ACEPTNC_POSBL_NMPR numeric(6),  -- 수용가능인원
+  LC_SE varchar(20),  -- 위치구분
+  LC_DETAIL varchar(300),  -- 위치DETAIL
+  ATCH_FILE_ID varchar(20),  -- 첨부파일 묶음ID
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (MTGRUM_ID)
 );
 CREATE TABLE TB_WORD_DICARY_INFO (
-WORD_ID varchar(20) NOT NULL, WORD_NM varchar(200), ENG_NM varchar(200), WORD_DC string, SYNONM varchar(300),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  WORD_ID varchar(20) NOT NULL,  -- 단어ID
+  WORD_NM varchar(200),  -- 단어명
+  ENG_NM varchar(200),  -- 영문명
+  WORD_DC string,
+  SYNONM varchar(300),  -- SYNONM
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (WORD_ID)
 );
 CREATE TABLE TB_INDVDL_PGE_CNTNTS (
-CNTNTS_ID varchar(20) NOT NULL, CNTNTS_NM varchar(200), CNTC_URL varchar(300), CNTNTS_USE_AT varchar(1) DEFAULT 'Y',
-  CNTNTS_LINK_URL varchar(300), CNTNTS_DC string,
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  CNTNTS_ID varchar(20) NOT NULL,  -- 콘텐츠ID
+  CNTNTS_NM varchar(200),  -- 콘텐츠명
+  CNTC_URL varchar(300),  -- 접촉URL
+  CNTNTS_USE_AT varchar(1) DEFAULT 'Y',  -- 콘텐츠사용여부
+  CNTNTS_LINK_URL varchar(300),  -- 콘텐츠링크URL
+  CNTNTS_DC string,
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (CNTNTS_ID)
 );
 CREATE TABLE TB_HPCM_INFO (
-HPCM_ID varchar(20) NOT NULL, HPCM_SE_CODE varchar(20), HPCM_DFN varchar(300), HPCM_DC string,
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  HPCM_ID varchar(20) NOT NULL,  -- 도움말ID
+  HPCM_SE_CODE varchar(20),  -- 도움말구분상세코드
+  HPCM_DFN varchar(300),  -- 도움말정의
+  HPCM_DC string,
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (HPCM_ID)
 );
 CREATE TABLE TB_COMMUTE (
-WRKTM_ID varchar(20) NOT NULL, EMPLYR_ID varchar(20), ORGNZT_ID varchar(20), WRKT_DT varchar(20),
-  WRK_START_TIME varchar(10), WRK_END_TIME varchar(10), WRK_HOURS varchar(10), OVTMWRK_HOURS varchar(10),
-  WRK_START_STATUS varchar(1), WRK_END_STATUS varchar(1),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  WRKTM_ID varchar(20) NOT NULL,  -- WRKTMID
+  EMPLYR_ID varchar(20),  -- 사용자ID
+  ORGNZT_ID varchar(20),  -- 조직ID
+  WRKT_DT varchar(20),  -- WRKT일시
+  WRK_START_TIME varchar(10),  -- 작업START시간
+  WRK_END_TIME varchar(10),  -- 작업종료시간
+  WRK_HOURS varchar(10),  -- 작업시간
+  OVTMWRK_HOURS varchar(10),  -- OVTMWRK시간
+  WRK_START_STATUS varchar(1),  -- 작업STARTSTATUS
+  WRK_END_STATUS varchar(1),  -- 작업종료STATUS
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (WRKTM_ID)
 );
 CREATE TABLE TB_ADMINISTRATION_WORD (
-ADMINIST_WORD_ID varchar(20) NOT NULL, ADMINIST_WORD_NM varchar(200), ADMINIST_WORD_ENG_NM varchar(200),
-  ADMINIST_WORD_ABRV_NM varchar(100), THEMA_RELM varchar(100), WORD_SE varchar(20), RELATE_STD_WORD varchar(200),
-  ADMINIST_WORD_DFN string, ADMINIST_WORD_DC string,
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  ADMINIST_WORD_ID varchar(20) NOT NULL,  -- 행정단어ID
+  ADMINIST_WORD_NM varchar(200),  -- 행정단어명
+  ADMINIST_WORD_ENG_NM varchar(200),  -- 행정단어영문명
+  ADMINIST_WORD_ABRV_NM varchar(100),  -- 행정단어약어명
+  THEMA_RELM varchar(100),  -- THEMARELM
+  WORD_SE varchar(20),  -- 단어구분
+  RELATE_STD_WORD varchar(200),  -- 관련표준단어
+  ADMINIST_WORD_DFN string,
+  ADMINIST_WORD_DC string,
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (ADMINIST_WORD_ID)
 );
 CREATE TABLE TB_NOTE (
-NOTE_ID varchar(20) NOT NULL, NOTE_SJ varchar(200), NOTE_CN string, ATCH_FILE_ID varchar(20),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  NOTE_ID varchar(20) NOT NULL,  -- 쪽지ID
+  NOTE_SJ varchar(200),  -- 쪽지제목
+  NOTE_CN string,
+  ATCH_FILE_ID varchar(20),  -- 첨부파일 묶음ID
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (NOTE_ID)
 );
 CREATE TABLE TB_NOTE_TRNSMIT (
-NOTE_TRNSMIT_ID varchar(20) NOT NULL, NOTE_ID varchar(20), TRNSMITER_ID varchar(20), DELETE_AT varchar(1) DEFAULT 'N',
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  NOTE_TRNSMIT_ID varchar(20) NOT NULL,  -- 쪽지송신ID
+  NOTE_ID varchar(20),  -- 쪽지ID
+  TRNSMITER_ID varchar(20),  -- TRNSMITERID
+  DELETE_AT varchar(1) DEFAULT 'N',  -- 삭제여부
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (NOTE_TRNSMIT_ID)
 );
 CREATE TABLE TB_NOTE_RECPTN (
-NOTE_RECPTN_ID varchar(20) NOT NULL, NOTE_ID varchar(20), NOTE_TRNSMIT_ID varchar(20), RCVER_ID varchar(20),
-  READNG_AT varchar(1) DEFAULT 'N', OPEN_YN varchar(1) DEFAULT 'N', RECPTN_SE varchar(20) DEFAULT '01', DELETE_AT varchar(1) DEFAULT 'N',
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  NOTE_RECPTN_ID varchar(20) NOT NULL,  -- 쪽지수신ID
+  NOTE_ID varchar(20),  -- 쪽지ID
+  NOTE_TRNSMIT_ID varchar(20),  -- 쪽지송신ID
+  RCVER_ID varchar(20),  -- 수화자ID
+  READNG_AT varchar(1) DEFAULT 'N',  -- READNG여부
+  OPEN_YN varchar(1) DEFAULT 'N',  -- 개봉여부
+  RECPTN_SE varchar(20) DEFAULT '01',  -- 수신구분
+  DELETE_AT varchar(1) DEFAULT 'N',  -- 삭제여부
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (NOTE_RECPTN_ID)
 );
 CREATE TABLE TB_INDVDL_YRYC_MANAGE (
-OCCRRNC_YEAR varchar(4) NOT NULL, USER_ID varchar(20) NOT NULL,
-  YRYC_OCCRRNC_CO numeric(5,1), USE_YRYC_CO numeric(5,1), REMNDR_YRYC_CO numeric(5,1),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  OCCRRNC_YEAR varchar(4) NOT NULL,  -- 발생연도
+  USER_ID varchar(20) NOT NULL,  -- 사용자아이디
+  YRYC_OCCRRNC_CO numeric(5,1),  -- 연차발생수
+  USE_YRYC_CO numeric(5,1),  -- 사용연차수
+  REMNDR_YRYC_CO numeric(5,1),  -- REMNDR연차수
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (OCCRRNC_YEAR, USER_ID)
 );
 CREATE TABLE TB_ANNVRSRY_MANAGE (
-ANNVRSRY_ID varchar(20) NOT NULL, USER_ID varchar(20), ANNVRSRY_SE varchar(20), ANNVRSRY_NM varchar(200),
-  ANNVRSRY varchar(20), CLDR_SE varchar(20), ANNVRSRY_NTCN_SETUP varchar(20), ANNVRSRY_NTCN_BGNDE varchar(20),
-  MEMO string, REPTIT_AT varchar(1) DEFAULT 'N',
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  ANNVRSRY_ID varchar(20) NOT NULL,  -- 기념일ID
+  USER_ID varchar(20),  -- 사용자아이디
+  ANNVRSRY_SE varchar(20),  -- 기념일구분
+  ANNVRSRY_NM varchar(200),  -- 기념일명
+  ANNVRSRY varchar(20),  -- 기념일
+  CLDR_SE varchar(20),  -- 달력구분
+  ANNVRSRY_NTCN_SETUP varchar(20),  -- 기념일알림설정
+  ANNVRSRY_NTCN_BGNDE varchar(20),  -- 기념일알림시작일자
+  MEMO string,
+  REPTIT_AT varchar(1) DEFAULT 'N',  -- REPTIT여부
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (ANNVRSRY_ID)
 );
 CREATE TABLE TB_MTG_INFO (
-MTG_ID varchar(20) NOT NULL, MTG_NM varchar(200), MTG_MTR_CN string, MTG_SN varchar(20), MTG_CO varchar(20),
-  MTG_DE varchar(20), MTG_PLACE varchar(200), MTG_BEGIN_TM varchar(10), MTG_END_TM varchar(10),
-  CLSDR_MTG_AT varchar(1) DEFAULT 'N', READNG_BGNDE varchar(20), READNG_AT varchar(1) DEFAULT 'N',
-  MTG_RESULT_CN string, MTG_RESULT_ENNC varchar(200), ETC_MATTER string,
-  MNGT_DEPT_ID varchar(20), MNAER_ID varchar(20), MNAER_DEPT_ID varchar(20), MTG_AT varchar(1) DEFAULT 'N',
-  NONATDRN_CO numeric(6), ATDRN_CO numeric(6),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  MTG_ID varchar(20) NOT NULL,  -- 회의ID
+  MTG_NM varchar(200),  -- 회의명
+  MTG_MTR_CN string,
+  MTG_SN varchar(20),  -- 회의일련번호
+  MTG_CO varchar(20),  -- 회의수
+  MTG_DE varchar(20),  -- 회의일자
+  MTG_PLACE varchar(200),  -- 회의장소
+  MTG_BEGIN_TM varchar(10),  -- 회의시작시각
+  MTG_END_TM varchar(10),  -- 회의종료시각
+  CLSDR_MTG_AT varchar(1) DEFAULT 'N',  -- CLSDR회의여부
+  READNG_BGNDE varchar(20),  -- READNG시작일자
+  READNG_AT varchar(1) DEFAULT 'N',  -- READNG여부
+  MTG_RESULT_CN string,
+  MTG_RESULT_ENNC varchar(200),  -- 회의결과암호
+  ETC_MATTER string,
+  MNGT_DEPT_ID varchar(20),  -- 관리부서ID
+  MNAER_ID varchar(20),  -- 담당자ID
+  MNAER_DEPT_ID varchar(20),  -- 담당자부서ID
+  MTG_AT varchar(1) DEFAULT 'N',  -- 회의여부
+  NONATDRN_CO numeric(6),  -- NONATDRN수
+  ATDRN_CO numeric(6),  -- ATDRN수
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (MTG_ID)
 );
 CREATE TABLE TB_RECENT_SRCHWRD_MANAGE (
-SRCHWRD_MANAGE_ID varchar(20) NOT NULL, SRCHWRD_MANAGE_NM varchar(200), SRCHWRD_CONECT_URL varchar(300),
-  USER_SEARCH_AT varchar(1) DEFAULT 'Y',
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  SRCHWRD_MANAGE_ID varchar(20) NOT NULL,  -- 검색어MANAGEID
+  SRCHWRD_MANAGE_NM varchar(200),  -- 검색어MANAGE명
+  SRCHWRD_CONECT_URL varchar(300),  -- 검색어접속URL
+  USER_SEARCH_AT varchar(1) DEFAULT 'Y',  -- 사용자SEARCH여부
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (SRCHWRD_MANAGE_ID)
 );
 CREATE TABLE TB_RECENT_SRCHWRD (
-SRCHWRD_ID varchar(20) NOT NULL, SRCHWRD_MANAGE_ID varchar(20), SRCHWRD_NM varchar(200), SRCHWRD_CO numeric(10) DEFAULT 0,
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  SRCHWRD_ID varchar(20) NOT NULL,  -- 검색어ID
+  SRCHWRD_MANAGE_ID varchar(20),  -- 검색어MANAGEID
+  SRCHWRD_NM varchar(200),  -- 검색어명
+  SRCHWRD_CO numeric(10) DEFAULT 0,  -- 검색어수
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (SRCHWRD_ID)
 );
 CREATE TABLE TB_EVENT_INFO (
-EVENT_ID varchar(20) NOT NULL, BSNS_YEAR varchar(4), BSNS_CODE varchar(20),
-  EVENT_SVC_BGNDE varchar(20), EVENT_SVC_ENDDE varchar(20), SVC_USE_NMPR_CO numeric(8), CHARGER_NM varchar(50),
-  EVENT_CN string, EVENT_TY_CODE varchar(20), PRPARETG_CN string, EVENT_CONFM_AT varchar(1) DEFAULT 'N', EVENT_CONFM_DE varchar(20),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  EVENT_ID varchar(20) NOT NULL,  -- 행사ID
+  BSNS_YEAR varchar(4),  -- 용무연도
+  BSNS_CODE varchar(20),  -- 용무코드
+  EVENT_SVC_BGNDE varchar(20),  -- 행사서비스시작일자
+  EVENT_SVC_ENDDE varchar(20),  -- 행사서비스종료일자
+  SVC_USE_NMPR_CO numeric(8),  -- 봉사사용국가유공자수
+  CHARGER_NM varchar(50),  -- 담당자명
+  EVENT_CN string,
+  EVENT_TY_CODE varchar(20),  -- 행사유형상세코드
+  PRPARETG_CN string,
+  EVENT_CONFM_AT varchar(1) DEFAULT 'N',  -- 행사승인여부
+  EVENT_CONFM_DE varchar(20),  -- 행사승인일자
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (EVENT_ID)
 );
 CREATE TABLE TB_VCATN_MANAGE (
-APPLCNT_ID varchar(20) NOT NULL, VCATN_SE varchar(20) NOT NULL, OCCRRNC_YEAR varchar(4),
-  BGNDE varchar(20) NOT NULL, ENDDE varchar(20) NOT NULL, REQST_DE varchar(20), VCATN_RESN varchar(500),
-  NOON_SE varchar(20), SANCTNER_ID varchar(20), CONFM_AT varchar(1) DEFAULT 'N', SANCTN_DT varchar(20),
-  RETURN_RESN varchar(500), INFRML_SANCTN_ID varchar(20),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  APPLCNT_ID varchar(20) NOT NULL,  -- APPLCNTID
+  VCATN_SE varchar(20) NOT NULL,  -- VCATN구분
+  OCCRRNC_YEAR varchar(4),  -- 발생연도
+  BGNDE varchar(20) NOT NULL,  -- 시작일자
+  ENDDE varchar(20) NOT NULL,  -- 종료일자
+  REQST_DE varchar(20),  -- REQST일자
+  VCATN_RESN varchar(500),  -- VCATN사유
+  NOON_SE varchar(20),  -- NOON구분
+  SANCTNER_ID varchar(20),  -- SANCTNERID
+  CONFM_AT varchar(1) DEFAULT 'N',  -- 승인여부
+  SANCTN_DT varchar(20),  -- 결재일시
+  RETURN_RESN varchar(500),  -- RETURN사유
+  INFRML_SANCTN_ID varchar(20),  -- INFRML결재ID
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (APPLCNT_ID, VCATN_SE, BGNDE, ENDDE)
 );
 CREATE TABLE TB_BNDT_MANAGE (
-BNDT_ID varchar(20) NOT NULL, BNDT_DE varchar(20) NOT NULL, RM varchar(2000),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  BNDT_ID varchar(20) NOT NULL,  -- 당직ID
+  BNDT_DE varchar(20) NOT NULL,  -- 당직일자
+  RM varchar(2000),  -- RM
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (BNDT_ID, BNDT_DE)
 );
 CREATE TABLE TB_BNDT_DIARY (
-BNDT_ID varchar(20) NOT NULL, BNDT_DE varchar(20) NOT NULL, RM varchar(2000),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  BNDT_ID varchar(20) NOT NULL,  -- 당직ID
+  BNDT_DE varchar(20) NOT NULL,  -- 당직일자
+  RM varchar(2000),  -- RM
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (BNDT_ID, BNDT_DE)
 );
 CREATE TABLE TB_BNDT_CECK_MANAGE (
-BNDT_ID varchar(20) NOT NULL, BNDT_DE varchar(20) NOT NULL, RM varchar(2000),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  BNDT_ID varchar(20) NOT NULL,  -- 당직ID
+  BNDT_DE varchar(20) NOT NULL,  -- 당직일자
+  RM varchar(2000),  -- RM
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (BNDT_ID, BNDT_DE)
 );
 CREATE TABLE TB_ONLINE_POLL_MANAGE (
-POLL_ID varchar(20) NOT NULL, POLL_NM varchar(200), POLL_BGNDE varchar(20), POLL_ENDDE varchar(20),
-  POLL_KND varchar(20), POLL_DSUSE_ENNC varchar(1) DEFAULT 'N', POLL_ATMC_DSUSE_ENNC varchar(1) DEFAULT 'N', QESITM_CN string,
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  POLL_ID varchar(20) NOT NULL,  -- 투표ID
+  POLL_NM varchar(200),  -- 투표명
+  POLL_BGNDE varchar(20),  -- 투표시작일자
+  POLL_ENDDE varchar(20),  -- 투표종료일자
+  POLL_KND varchar(20),  -- 투표종류
+  POLL_DSUSE_ENNC varchar(1) DEFAULT 'N',  -- 투표폐기암호
+  POLL_ATMC_DSUSE_ENNC varchar(1) DEFAULT 'N',  -- 투표ATMC폐기암호
+  QESITM_CN string,
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (POLL_ID)
 );
 CREATE TABLE TB_ONLINE_POLL_IEM (
-POLL_ID varchar(20) NOT NULL, POLL_IEM_ID varchar(20) NOT NULL, POLL_IEM_NM varchar(200),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  POLL_ID varchar(20) NOT NULL,  -- 투표ID
+  POLL_IEM_ID varchar(20) NOT NULL,  -- 투표항목ID
+  POLL_IEM_NM varchar(200),  -- 투표항목명
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (POLL_ID, POLL_IEM_ID)
 );
 CREATE TABLE TB_ONLINE_MANUAL (
-ONLINE_MNL_ID varchar(20) NOT NULL, ONLINE_MNL_NM varchar(200), ONLINE_MNL_SE_CODE varchar(20),
-  ONLINE_MNL_DFN varchar(500), ONLINE_MNL_DC string,
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  ONLINE_MNL_ID varchar(20) NOT NULL,  -- 온라인매뉴얼ID
+  ONLINE_MNL_NM varchar(200),  -- 온라인매뉴얼명
+  ONLINE_MNL_SE_CODE varchar(20),  -- 온라인매뉴얼구분상세코드
+  ONLINE_MNL_DFN varchar(500),  -- 온라인매뉴얼정의
+  ONLINE_MNL_DC string,
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (ONLINE_MNL_ID)
 );
 CREATE TABLE TB_CPYRHT_INFO (
-CPYRHT_ID varchar(20) NOT NULL, CPYRHT_PRTC_POLICY_CN string,
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  CPYRHT_ID varchar(20) NOT NULL,  -- 저작권ID
+  CPYRHT_PRTC_POLICY_CN string,
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (CPYRHT_ID)
 );
 CREATE TABLE TB_CNSLT_LIST (
-CNSLT_ID varchar(20) NOT NULL, CNSLT_SJ varchar(200), CNSLT_CN string, OTHBC_AT varchar(1) DEFAULT 'Y',
-  EMAIL_ADRES varchar(100), EMAIL_ANSWER_AT varchar(1) DEFAULT 'N', AREA_NO varchar(10),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  CNSLT_ID varchar(20) NOT NULL,  -- 컨설팅ID
+  CNSLT_SJ varchar(200),  -- 컨설팅제목
+  CNSLT_CN string,
+  OTHBC_AT varchar(1) DEFAULT 'Y',  -- 외부공개여부
+  EMAIL_ADRES varchar(100),  -- 이메일
+  EMAIL_ANSWER_AT varchar(1) DEFAULT 'N',  -- 이메일답변여부
+  AREA_NO varchar(10),  -- 지역번호
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (CNSLT_ID)
 );
 CREATE TABLE TB_BATCH_OPERT (
-BATCH_OPERT_ID varchar(20) NOT NULL, BATCH_OPERT_NM varchar(100), BATCH_PROGRM varchar(500), PARAMTR varchar(500), USE_AT varchar(1) DEFAULT 'Y',
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  BATCH_OPERT_ID varchar(20) NOT NULL,  -- 배치작업ID
+  BATCH_OPERT_NM varchar(100),  -- 배치작업명
+  BATCH_PROGRM varchar(500),  -- 배치프로그램
+  PARAMTR varchar(500),  -- PARAMTR
+  USE_AT varchar(1) DEFAULT 'Y',  -- 사용여부(Y/N)
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (BATCH_OPERT_ID)
 );
 CREATE TABLE TB_BATCH_SCHDUL (
-BATCH_SCHDUL_ID varchar(20) NOT NULL, BATCH_OPERT_ID varchar(20), EXECUT_CYCLE varchar(20),
-  EXECUT_SCHDUL_DE varchar(20), EXECUT_SCHDUL_HOUR varchar(2), EXECUT_SCHDUL_MNT varchar(2), EXECUT_SCHDUL_SECND varchar(2),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  BATCH_SCHDUL_ID varchar(20) NOT NULL,  -- 배치일정ID
+  BATCH_OPERT_ID varchar(20),  -- 배치작업ID
+  EXECUT_CYCLE varchar(20),  -- 실행주기
+  EXECUT_SCHDUL_DE varchar(20),  -- 실행일정일자
+  EXECUT_SCHDUL_HOUR varchar(2),  -- 실행일정HOUR
+  EXECUT_SCHDUL_MNT varchar(2),  -- 실행일정MNT
+  EXECUT_SCHDUL_SECND varchar(2),  -- 실행일정SECND
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (BATCH_SCHDUL_ID)
 );
 CREATE TABLE TB_BATCH_RESULT (
-BATCH_RESULT_ID varchar(20) NOT NULL, BATCH_SCHDUL_ID varchar(20), BATCH_OPERT_ID varchar(20), PARAMTR varchar(500),
-  STTUS varchar(1), ERROR_INFO varchar(2000), EXECUT_BEGIN_TM varchar(14), EXECUT_END_TM varchar(14),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  BATCH_RESULT_ID varchar(20) NOT NULL,  -- 배치결과ID
+  BATCH_SCHDUL_ID varchar(20),  -- 배치일정ID
+  BATCH_OPERT_ID varchar(20),  -- 배치작업ID
+  PARAMTR varchar(500),  -- PARAMTR
+  STTUS varchar(1),  -- 상태
+  ERROR_INFO varchar(2000),  -- 오류정보
+  EXECUT_BEGIN_TM varchar(14),  -- 실행시작시각
+  EXECUT_END_TM varchar(14),  -- 실행종료시각
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (BATCH_RESULT_ID)
 );
 CREATE TABLE TB_NCRD (
-NCRD_ID varchar(20) NOT NULL, NM varchar(50), NCRD_TRGTER_ID varchar(20), OTHBC_AT varchar(1) DEFAULT 'Y', EXTRL_USER_AT varchar(1) DEFAULT 'N',
-  CMPNY_NM varchar(100), DEPT_NM varchar(100), OFCPS_NM varchar(60), IDNTFC_NO varchar(50),
-  FRST_MBTLNUM varchar(4), MIDDLE_MBTLNUM varchar(4), END_MBTLNUM varchar(4), EMAIL_ADRES varchar(100),
-  ADRES varchar(300), ZIP_CODE varchar(6), REMARK varchar(2000),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  NCRD_ID varchar(20) NOT NULL,  -- 명함ID
+  NM varchar(50),  -- 명
+  NCRD_TRGTER_ID varchar(20),  -- 명함대상자ID
+  OTHBC_AT varchar(1) DEFAULT 'Y',  -- 외부공개여부
+  EXTRL_USER_AT varchar(1) DEFAULT 'N',  -- EXTRL사용자여부
+  CMPNY_NM varchar(100),  -- 회사명
+  DEPT_NM varchar(100),  -- 부서명
+  OFCPS_NM varchar(60),  -- 직책명
+  IDNTFC_NO varchar(50),  -- IDNTFC번호
+  FRST_MBTLNUM varchar(4),  -- 최초휴대전화
+  MIDDLE_MBTLNUM varchar(4),  -- MIDDLE휴대전화
+  END_MBTLNUM varchar(4),  -- 종료휴대전화
+  EMAIL_ADRES varchar(100),  -- 이메일
+  ADRES varchar(300),  -- 주소
+  ZIP_CODE varchar(6),  -- 우편번호코드
+  REMARK varchar(2000),  -- REMARK
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (NCRD_ID)
 );
 CREATE TABLE TB_DAM_KNO_IFM (
-KNWLDG_ID varchar(20) NOT NULL, KNWLDG_NM varchar(200), KNWLDG_CN string, KNWLDG_TY_CODE varchar(20),
-  KNWLDG_EVL varchar(1) DEFAULT '1', OTHBC_AT varchar(1) DEFAULT 'Y', EVL_DE varchar(20), ATCH_FILE_ID varchar(20),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  KNWLDG_ID varchar(20) NOT NULL,  -- 지식ID
+  KNWLDG_NM varchar(200),  -- 지식명
+  KNWLDG_CN string,
+  KNWLDG_TY_CODE varchar(20),  -- 지식유형상세코드
+  KNWLDG_EVL varchar(1) DEFAULT '1',  -- 지식평가
+  OTHBC_AT varchar(1) DEFAULT 'Y',  -- 외부공개여부
+  EVL_DE varchar(20),  -- 평가일자
+  ATCH_FILE_ID varchar(20),  -- 첨부파일 묶음ID
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (KNWLDG_ID)
 );
 CREATE TABLE TB_ADBK_MANAGE (
-ADBK_ID varchar(20) NOT NULL, ADBK_NM varchar(100), OTHBC_SCOPE varchar(20) DEFAULT '회사', USE_AT varchar(1) DEFAULT 'Y',
-  WRTER_ID varchar(20), TRGET_ORGNZT_ID varchar(20),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  ADBK_ID varchar(20) NOT NULL,  -- 주소록ID
+  ADBK_NM varchar(100),  -- 주소록명
+  OTHBC_SCOPE varchar(20) DEFAULT '회사',  -- 외부공개SCOPE
+  USE_AT varchar(1) DEFAULT 'Y',  -- 사용여부(Y/N)
+  WRTER_ID varchar(20),  -- WRTERID
+  TRGET_ORGNZT_ID varchar(20),  -- 대상ORGNZTID
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (ADBK_ID)
 );
 CREATE TABLE TB_COMMENT (
-ANSWER_NO numeric(20) NOT NULL, NTT_ID numeric(20) NOT NULL, BBS_ID varchar(20) NOT NULL,
-  WRTER_ID varchar(20), WRTER_NM varchar(50), ANSWER varchar(2000), PASSWORD varchar(200), USE_AT varchar(1) DEFAULT 'Y',
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  ANSWER_NO numeric(20) NOT NULL,  -- 답변번호
+  NTT_ID numeric(20) NOT NULL,  -- 게시물ID
+  BBS_ID varchar(20) NOT NULL,  -- 게시판ID
+  WRTER_ID varchar(20),  -- WRTERID
+  WRTER_NM varchar(50),  -- WRTER명
+  ANSWER varchar(2000),  -- 답변
+  PASSWORD varchar(200),  -- 비밀번호(해시)
+  USE_AT varchar(1) DEFAULT 'Y',  -- 사용여부(Y/N)
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (ANSWER_NO, NTT_ID, BBS_ID)
 );
 CREATE TABLE TB_MEMO_TODO (
-TODO_ID varchar(20) NOT NULL, TODO_SJ varchar(200), TODO_CN string, TODO_BEGIN_TIME varchar(20), TODO_END_TIME varchar(20), WRTER_ID varchar(20),
-  FRST_REGISTER_ID varchar(20), FRST_REGIST_PNTTM timestamp, LAST_UPDUSR_ID varchar(20), LAST_UPDT_PNTTM timestamp,
+  TODO_ID varchar(20) NOT NULL,  -- 할일ID
+  TODO_SJ varchar(200),  -- 할일제목
+  TODO_CN string,
+  TODO_BEGIN_TIME varchar(20),  -- 할일시작시간
+  TODO_END_TIME varchar(20),  -- 할일종료시간
+  WRTER_ID varchar(20),  -- WRTERID
+  FRST_REGISTER_ID varchar(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM timestamp,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM timestamp,  -- 최종수정시각
   PRIMARY KEY (TODO_ID)
 );
 
