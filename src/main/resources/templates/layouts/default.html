@@ -71,6 +71,8 @@
 <script th:src="@{/js/common.js}"></script>
 <!-- 배너 캐러셀·팝업 동작 -->
 <script th:src="@{/js/banner.js}"></script>
+<!-- 공통 다이얼로그 메시지(i18n) -->
+<script th:inline="javascript">window.CONFIRM_DELETE = /*[[#{common.confirm.delete}]]*/ '삭제하시겠습니까?';</script>
 
 <!-- 페이지별 추가 JS -->
 <th:block layout:fragment="body-js"></th:block>

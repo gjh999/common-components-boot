@@ -144,8 +144,8 @@
                 form.addEventListener('submit', function (e) {
                     fromDate.value = (bgn.value || '').replace(/-/g, '');
                     toDate.value = (end.value || '').replace(/-/g, '');
-                    if (!fromDate.value) { e.preventDefault(); alert('기간 시작일자를 입력하세요'); return; }
-                    if (!toDate.value) { e.preventDefault(); alert('기간 종료일자를 입력하세요'); return; }
+                    if (!fromDate.value) { e.preventDefault(); alert([[#{stats.js.needFrom}]]); return; }
+                    if (!toDate.value) { e.preventDefault(); alert([[#{stats.js.needTo}]]); return; }
                 });
             })();
         </script>

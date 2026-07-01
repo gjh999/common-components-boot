@@ -56,7 +56,7 @@
 
         <form method="post" th:action="@{/uss/ion/uas/removeUserAbsnce.do}" class="mt-2"
               th:onsubmit="'return confirm(\'' + #{common.confirm.delete} + '\');'"
-              onsubmit="return confirm('삭제하시겠습니까?');">
+              onsubmit="return confirm(window.CONFIRM_DELETE || '삭제하시겠습니까?');">
             <input type="hidden" name="userId" th:value="${userAbsnce.userId}"/>
             <button type="submit" class="krds-btn danger" th:text="#{button.delete}">삭제</button>
         </form>

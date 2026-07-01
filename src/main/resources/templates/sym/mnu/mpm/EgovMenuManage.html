@@ -61,7 +61,7 @@
         function deleteChecked() {
             var ids = [];
             document.querySelectorAll('.chkField:checked').forEach(function (c) { ids.push(c.value); });
-            if (ids.length === 0) { alert('삭제할 메뉴를 선택하세요.'); return; }
+            if (ids.length === 0) { alert([[#{menu.js.needSelect}]]); return; }
             document.getElementById('checkedMenuNoForDel').value = ids.join(',');
             document.getElementById('delForm').submit();
         }

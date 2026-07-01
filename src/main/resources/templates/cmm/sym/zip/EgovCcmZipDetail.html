@@ -36,7 +36,7 @@
                th:href="@{/sym/ccm/zip/EgovCcmZipModify.do(zip=${result.zip}, sn=${result.sn})}"><i class="bi bi-pencil"></i> <span th:text="#{button.modify}">수정</span></a>
             <a sec:authorize="hasRole('ROLE_ADMIN')" class="krds-btn danger"
                th:href="@{/sym/ccm/zip/EgovCcmZipRemove.do(zip=${result.zip}, sn=${result.sn})}"
-               onclick="return confirm('삭제하시겠습니까?');"><i class="bi bi-trash"></i> <span th:text="#{button.delete}">삭제</span></a>
+               onclick="return confirm(window.CONFIRM_DELETE || '삭제하시겠습니까?');"><i class="bi bi-trash"></i> <span th:text="#{button.delete}">삭제</span></a>
         </div>
     </div>
 </main>

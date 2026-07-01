@@ -103,7 +103,7 @@
     <script th:inline="javascript">
         document.getElementById('btnIdCheck').addEventListener('click', function () {
             var id = document.getElementById('mberId').value;
-            if (!id || id.trim() === '') { alert('아이디를 입력하세요.'); return; }
+            if (!id || id.trim() === '') { alert([[#{common.js.needId}]]); return; }
             window.open([[@{/uss/umt/EgovIdDplctCnfirmView.do}]] + '?checkId=' + encodeURIComponent(id),
                 'idCheck', 'width=560,height=340,scrollbars=yes');
         });

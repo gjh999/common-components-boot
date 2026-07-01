@@ -125,7 +125,7 @@
         var PWD_MISMATCH = /*[[#{entrprs.pwd.mismatch}]]*/ '비밀번호가 일치하지 않습니다.';
         document.getElementById('btnIdCheck').addEventListener('click', function () {
             var id = document.getElementById('entrprsMberId').value;
-            if (!id || id.trim() === '') { alert('아이디를 입력하세요.'); return; }
+            if (!id || id.trim() === '') { alert([[#{common.js.needId}]]); return; }
             window.open([[@{/uss/umt/EgovIdDplctCnfirmView.do}]] + '?checkId=' + encodeURIComponent(id),
                 'idCheck', 'width=560,height=340,scrollbars=yes');
         });

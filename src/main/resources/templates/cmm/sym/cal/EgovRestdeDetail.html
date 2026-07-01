@@ -35,7 +35,7 @@
             <a sec:authorize="hasRole('ROLE_ADMIN')" class="krds-btn danger"
                th:href="@{/sym/cal/EgovRestdeRemove.do(restdeNo=${result.restdeNo})}"
                th:onclick="'return confirm(\'' + #{cal.restde.confirmDelete} + '\');'"
-               onclick="return confirm('삭제하시겠습니까?');"><i class="bi bi-trash"></i> <span th:text="#{button.delete}">삭제</span></a>
+               onclick="return confirm(window.CONFIRM_DELETE || '삭제하시겠습니까?');"><i class="bi bi-trash"></i> <span th:text="#{button.delete}">삭제</span></a>
         </div>
     </div>
 </main>

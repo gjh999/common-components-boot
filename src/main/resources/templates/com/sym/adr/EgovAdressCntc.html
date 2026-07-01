@@ -81,7 +81,7 @@
     var body = document.getElementById('adrResultBody');
     function esc(s){ return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
     function render(rows){
-        if(!rows || !rows.length){ body.innerHTML = '<tr><td colspan="3" class="adr-empty">검색 결과가 없습니다.</td></tr>'; return; }
+        if(!rows || !rows.length){ body.innerHTML = '<tr><td colspan="3" class="adr-empty">' + [[#{adr.js.noresult}]] + '</td></tr>'; return; }
         body.innerHTML = rows.map(function(r){
             return '<tr><td class="text-center">'+esc(r.zip)+'</td><td>'+esc(r.road)+'</td><td>'+esc(r.jibun)+'</td></tr>';
         }).join('');
@@ -89,9 +89,9 @@
     btn.addEventListener('click', function(){
         var key = document.getElementById('confmKey').value.trim();
         var kw  = document.getElementById('keyword').value.trim();
-        if(!key){ alert('승인키(confmKey)를 입력하세요.'); return; }
-        if(!kw){ alert('검색어를 입력하세요.'); return; }
-        body.innerHTML = '<tr><td colspan="3" class="adr-empty">검색 중...</td></tr>';
+        if(!key){ alert([[#{adr.js.needkey}]]); return; }
+        if(!kw){ alert([[#{adr.js.needkw}]]); return; }
+        body.innerHTML = '<tr><td colspan="3" class="adr-empty">' + [[#{adr.js.searching}]] + '</td></tr>';
         var url = ctx + 'sym/adr/getAdressCntcApi.do?currentPage=1&countPerPage=20&confmKey='
                 + encodeURIComponent(key) + '&keyword=' + encodeURIComponent(kw);
         fetch(url, { credentials:'same-origin' })
@@ -101,7 +101,7 @@
                 var err = doc.querySelector('errorCode');
                 if(err && err.textContent !== '0'){
                     var msg = doc.querySelector('errorMessage');
-                    body.innerHTML = '<tr><td colspan="3" class="adr-empty">'+esc(msg?msg.textContent:'조회 오류')+'</td></tr>';
+                    body.innerHTML = '<tr><td colspan="3" class="adr-empty">'+esc(msg?msg.textContent:[[#{adr.js.error}]])+'</td></tr>';
                     return;
                 }
                 var items = doc.querySelectorAll('juso');
@@ -115,7 +115,7 @@
                 });
                 render(rows);
             })
-            .catch(function(){ body.innerHTML = '<tr><td colspan="3" class="adr-empty">연계 호출에 실패했습니다.</td></tr>'; });
+            .catch(function(){ body.innerHTML = '<tr><td colspan="3" class="adr-empty">' + [[#{adr.js.failed}]] + '</td></tr>'; });
     });
 })();
 </script>

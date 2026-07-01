@@ -38,7 +38,7 @@
     <div class="form-actions d-flex justify-content-between align-items-center">
         <a class="krds-btn tertiary" th:href="@{/uss/ion/evt/EgovEventReqstManageList.do}" th:text="#{button.list}">목록</a>
         <div class="d-flex gap-2">
-            <form th:action="@{/uss/ion/evt/EgovEventReqstDelete.do}" method="post" onsubmit="return confirm('삭제하시겠습니까?');" style="display:inline;">
+            <form th:action="@{/uss/ion/evt/EgovEventReqstDelete.do}" method="post" onsubmit="return confirm(window.CONFIRM_DELETE || '삭제하시겠습니까?');" style="display:inline;">
                 <input type="hidden" name="eventId" th:value="${eventManageVO.eventId}"/>
                 <button class="krds-btn danger" type="submit"><i class="bi bi-trash"></i> <span th:text="#{button.delete}">삭제</span></button>
             </form>
