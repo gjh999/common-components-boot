@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 출퇴근관리(uss/cmt) — COMTNCOMMUTE → TB_COMMUTE 표준화(HSQL) -->
+<mapper namespace="cmtManageDAO">
+
+    <select id="selectCmtList_S" parameterType="egovframework.com.uss.cmt.service.CmtManageVO" resultType="egovframework.com.uss.cmt.service.CmtManageVO">
+        SELECT WRKTM_ID AS wrktmId, EMPLYR_ID AS emplyrId, ORGNZT_ID AS orgnztId, WRKT_DT AS wrktDt,
+               WRK_START_TIME AS wrkStartTime, WRK_END_TIME AS wrkEndTime, WRK_HOURS AS wrkHours,
+               OVTMWRK_HOURS AS ovtmwrkHours, WRK_START_STATUS AS wrkStartStatus, WRK_END_STATUS AS wrkEndStatus
+        FROM TB_COMMUTE
+        ORDER BY WRKT_DT DESC, WRKTM_ID DESC
+    </select>
+
+    <select id="selectWrktmId_S" parameterType="egovframework.com.uss.cmt.service.CmtManageVO" resultType="java.lang.String">
+        SELECT WRKTM_ID FROM TB_COMMUTE WHERE EMPLYR_ID = #{emplyrId} AND WRKT_DT = #{wrktDt}
+    </select>
+
+    <select id="selectWrkStartInfo_S" parameterType="egovframework.com.uss.cmt.service.CmtManageVO" resultType="egovframework.com.uss.cmt.service.CmtManageVO">
+        SELECT WRKTM_ID AS wrktmId, EMPLYR_ID AS emplyrId, WRKT_DT AS wrktDt, WRK_START_TIME AS wrkStartTime,
+               WRK_START_STATUS AS wrkStartStatus, WRK_END_STATUS AS wrkEndStatus
+        FROM TB_COMMUTE WHERE EMPLYR_ID = #{emplyrId} AND WRKT_DT = #{wrktDt}
+    </select>
+
+    <insert id="insertWrkStartCmtInfo_S" parameterType="egovframework.com.uss.cmt.service.CmtManageVO">
+        INSERT INTO TB_COMMUTE (WRKTM_ID, EMPLYR_ID, ORGNZT_ID, WRKT_DT, WRK_START_TIME, WRK_START_STATUS, FRST_REGIST_PNTTM, FRST_REGISTER_ID)
+        VALUES (#{wrktmId}, #{emplyrId}, #{orgnztId}, #{wrktDt}, #{wrkStartTime}, #{wrkStartStatus}, CURRENT_TIMESTAMP, #{emplyrId})
+    </insert>
+
+    <update id="insertWrkEndCmtInfo_S" parameterType="egovframework.com.uss.cmt.service.CmtManageVO">
+        UPDATE TB_COMMUTE SET WRK_END_TIME = #{wrkEndTime}, WRK_END_STATUS = #{wrkEndStatus}, WRK_HOURS = #{wrkHours},
+               OVTMWRK_HOURS = #{ovtmwrkHours}, LAST_UPDT_PNTTM = CURRENT_TIMESTAMP, LAST_UPDUSR_ID = #{emplyrId}
+        WHERE WRKTM_ID = #{wrktmId}
+    </update>
+
+</mapper>

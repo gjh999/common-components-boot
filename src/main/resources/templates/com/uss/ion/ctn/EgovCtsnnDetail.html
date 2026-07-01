@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{i1.48}">직원 경조사 관리</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:820px;">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/uss/ion/ctn/selectCtsnnManageList.do}" th:text="#{i1.48}">직원 경조사 관리</a></li>
+        <li class="breadcrumb-item active" th:text="${ctsnnManageVO.ctsnnNm}">상세</li>
+    </ol></nav>
+    <h1 class="h4 mb-3"><i class="bi bi-gift"></i> <span th:text="${ctsnnManageVO.ctsnnNm}">경조명</span></h1>
+
+    <div class="krds-table-wrap">
+        <table class="tbl col">
+            <tbody>
+            <tr><th scope="row" style="width:140px;" th:text="#{i1.54}">경조명</th><td th:text="${ctsnnManageVO.ctsnnNm}">경조명</td></tr>
+            <tr><th scope="row" th:text="#{c5.2}">경조코드</th><td th:text="${ctsnnManageVO.ctsnnCdNm} ?: ${ctsnnManageVO.ctsnnCd}">경조코드</td></tr>
+            <tr><th scope="row" th:text="#{i1.56}">신청자</th><td th:text="${ctsnnManageVO.usNm}">신청자</td></tr>
+            <tr><th scope="row" th:text="#{i1.55}">대상자</th><td th:text="${ctsnnManageVO.trgterNm}">대상자</td></tr>
+            <tr><th scope="row" th:text="#{c5.3}">생년월일</th><td th:text="${ctsnnManageVO.brth}">생년월일</td></tr>
+            <tr><th scope="row" th:text="#{i1.58}">발생일</th><td th:text="${ctsnnManageVO.occrrDe}">발생일</td></tr>
+            <tr><th scope="row" th:text="#{c5.4}">관계</th><td th:text="${ctsnnManageVO.relateNm} ?: ${ctsnnManageVO.relate}">관계</td></tr>
+            <tr><th scope="row" th:text="#{i1.57}">신청일</th><td th:text="${ctsnnManageVO.reqstDe}">신청일</td></tr>
+            <tr><th scope="row" th:text="#{c5.5}">비고</th><td style="white-space:pre-wrap;" th:text="${ctsnnManageVO.remark}">비고</td></tr>
+            <tr><th scope="row" th:text="#{i1.49}">승인여부</th>
+                <td><span class="krds-badge" th:classappend="${ctsnnManageVO.confmAt == 'Y'} ? 'bg-success' : 'bg-gray'"
+                          th:text="${ctsnnManageVO.confmAt == 'Y'} ? #{i1.51} : #{i1.52}">미승인</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-actions d-flex justify-content-between align-items-center">
+        <a class="krds-btn tertiary" th:href="@{/uss/ion/ctn/selectCtsnnManageList.do}" th:text="#{button.list}">목록</a>
+        <div class="d-flex gap-2">
+            <form th:action="@{/uss/ion/ctn/deleteCtsnnManage.do}" method="post" onsubmit="return confirm('삭제하시겠습니까?');" style="display:inline;">
+                <input type="hidden" name="ctsnnId" th:value="${ctsnnManageVO.ctsnnId}"/>
+                <button class="krds-btn danger" type="submit"><i class="bi bi-trash"></i> <span th:text="#{button.delete}">삭제</span></button>
+            </form>
+            <a class="krds-btn primary" th:href="@{/uss/ion/ctn/EgovCtsnnManageDetail.do(cmd='updt',ctsnnId=${ctsnnManageVO.ctsnnId})}"><i class="bi bi-pencil"></i> <span th:text="#{button.modify}">수정</span></a>
+        </div>
+    </div>
+</div>
+</main>
+</body>
+</html>

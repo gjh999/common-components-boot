@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 받은쪽지함(uss/ion/ntr) — TB_NOTE/TRNSMIT/RECPTN 재사용(HSQL) -->
+<mapper namespace="NoteRecptn">
+
+    <sql id="ntrCols">
+        NOTE.NOTE_ID AS noteId, NR.NOTE_TRNSMIT_ID AS noteTrnsmitId, NR.NOTE_RECPTN_ID AS noteRecptnId,
+        NT.TRNSMITER_ID AS frstRegisterId, NOTE.NOTE_SJ AS noteSj, NOTE.NOTE_CN AS noteCn,
+        NR.RCVER_ID AS rcverId, NR.OPEN_YN AS openYn, NR.RECPTN_SE AS recptnSe,
+        TO_CHAR(NR.FRST_REGIST_PNTTM,'YYYY-MM-DD HH24:MI') AS frstRegisterPnttm
+    </sql>
+
+    <select id="selectNoteRecptn" resultType="egovframework.com.uss.ion.ntr.service.NoteRecptn">
+        SELECT <include refid="ntrCols"/>
+        FROM TB_NOTE NOTE
+             JOIN TB_NOTE_TRNSMIT NT ON NOTE.NOTE_ID = NT.NOTE_ID
+             JOIN TB_NOTE_RECPTN NR ON NR.NOTE_TRNSMIT_ID = NT.NOTE_TRNSMIT_ID AND NR.NOTE_ID = NOTE.NOTE_ID
+        WHERE NR.DELETE_AT = 'N'
+        ORDER BY NR.FRST_REGIST_PNTTM DESC
+        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+    </select>
+
+    <select id="selectNoteRecptnCnt" resultType="int">
+        SELECT COUNT(*) FROM TB_NOTE NOTE
+             JOIN TB_NOTE_TRNSMIT NT ON NOTE.NOTE_ID = NT.NOTE_ID
+             JOIN TB_NOTE_RECPTN NR ON NR.NOTE_TRNSMIT_ID = NT.NOTE_TRNSMIT_ID AND NR.NOTE_ID = NOTE.NOTE_ID
+        WHERE NR.DELETE_AT = 'N'
+    </select>
+
+    <select id="selectNoteRecptnDetail" parameterType="egovframework.com.uss.ion.ntr.service.NoteRecptn" resultType="egovframework.com.uss.ion.ntr.service.NoteRecptn">
+        SELECT <include refid="ntrCols"/>
+        FROM TB_NOTE NOTE
+             JOIN TB_NOTE_TRNSMIT NT ON NOTE.NOTE_ID = NT.NOTE_ID
+             JOIN TB_NOTE_RECPTN NR ON NR.NOTE_TRNSMIT_ID = NT.NOTE_TRNSMIT_ID AND NR.NOTE_ID = NOTE.NOTE_ID
+        WHERE NR.NOTE_RECPTN_ID = #{noteRecptnId}
+    </select>
+
+    <select id="selectNoteTrnsmitRelationCnt" parameterType="egovframework.com.uss.ion.ntr.service.NoteRecptn" resultType="int">
+        SELECT COUNT(*) FROM TB_NOTE_TRNSMIT WHERE NOTE_TRNSMIT_ID = #{noteTrnsmitId} AND DELETE_AT = 'N'
+    </select>
+
+    <select id="selectNoteRecptnRelationCnt" parameterType="egovframework.com.uss.ion.ntr.service.NoteRecptn" resultType="int">
+        SELECT COUNT(*) FROM TB_NOTE_RECPTN WHERE NOTE_TRNSMIT_ID = #{noteTrnsmitId} AND DELETE_AT = 'N'
+    </select>
+
+    <update id="updateNoteRecptnOpen" parameterType="egovframework.com.uss.ion.ntr.service.NoteRecptn">
+        UPDATE TB_NOTE_RECPTN SET OPEN_YN = 'Y', READNG_AT = 'Y', LAST_UPDT_PNTTM = CURRENT_TIMESTAMP WHERE NOTE_RECPTN_ID = #{noteRecptnId}
+    </update>
+
+    <update id="deleteNoteRecptn" parameterType="egovframework.com.uss.ion.ntr.service.NoteRecptn">
+        UPDATE TB_NOTE_RECPTN SET DELETE_AT = 'Y' WHERE NOTE_RECPTN_ID = #{noteRecptnId}
+    </update>
+
+</mapper>

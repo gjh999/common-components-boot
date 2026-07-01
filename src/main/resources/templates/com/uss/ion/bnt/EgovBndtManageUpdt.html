@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{i2.70}">당직 관리</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:820px;">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/uss/ion/bnt/EgovBndtManageList.do}" th:text="#{i2.70}">당직 관리</a></li>
+        <li class="breadcrumb-item active" th:text="#{button.modify}">수정</li>
+    </ol></nav>
+    <h1 class="h4 mb-3"><i class="bi bi-moon-stars"></i> <span th:text="#{i2.70}">당직 관리</span> - <span th:text="#{button.modify}">수정</span></h1>
+
+    <div th:if="${errorMessage != null}" class="krds-alert danger mb-3" th:text="${errorMessage}">오류</div>
+
+    <form th:action="@{/uss/ion/bnt/updtBndtManage.do}" method="post" th:object="${bndtManageVO}">
+        <input type="hidden" th:field="*{bndtId}"/>
+        <input type="hidden" th:field="*{bndtDe}"/>
+        <fieldset class="krds-form-section">
+            <legend class="krds-form-section-title" th:text="#{i2.70}">당직 관리</legend>
+            <div class="row g-3">
+                <div class="col-md-6"><label class="form-label" th:text="#{c5.1}">당직 ID</label>
+                    <input class="krds-input" type="text" th:value="*{bndtId}" readonly/></div>
+                <div class="col-md-6"><label class="form-label" th:text="#{i2.73}">당직 일자</label>
+                    <input class="krds-input" type="text" th:value="*{bndtDe}" readonly/></div>
+                <div class="col-12"><label class="form-label" th:text="#{i2.74}">비고</label>
+                    <textarea class="krds-input" th:field="*{remark}" rows="6" maxlength="2500"></textarea></div>
+            </div>
+        </fieldset>
+        <div class="form-actions d-flex justify-content-between align-items-center">
+            <a class="krds-btn tertiary" th:href="@{/uss/ion/bnt/EgovBndtManageDetail.do(bndtId=${bndtManageVO.bndtId},bndtDe=${bndtManageVO.bndtDe})}" th:text="#{button.cancel}">취소</a>
+            <button class="krds-btn primary" type="submit"><i class="bi bi-check-lg"></i> <span th:text="#{button.save}">저장</span></button>
+        </div>
+    </form>
+</div>
+</main>
+</body>
+</html>

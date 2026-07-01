@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head>
+    <title>출퇴근 관리</title>
+</head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:1050px;">
+
+    <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/examples}" th:text="#{cat.crumb}">공통컴포넌트 예제</a></li>
+            <li class="breadcrumb-item active" th:text="#{i2.32}">출퇴근 관리</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0"><i class="bi bi-clock-history"></i> <span th:text="#{i2.32}">출퇴근 관리</span></h1>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="text-muted small"><span th:text="#{list.total}">전체</span>
+            <strong th:text="${resultList != null ? #lists.size(resultList) : 0}">0</strong>
+            <span th:text="#{list.count.unit}">건</span></span>
+    </div>
+
+    <div class="krds-table-wrap">
+        <table class="tbl">
+            <thead>
+            <tr>
+                <th scope="col" style="width:70px;" th:text="#{list.seq}">순번</th>
+                <th scope="col" style="width:140px;" th:text="#{i2.33}">근무일자</th>
+                <th scope="col" style="width:110px;" th:text="#{i2.34}">출근시각</th>
+                <th scope="col" style="width:110px;" th:text="#{i2.35}">퇴근시각</th>
+                <th scope="col" style="width:100px;" th:text="#{i2.36}">근무시간</th>
+                <th scope="col" th:text="#{i2.37}">상태</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item,stat : ${resultList}">
+                <td class="text-center" th:text="${stat.count}">1</td>
+                <td class="text-center" th:text="${item.wrktDt}">근무일자</td>
+                <td class="text-center" th:text="${item.wrkStartTime}">출근</td>
+                <td class="text-center" th:text="${item.wrkEndTime}">퇴근</td>
+                <td class="text-center"><span th:text="${item.wrkHours}">0</span><span th:text="#{i2.38}">시간</span></td>
+                <td>
+                    <span class="krds-badge" th:classappend="${item.wrkStartStatus == 'Y'} ? 'bg-success' : 'bg-gray'" th:text="${item.wrkStartStatus == 'Y'} ? '출근' : '미출근'">출근</span>
+                    <span class="krds-badge" th:classappend="${item.wrkEndStatus == 'Y'} ? 'bg-success' : 'bg-gray'" th:text="${item.wrkEndStatus == 'Y'} ? '퇴근' : '근무중'">근무중</span>
+                </td>
+            </tr>
+            <tr th:if="${resultList == null or #lists.isEmpty(resultList)}">
+                <td colspan="6" class="text-center text-muted py-4" th:text="#{i2.39}">출퇴근 기록이 없습니다.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</main>
+</body>
+</html>

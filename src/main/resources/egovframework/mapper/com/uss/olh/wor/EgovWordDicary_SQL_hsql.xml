@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 단어사전(uss/olh/wor) — COMTNWORDDICARYINFO → TB_WORD_DICARY_INFO 표준화(HSQL) -->
+<mapper namespace="WordDicary">
+
+    <sql id="worCols">
+        A.WORD_ID AS wordId, A.WORD_NM AS wordNm, A.ENG_NM AS engNm, A.WORD_DC AS wordDc, A.SYNONM AS synonm,
+        (SELECT B.USER_NM FROM VW_USER_MASTER B WHERE B.ESNTL_ID = A.FRST_REGISTER_ID) AS emplyrNm,
+        A.FRST_REGISTER_ID AS frstRegisterId, TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS frstRegisterPnttm
+    </sql>
+
+    <sql id="worSearch">
+        <if test="searchWrd != null and searchWrd != ''">
+            <if test="searchCnd == 0 or searchCnd == '0'">AND A.WORD_NM LIKE CONCAT(CONCAT('%', #{searchWrd}),'%')</if>
+            <if test="searchCnd == 1 or searchCnd == '1'">AND A.WORD_DC LIKE CONCAT(CONCAT('%', #{searchWrd}),'%')</if>
+            <if test="searchCnd == null or searchCnd == ''">AND (A.WORD_NM LIKE CONCAT(CONCAT('%', #{searchWrd}),'%') OR A.ENG_NM LIKE CONCAT(CONCAT('%', #{searchWrd}),'%'))</if>
+        </if>
+    </sql>
+
+    <select id="selectWordDicaryList" parameterType="egovframework.com.uss.olh.wor.service.WordDicaryVO" resultType="egovframework.com.uss.olh.wor.service.WordDicaryVO">
+        SELECT <include refid="worCols"/>
+        FROM TB_WORD_DICARY_INFO A WHERE 1=1
+        <include refid="worSearch"/>
+        ORDER BY A.WORD_ID DESC
+        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+    </select>
+
+    <select id="selectWordDicaryListCnt" parameterType="egovframework.com.uss.olh.wor.service.WordDicaryVO" resultType="int">
+        SELECT COUNT(*) FROM TB_WORD_DICARY_INFO A WHERE 1=1
+        <include refid="worSearch"/>
+    </select>
+
+    <select id="selectWordDicaryDetail" parameterType="egovframework.com.uss.olh.wor.service.WordDicaryVO" resultType="egovframework.com.uss.olh.wor.service.WordDicaryVO">
+        SELECT <include refid="worCols"/> FROM TB_WORD_DICARY_INFO A WHERE A.WORD_ID = #{wordId}
+    </select>
+
+    <insert id="insertWordDicary" parameterType="egovframework.com.uss.olh.wor.service.WordDicaryVO">
+        INSERT INTO TB_WORD_DICARY_INFO (WORD_ID, WORD_NM, ENG_NM, WORD_DC, SYNONM, FRST_REGIST_PNTTM, FRST_REGISTER_ID)
+        VALUES (#{wordId}, #{wordNm}, #{engNm}, #{wordDc}, #{synonm}, CURRENT_TIMESTAMP, #{frstRegisterId})
+    </insert>
+
+    <update id="updateWordDicary" parameterType="egovframework.com.uss.olh.wor.service.WordDicaryVO">
+        UPDATE TB_WORD_DICARY_INFO SET WORD_NM = #{wordNm}, ENG_NM = #{engNm}, WORD_DC = #{wordDc}, SYNONM = #{synonm},
+               LAST_UPDUSR_ID = #{lastUpdusrId}, LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
+        WHERE WORD_ID = #{wordId}
+    </update>
+
+    <delete id="deleteWordDicary" parameterType="egovframework.com.uss.olh.wor.service.WordDicaryVO">
+        DELETE FROM TB_WORD_DICARY_INFO WHERE WORD_ID = #{wordId}
+    </delete>
+
+</mapper>

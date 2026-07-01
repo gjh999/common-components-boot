@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="#{i5.39}">주소록 구성원 조회</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap-icons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/krds.css}"/>
+    <link rel="stylesheet" th:href="@{/css/popup.css}"/>
+</head>
+<body>
+  <div class="popup-wrap">
+    <div class="popup-head"><i class="bi bi-window-stack"></i><h1 th:text="#{i5.39}">주소록 구성원 조회</h1></div>
+    <iframe th:if="${requestUrl != null and requestUrl != ''}" class="popup-frame"
+            th:title="#{i5.40}" title="주소록구성원조회" id="popupFrame" th:src="@{${requestUrl}}"
+            th:width="${width != null ? width : '100%'}" th:height="${height != null ? height : '520'}"
+            frameborder="0"></iframe>
+    <div th:unless="${requestUrl != null and requestUrl != ''}" class="alert alert-secondary"
+         th:text="#{i5.41}">표시할 대상 주소(requestUrl)가 지정되지 않았습니다.</div>
+    <div class="popup-foot">
+        <button class="krds-btn tertiary small" type="button" onclick="window.close();" th:text="#{i5.36}">닫기</button>
+    </div>
+  </div>
+</body>
+</html>

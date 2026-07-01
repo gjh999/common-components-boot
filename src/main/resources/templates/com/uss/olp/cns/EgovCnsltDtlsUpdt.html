@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{i2.45}">상담 관리</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:820px;">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/uss/olp/cns/CnsltListInqire.do}" th:text="#{i2.45}">상담 관리</a></li>
+        <li class="breadcrumb-item active" th:text="#{button.modify}">수정</li>
+    </ol></nav>
+    <h1 class="h4 mb-3"><i class="bi bi-chat-dots"></i> <span th:text="#{i2.45}">상담 관리</span> - <span th:text="#{button.modify}">수정</span></h1>
+
+    <form th:action="@{/uss/olp/cns/CnsltDtlsUpdt.do}" method="post" enctype="multipart/form-data" th:object="${cnsltManageVO}">
+        <input type="hidden" th:field="*{cnsltId}"/>
+        <input type="hidden" th:field="*{atchFileId}"/>
+        <input type="hidden" name="atchFileAt" th:value="${cnsltManageVO.atchFileId != null and cnsltManageVO.atchFileId != ''} ? 'Y' : 'N'"/>
+        <fieldset class="krds-form-section">
+            <legend class="krds-form-section-title" th:text="#{i2.47}">상담 제목</legend>
+            <div class="row g-3">
+                <div class="col-12"><label class="form-label"><span th:text="#{i2.47}">상담 제목</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="text" th:field="*{cnsltSj}" maxlength="250" required/></div>
+                <div class="col-md-6"><label class="form-label"><span th:text="#{i2.48}">작성자</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="text" th:field="*{wrterNm}" maxlength="20" required/></div>
+                <div class="col-md-6"><label class="form-label"><span th:text="#{c6.11}">작성비밀번호</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="password" th:field="*{writngPassword}" maxlength="20" required/></div>
+                <div class="col-md-6"><label class="form-label"><span th:text="#{i5.30}">이메일</span></label>
+                    <input class="krds-input" type="email" th:field="*{emailAdres}" maxlength="50"/></div>
+                <div class="col-md-6"><label class="form-label"><span th:text="#{i2.49}">공개</span></label>
+                    <select class="krds-form-select" th:field="*{othbcAt}">
+                        <option value="Y" th:text="#{c6.14}">공개</option>
+                        <option value="N" th:text="#{c6.15}">비공개</option>
+                    </select></div>
+                <div class="col-12"><label class="form-label"><span th:text="#{c6.13}">전화번호</span> <span class="frm-rq">*</span></label>
+                    <div class="d-flex align-items-center gap-2" style="max-width:320px;">
+                        <input class="krds-input" type="text" th:field="*{areaNo}" maxlength="4" required/> -
+                        <input class="krds-input" type="text" th:field="*{middleTelno}" maxlength="4" required/> -
+                        <input class="krds-input" type="text" th:field="*{endTelno}" maxlength="4" required/></div></div>
+                <div class="col-12"><label class="form-label"><span th:text="#{i1.218}">내용</span> <span class="frm-rq">*</span></label>
+                    <textarea class="krds-input" th:field="*{cnsltCn}" rows="6" maxlength="2500" required></textarea></div>
+                <div class="col-12"><label class="form-label"><span th:text="#{c6.12}">조치내용</span> <span class="frm-rq">*</span></label>
+                    <textarea class="krds-input" th:field="*{managtCn}" rows="3" maxlength="2500" required></textarea></div>
+                <div class="col-12"><label class="form-label" th:text="#{c6.16}">첨부파일</label>
+                    <input class="krds-input" type="file" name="file_1"/></div>
+            </div>
+        </fieldset>
+        <div class="form-actions d-flex justify-content-between align-items-center">
+            <a class="krds-btn tertiary" th:href="@{/uss/olp/cns/CnsltDetailInqire.do(cnsltId=${cnsltManageVO.cnsltId},passwordConfirmAt='Y')}" th:text="#{button.cancel}">취소</a>
+            <button class="krds-btn primary" type="submit"><i class="bi bi-check-lg"></i> <span th:text="#{button.save}">저장</span></button>
+        </div>
+    </form>
+</div>
+</main>
+</body>
+</html>

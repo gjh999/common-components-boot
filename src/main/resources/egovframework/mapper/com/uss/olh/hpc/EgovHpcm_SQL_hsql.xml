@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 도움말관리(uss/olh/hpc) — COMTNHPCMINFO → TB_HPCM_INFO 표준화(HSQL, 코드 조인 단순화) -->
+<mapper namespace="Hpcm">
+
+    <sql id="hpcCols">
+        A.HPCM_ID AS hpcmId, A.HPCM_SE_CODE AS hpcmSeCode, A.HPCM_SE_CODE AS hpcmSeCodeNm,
+        A.HPCM_DFN AS hpcmDf, A.HPCM_DC AS hpcmDc,
+        A.FRST_REGISTER_ID AS frstRegisterId, TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS frstRegisterPnttm
+    </sql>
+
+    <sql id="hpcSearch">
+        <if test="searchWrd != null and searchWrd != ''">
+            <if test="searchCnd == 0 or searchCnd == '0'">AND A.HPCM_DFN LIKE CONCAT(CONCAT('%', #{searchWrd}),'%')</if>
+            <if test="searchCnd == 1 or searchCnd == '1'">AND A.HPCM_DC LIKE CONCAT(CONCAT('%', #{searchWrd}),'%')</if>
+            <if test="searchCnd == null or searchCnd == ''">AND (A.HPCM_DFN LIKE CONCAT(CONCAT('%', #{searchWrd}),'%') OR A.HPCM_DC LIKE CONCAT(CONCAT('%', #{searchWrd}),'%'))</if>
+        </if>
+    </sql>
+
+    <select id="selectHpcmList" parameterType="egovframework.com.uss.olh.hpc.service.HpcmVO" resultType="egovframework.com.uss.olh.hpc.service.HpcmVO">
+        SELECT <include refid="hpcCols"/>
+        FROM TB_HPCM_INFO A WHERE 1=1
+        <include refid="hpcSearch"/>
+        ORDER BY A.HPCM_ID DESC
+        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+    </select>
+
+    <select id="selectHpcmListCnt" parameterType="egovframework.com.uss.olh.hpc.service.HpcmVO" resultType="int">
+        SELECT COUNT(*) FROM TB_HPCM_INFO A WHERE 1=1
+        <include refid="hpcSearch"/>
+    </select>
+
+    <select id="selectHpcmDetail" parameterType="egovframework.com.uss.olh.hpc.service.HpcmVO" resultType="egovframework.com.uss.olh.hpc.service.HpcmVO">
+        SELECT <include refid="hpcCols"/> FROM TB_HPCM_INFO A WHERE A.HPCM_ID = #{hpcmId}
+    </select>
+
+    <insert id="insertHpcm" parameterType="egovframework.com.uss.olh.hpc.service.HpcmVO">
+        INSERT INTO TB_HPCM_INFO (HPCM_ID, HPCM_SE_CODE, HPCM_DFN, HPCM_DC, FRST_REGIST_PNTTM, FRST_REGISTER_ID)
+        VALUES (#{hpcmId}, #{hpcmSeCode}, #{hpcmDf}, #{hpcmDc}, CURRENT_TIMESTAMP, #{frstRegisterId})
+    </insert>
+
+    <update id="updateHpcm" parameterType="egovframework.com.uss.olh.hpc.service.HpcmVO">
+        UPDATE TB_HPCM_INFO SET HPCM_SE_CODE = #{hpcmSeCode}, HPCM_DFN = #{hpcmDf}, HPCM_DC = #{hpcmDc},
+               LAST_UPDUSR_ID = #{lastUpdusrId}, LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
+        WHERE HPCM_ID = #{hpcmId}
+    </update>
+
+    <delete id="deleteHpcm" parameterType="egovframework.com.uss.olh.hpc.service.HpcmVO">
+        DELETE FROM TB_HPCM_INFO WHERE HPCM_ID = #{hpcmId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 지식관리(dam/mgm) — COMTNDAMKNOIFM → TB_DAM_KNO_IFM 표준화(HSQL, 유형/조직/사용자 조인 단순화) -->
+<mapper namespace="KnoManagementDAO">
+
+    <sql id="knoTyNm">
+        CASE A.KNWLDG_TY_CODE WHEN '01' THEN '업무지식' WHEN '02' THEN '기술지식' WHEN '03' THEN '정책지식' ELSE A.KNWLDG_TY_CODE END
+    </sql>
+
+    <sql id="knoCols">
+        A.KNWLDG_ID AS knoId, A.KNWLDG_NM AS knoNm, A.KNWLDG_CN AS knoCn, A.KNWLDG_TY_CODE AS knoTypeCd,
+        <include refid="knoTyNm"/> AS knoTypeNm, A.OTHBC_AT AS othbcAt,
+        A.EVL_DE AS appYmd,
+        (SELECT M.USER_NM FROM VW_USER_MASTER M WHERE M.ESNTL_ID = A.FRST_REGISTER_ID) AS userNm,
+        (SELECT M.USER_NM FROM VW_USER_MASTER M WHERE M.ESNTL_ID = A.FRST_REGISTER_ID) AS regstNm,
+        A.FRST_REGISTER_ID AS frstRegisterId, TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS frstRegisterPnttm
+    </sql>
+
+    <sql id="knoSearch">
+        AND A.OTHBC_AT = 'Y' AND A.KNWLDG_EVL = '1'
+        <if test='searchCondition == "1" and searchKeyword != null and searchKeyword != ""'>AND A.KNWLDG_NM LIKE CONCAT(CONCAT('%', #{searchKeyword}),'%')</if>
+    </sql>
+
+    <select id="selectKnoManagementList" parameterType="egovframework.com.dam.mgm.service.KnoManagementVO" resultType="egovframework.com.dam.mgm.service.KnoManagementVO">
+        SELECT <include refid="knoCols"/>
+        FROM TB_DAM_KNO_IFM A WHERE 1=1
+        <include refid="knoSearch"/>
+        ORDER BY A.FRST_REGIST_PNTTM DESC
+        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+    </select>
+
+    <select id="selectKnoManagementTotCnt" parameterType="egovframework.com.dam.mgm.service.KnoManagementVO" resultType="int">
+        SELECT COUNT(*) FROM TB_DAM_KNO_IFM A WHERE 1=1
+        <include refid="knoSearch"/>
+    </select>
+
+    <select id="selectKnoManagement" parameterType="egovframework.com.dam.mgm.service.KnoManagementVO" resultType="egovframework.com.dam.mgm.service.KnoManagementVO">
+        SELECT <include refid="knoCols"/> FROM TB_DAM_KNO_IFM A WHERE A.KNWLDG_ID = #{knoId}
+    </select>
+
+    <update id="updateKnoManagement" parameterType="egovframework.com.dam.mgm.service.KnoManagement">
+        UPDATE TB_DAM_KNO_IFM SET KNWLDG_NM = #{knoNm}, KNWLDG_CN = #{knoCn}, OTHBC_AT = #{othbcAt},
+               LAST_UPDUSR_ID = #{lastUpdusrId}, LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
+        WHERE KNWLDG_ID = #{knoId}
+    </update>
+
+    <insert id="insertKnoManagement" parameterType="egovframework.com.dam.mgm.service.KnoManagement">
+        INSERT INTO TB_DAM_KNO_IFM (KNWLDG_ID, KNWLDG_NM, KNWLDG_CN, KNWLDG_TY_CODE, KNWLDG_EVL, OTHBC_AT, EVL_DE, FRST_REGISTER_ID, FRST_REGIST_PNTTM)
+        VALUES (#{knoId}, #{knoNm}, #{knoCn}, #{knoTypeCd}, '1', #{othbcAt}, #{appYmd}, #{frstRegisterId}, CURRENT_TIMESTAMP)
+    </insert>
+
+    <delete id="deleteKnoManagement" parameterType="egovframework.com.dam.mgm.service.KnoManagement">
+        DELETE FROM TB_DAM_KNO_IFM WHERE KNWLDG_ID = #{knoId}
+    </delete>
+
+</mapper>

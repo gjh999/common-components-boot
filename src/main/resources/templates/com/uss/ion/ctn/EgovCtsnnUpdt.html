@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{i1.48}">직원 경조사 관리</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:820px;">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/uss/ion/ctn/selectCtsnnManageList.do}" th:text="#{i1.48}">직원 경조사 관리</a></li>
+        <li class="breadcrumb-item active" th:text="#{button.modify}">수정</li>
+    </ol></nav>
+    <h1 class="h4 mb-3"><i class="bi bi-gift"></i> <span th:text="#{i1.48}">직원 경조사 관리</span> - <span th:text="#{button.modify}">수정</span></h1>
+
+    <form th:action="@{/uss/ion/ctn/updtCtsnnManage.do}" method="post" th:object="${ctsnnManageVO}">
+        <input type="hidden" th:field="*{ctsnnId}"/>
+        <input type="hidden" th:field="*{usid}"/>
+        <fieldset class="krds-form-section">
+            <legend class="krds-form-section-title" th:text="#{i1.48}">직원 경조사 관리</legend>
+            <div class="row g-3">
+                <div class="col-md-6"><label class="form-label"><span th:text="#{i1.54}">경조명</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="text" th:field="*{ctsnnNm}" maxlength="255" required/></div>
+                <div class="col-md-6"><label class="form-label"><span th:text="#{c5.2}">경조코드</span> <span class="frm-rq">*</span></label>
+                    <select class="krds-form-select" th:field="*{ctsnnCd}" required>
+                        <option value="" th:text="#{i1.50}">전체</option>
+                        <option th:each="code : ${ctsnnCodeList}" th:value="${code.code}" th:text="${code.codeNm}">코드</option>
+                    </select></div>
+                <div class="col-md-6"><label class="form-label"><span th:text="#{i1.55}">대상자</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="text" th:field="*{trgterNm}" maxlength="20" required/></div>
+                <div class="col-md-6"><label class="form-label"><span th:text="#{c5.3}">생년월일</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="date" th:field="*{brth}" required/></div>
+                <div class="col-md-6"><label class="form-label"><span th:text="#{i1.58}">발생일</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="date" th:field="*{occrrDe}" required/></div>
+                <div class="col-md-6"><label class="form-label"><span th:text="#{c5.4}">관계</span> <span class="frm-rq">*</span></label>
+                    <select class="krds-form-select" th:field="*{relate}" required>
+                        <option value="" th:text="#{i1.50}">전체</option>
+                        <option th:each="code : ${relateCodeList}" th:value="${code.code}" th:text="${code.codeNm}">관계</option>
+                    </select></div>
+                <div class="col-md-6"><label class="form-label"><span th:text="#{i1.207}">결재자</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="text" th:field="*{sanctnerId}" maxlength="20" required/></div>
+                <div class="col-12"><label class="form-label" th:text="#{c5.5}">비고</label>
+                    <textarea class="krds-input" th:field="*{remark}" rows="4" maxlength="1000"></textarea></div>
+            </div>
+        </fieldset>
+        <div class="form-actions d-flex justify-content-between align-items-center">
+            <a class="krds-btn tertiary" th:href="@{/uss/ion/ctn/EgovCtsnnManageDetail.do(ctsnnId=${ctsnnManageVO.ctsnnId})}" th:text="#{button.cancel}">취소</a>
+            <button class="krds-btn primary" type="submit"><i class="bi bi-check-lg"></i> <span th:text="#{button.save}">저장</span></button>
+        </div>
+    </form>
+</div>
+</main>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{menu.creatManage.title}">메뉴생성관리</title></head>
+<body>
+<main layout:fragment="content">
+    <div class="container">
+        <nav aria-label="breadcrumb"><ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{nav.home}">홈</a></li>
+            <li class="breadcrumb-item" th:text="#{nav.systemManage}">내부시스템관리</li>
+            <li class="breadcrumb-item" th:text="#{menu.manage}">메뉴관리</li>
+            <li class="breadcrumb-item active" th:text="#{menu.creatManage.title}">메뉴생성관리</li>
+        </ol></nav>
+        <h1 class="h4 mb-3"><i class="bi bi-diagram-3"></i> <span th:text="#{menu.creatManage.title}">메뉴생성관리</span></h1>
+
+        <div th:if="${resultMsg != null and !resultMsg.isEmpty()}" class="alert alert-info py-2" th:text="${resultMsg}">메시지</div>
+
+        <form name="menuCreatManageForm" th:action="@{/sym/mnu/mcm/EgovMenuCreatManageSelect.do}" method="get" class="row g-2 mb-3">
+            <input type="hidden" name="pageIndex" th:value="${searchVO != null} ? ${searchVO.pageIndex} : 1"/>
+            <div class="col-auto">
+                <label for="searchKeyword" class="col-form-label"><span th:text="#{menu.securityTargetId}">보안설정대상 ID</span> :</label>
+            </div>
+            <div class="col-auto">
+                <input id="searchKeyword" class="krds-input" name="searchKeyword" type="text" maxlength="60"
+                       th:value="${searchVO != null} ? ${searchVO.searchKeyword} : ''" title="검색조건" th:title="#{menu.searchCondition}"/>
+            </div>
+            <div class="col-auto">
+                <button class="krds-btn primary" type="submit"><i class="bi bi-search"></i> <span th:text="#{button.inquiry}">조회</span></button>
+            </div>
+        </form>
+
+        <div class="krds-table-wrap">
+        <table class="tbl">
+            <caption class="visually-hidden" th:text="#{menu.creatManage.list}">메뉴생성관리 목록</caption>
+            <thead>
+                <tr>
+                    <th scope="col" th:text="#{menu.authorCode}">권한코드</th>
+                    <th scope="col" th:text="#{menu.authorNm}">권한명</th>
+                    <th scope="col" th:text="#{menu.authorDc}">권한설명</th>
+                    <th scope="col" style="width:120px;" th:text="#{menu.creatYn}">메뉴생성여부</th>
+                    <th scope="col" style="width:120px;" th:text="#{menu.creat.title}">메뉴생성</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${#lists.isEmpty(list_menumanage)}">
+                    <td colspan="5" class="text-center text-muted py-4" th:text="#{menu.noData}">조회된 데이터가 없습니다.</td>
+                </tr>
+                <tr th:each="result : ${list_menumanage}">
+                    <td th:text="${result.authorCode}">권한코드</td>
+                    <td th:text="${result.authorNm}">권한명</td>
+                    <td th:text="${result.authorDc}">권한설명</td>
+                    <td class="text-center" th:text="${result.chkYeoBu != null and result.chkYeoBu > 0} ? 'Y' : 'N'">N</td>
+                    <td class="text-center">
+                        <a class="krds-btn tertiary small"
+                           th:href="@{/sym/mnu/mcm/EgovMenuCreatSelect.do(authorCode=${result.authorCode})}">
+                            <i class="bi bi-pencil"></i> <span th:text="#{menu.creat.title}">메뉴생성</span></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+
+        <div class="d-flex justify-content-center" th:if="${paginationInfo != null}">
+            <nav>
+                <div class="krds-pagination">
+                    <a class="page-navi prev" th:if="${paginationInfo.currentPageNo > 1}" th:href="@{/sym/mnu/mcm/EgovMenuCreatManageSelect.do(pageIndex=${paginationInfo.currentPageNo - 1}, searchKeyword=${searchVO != null} ? ${searchVO.searchKeyword} : '')}" th:text="#{common.prev}">이전</a>
+                    <div class="page-links">
+                        <span class="page-link active" th:text="${paginationInfo.currentPageNo}">1</span>
+                    </div>
+                    <a class="page-navi next" th:if="${paginationInfo.currentPageNo * paginationInfo.recordCountPerPage < paginationInfo.totalRecordCount}" th:href="@{/sym/mnu/mcm/EgovMenuCreatManageSelect.do(pageIndex=${paginationInfo.currentPageNo + 1}, searchKeyword=${searchVO != null} ? ${searchVO.searchKeyword} : '')}" th:text="#{common.next}">다음</a>
+                </div>
+            </nav>
+        </div>
+    </div>
+</main>
+</body>
+</html>

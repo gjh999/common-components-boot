@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 정보알림(uss/ion/noi) — COMTNNTFCINFO → TB_NTFC_INFO 표준화(HSQL) -->
+<mapper namespace="NotificationDAO">
+
+    <resultMap id="notificationList" type="egovframework.com.uss.ion.noi.service.NotificationVO">
+        <result property="ntfcNo" column="NTCN_NO"/>
+        <result property="ntfcSj" column="NTCN_SJ"/>
+        <result property="ntfcCn" column="NTCN_CN"/>
+        <result property="ntfcTime" column="NTCN_TM"/>
+        <result property="bhNtfcIntrvlString" column="BH_NTCN_INTRVL"/>
+        <result property="frstRegisterId" column="FRST_REGISTER_ID"/>
+        <result property="frstRegisterPnttm" column="FRST_REGIST_PNTTM"/>
+    </resultMap>
+
+    <sql id="noiSearch">
+        <if test="searchWrd != null and searchWrd != ''">
+            <if test="searchCnd == 0 or searchCnd == '0'">AND A.NTCN_TM LIKE CONCAT(#{searchWrd},'%')</if>
+            <if test="searchCnd == 1 or searchCnd == '1'">AND A.NTCN_SJ LIKE CONCAT(CONCAT('%', #{searchWrd}),'%')</if>
+            <if test="searchCnd == 2 or searchCnd == '2'">AND A.NTCN_CN LIKE CONCAT(CONCAT('%', #{searchWrd}),'%')</if>
+        </if>
+    </sql>
+
+    <select id="selectNotificationInfs" parameterType="egovframework.com.uss.ion.noi.service.NotificationVO" resultMap="notificationList">
+        SELECT A.NTCN_NO, A.NTCN_SJ, A.NTCN_CN, A.NTCN_TM, A.BH_NTCN_INTRVL,
+               A.FRST_REGISTER_ID, TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS FRST_REGIST_PNTTM
+        FROM TB_NTFC_INFO A
+        WHERE 1=1
+        <include refid="noiSearch"/>
+        ORDER BY A.FRST_REGIST_PNTTM DESC
+        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+    </select>
+
+    <select id="selectNotificationInfsCnt" parameterType="egovframework.com.uss.ion.noi.service.NotificationVO" resultType="int">
+        SELECT COUNT(*) FROM TB_NTFC_INFO A WHERE 1=1
+        <include refid="noiSearch"/>
+    </select>
+
+    <select id="selectNotificationInf" parameterType="egovframework.com.uss.ion.noi.service.NotificationVO" resultMap="notificationList">
+        SELECT A.NTCN_NO, A.NTCN_SJ, A.NTCN_CN, A.NTCN_TM, A.BH_NTCN_INTRVL,
+               A.FRST_REGISTER_ID, TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS FRST_REGIST_PNTTM
+        FROM TB_NTFC_INFO A WHERE A.NTCN_NO = #{ntfcNo}
+    </select>
+
+    <select id="getNotificationData" parameterType="egovframework.com.uss.ion.noi.service.NotificationVO" resultMap="notificationList">
+        SELECT A.NTCN_NO, A.NTCN_SJ, A.NTCN_CN, A.NTCN_TM, A.BH_NTCN_INTRVL,
+               A.FRST_REGISTER_ID, TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD HH24:MI:SS') AS FRST_REGIST_PNTTM
+        FROM TB_NTFC_INFO A
+    </select>
+
+    <insert id="insertNotificationInf" parameterType="egovframework.com.uss.ion.noi.service.NotificationVO">
+        <selectKey keyProperty="ntfcNo" resultType="java.lang.String" order="BEFORE">
+            SELECT IFNULL(MAX(NTCN_NO),0)+1 AS NTCN_NO FROM TB_NTFC_INFO
+        </selectKey>
+        INSERT INTO TB_NTFC_INFO (NTCN_NO, NTCN_SJ, NTCN_CN, NTCN_TM, BH_NTCN_INTRVL, FRST_REGISTER_ID, FRST_REGIST_PNTTM)
+        VALUES (#{ntfcNo}, #{ntfcSj}, #{ntfcCn}, #{ntfcTime}, #{bhNtfcIntrvlString}, #{frstRegisterId}, CURRENT_TIMESTAMP)
+    </insert>
+
+    <update id="updateNotificationInf" parameterType="egovframework.com.uss.ion.noi.service.NotificationVO">
+        UPDATE TB_NTFC_INFO
+        SET NTCN_SJ = #{ntfcSj}, NTCN_CN = #{ntfcCn}, NTCN_TM = #{ntfcTime}, BH_NTCN_INTRVL = #{bhNtfcIntrvlString},
+            LAST_UPDUSR_ID = #{lastUpdusrId}, LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
+        WHERE NTCN_NO = #{ntfcNo}
+    </update>
+
+    <delete id="deleteNotificationInf" parameterType="egovframework.com.uss.ion.noi.service.NotificationVO">
+        DELETE FROM TB_NTFC_INFO WHERE NTCN_NO = #{ntfcNo}
+    </delete>
+
+</mapper>

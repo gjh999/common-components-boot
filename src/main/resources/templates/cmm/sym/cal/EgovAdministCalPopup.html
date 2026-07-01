@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="#{cal.admin.title}">행정달력</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap-icons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/krds/resources/cdn/krds.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/common.css}"/>
+    <link rel="stylesheet" th:href="@{/css/krds-compat.css}"/>
+    <link rel="stylesheet" th:href="@{/css/krds.css}"/>
+</head>
+<body class="p-2">
+    <iframe th:src="@{/sym/cmm/EgovselectAdministCalendar.do}" title="행정달력" th:title="#{cal.admin.title}"
+            style="width:100%;height:520px;border:0;"></iframe>
+    <div class="text-end mt-2">
+        <button class="krds-btn tertiary small" type="button" onclick="window.close();" th:text="#{button.close}">닫기</button>
+    </div>
+</body>
+</html>

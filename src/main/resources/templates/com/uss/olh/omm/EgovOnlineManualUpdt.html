@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{i2.52}">온라인 매뉴얼</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:820px;">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/uss/olh/omm/selectOnlineManualList.do}" th:text="#{i2.52}">온라인 매뉴얼</a></li>
+        <li class="breadcrumb-item active" th:text="#{button.modify}">수정</li>
+    </ol></nav>
+    <h1 class="h4 mb-3"><i class="bi bi-journal-text"></i> <span th:text="#{i2.52}">온라인 매뉴얼</span> - <span th:text="#{button.modify}">수정</span></h1>
+
+    <form th:action="@{/uss/olh/omm/updateOnlineManual.do}" method="post" th:object="${onlineManualVO}">
+        <input type="hidden" th:field="*{onlineMnlId}"/>
+        <fieldset class="krds-form-section">
+            <legend class="krds-form-section-title" th:text="#{i2.54}">매뉴얼명</legend>
+            <div class="row g-3">
+                <div class="col-12"><label class="form-label"><span th:text="#{i2.54}">매뉴얼명</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="text" th:field="*{onlineMnlNm}" maxlength="255" required/></div>
+                <div class="col-md-6"><label class="form-label"><span th:text="#{i2.55}">구분</span> <span class="frm-rq">*</span></label>
+                    <select class="krds-input" th:field="*{onlineMnlSeCode}" required>
+                        <option value="" th:text="#{c3.6}">선택</option>
+                        <option th:each="code : ${onlineMnlSeCode}" th:value="${code.code}" th:text="${code.codeNm}">구분</option>
+                    </select></div>
+                <div class="col-12"><label class="form-label"><span th:text="#{i2.56}">정의</span> <span class="frm-rq">*</span></label>
+                    <textarea class="krds-input" th:field="*{onlineMnlDf}" rows="4" required></textarea></div>
+                <div class="col-12"><label class="form-label"><span th:text="#{i4.3}">설명</span> <span class="frm-rq">*</span></label>
+                    <textarea class="krds-input" th:field="*{onlineMnlDc}" rows="8" required></textarea></div>
+            </div>
+        </fieldset>
+        <div class="form-actions d-flex justify-content-between align-items-center">
+            <a class="krds-btn tertiary" th:href="@{/uss/olh/omm/selectOnlineManualDetail.do(onlineMnlId=${onlineManualVO.onlineMnlId})}" th:text="#{button.cancel}">취소</a>
+            <button class="krds-btn primary" type="submit"><i class="bi bi-check-lg"></i> <span th:text="#{button.save}">저장</span></button>
+        </div>
+    </form>
+</div>
+</main>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head>
+    <title>행사 관리</title>
+</head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:1100px;">
+
+    <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/examples}" th:text="#{cat.crumb}">공통컴포넌트 예제</a></li>
+            <li class="breadcrumb-item active" th:text="#{i2.25}">행사 관리</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0"><i class="bi bi-megaphone"></i> <span th:text="#{i2.25}">행사 관리</span></h1>
+        <a class="krds-btn primary" th:href="@{/uss/ion/ecc/insertEventCmpgnView.do}"><i class="bi bi-plus-lg"></i> <span th:text="#{button.regist}">등록</span></a>
+    </div>
+
+    <form th:action="@{/uss/ion/ecc/selectEventCmpgnList.do}" method="get" class="search-bar krds-search mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-9">
+                <div class="form-group">
+                    <div class="form-tit"><label for="searchKeyword" th:text="#{search.keyword}">검색어</label></div>
+                    <div class="form-conts"><input type="text" id="searchKeyword" name="searchKeyword" class="krds-input"
+                           th:value="${searchKeyword}" th:placeholder="#{search.keyword.placeholder}" placeholder="행사 내용 검색" maxlength="100"/></div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="krds-btn primary medium w-100"><i class="bi bi-search"></i> <span th:text="#{button.search}">검색</span></button>
+            </div>
+        </div>
+    </form>
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="text-muted small"><span th:text="#{list.total}">전체</span>
+            <strong th:text="${paginationInfo != null ? paginationInfo.totalRecordCount : 0}">0</strong>
+            <span th:text="#{list.count.unit}">건</span></span>
+    </div>
+
+    <div class="krds-table-wrap">
+        <table class="tbl">
+            <thead>
+            <tr>
+                <th scope="col" style="width:70px;" th:text="#{list.seq}">순번</th>
+                <th scope="col" th:text="#{i2.26}">행사 내용</th>
+                <th scope="col" style="width:200px;" th:text="#{i2.27}">행사 기간</th>
+                <th scope="col" style="width:100px;" th:text="#{i2.28}">담당자</th>
+                <th scope="col" style="width:90px;" th:text="#{i2.29}">정원</th>
+                <th scope="col" style="width:90px;" th:text="#{i2.30}">승인</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item,stat : ${resultList}">
+                <td class="text-center" th:text="${stat.count}">1</td>
+                <td><a th:href="@{/uss/ion/ecc/selectEventCmpgnDetail.do(eventId=${item.eventId})}" th:text="${item.eventCn}">행사 내용</a></td>
+                <td class="text-center small"><span th:text="${item.eventSvcBeginDe}">시작</span> ~ <span th:text="${item.eventSvcEndDe}">종료</span></td>
+                <td class="text-center" th:text="${item.chargerNm}">담당</td>
+                <td class="text-center"><span th:text="${item.svcUseNmprCo}">0</span><span th:text="#{i2.31}">명</span></td>
+                <td class="text-center">
+                    <span class="krds-badge" th:classappend="${item.eventConfmAt == 'Y'} ? 'bg-success' : 'bg-gray'"
+                          th:text="${item.eventConfmAt == 'Y'} ? '승인' : '대기'">승인</span>
+                </td>
+            </tr>
+            <tr th:if="${resultList == null or #lists.isEmpty(resultList)}">
+                <td colspan="6" class="text-center text-muted py-4" th:text="#{i2.14}">등록된 행사가 없습니다.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${paginationInfo != null}"
+         th:replace="~{fragments/pagination :: paginationSearch(paginationInfo=${paginationInfo}, baseUrl='/uss/ion/ecc/selectEventCmpgnList.do', searchCondition='', searchKeyword=${searchKeyword})}"></div>
+
+</div>
+</main>
+</body>
+</html>

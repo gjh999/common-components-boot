@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head>
+    <title th:text="#{i1.48}">직원 경조사 관리</title>
+</head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:1100px;">
+
+    <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/examples}" th:text="#{cat.crumb}">공통컴포넌트 예제</a></li>
+            <li class="breadcrumb-item active" th:text="#{i1.48}">직원 경조사 관리</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0"><i class="bi bi-gift"></i> <span th:text="#{i1.48}">직원 경조사 관리</span></h1>
+        <a class="krds-btn primary" sec:authorize="isAuthenticated()" th:href="@{/uss/ion/ctn/EgovCtsnnRegist.do}"><i class="bi bi-plus-lg"></i> <span th:text="#{button.regist}">등록</span></a>
+    </div>
+
+    <!-- 검색 영역 (KRDS) -->
+    <form th:action="@{/uss/ion/ctn/selectCtsnnManageList.do}" method="get" class="search-bar krds-search mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <div class="form-tit"><label for="searchConfmAt" th:text="#{i1.49}">승인여부</label></div>
+                    <div class="form-conts">
+                        <select id="searchConfmAt" name="searchConfmAt" class="krds-form-select">
+                            <option value="" th:text="#{i1.50}">전체</option>
+                            <option value="Y" th:selected="${ctsnnManageVO != null and ctsnnManageVO.searchConfmAt == 'Y'}" th:text="#{i1.51}">승인</option>
+                            <option value="N" th:selected="${ctsnnManageVO != null and ctsnnManageVO.searchConfmAt == 'N'}" th:text="#{i1.52}">미승인</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="form-tit"><label for="searchNm" th:text="#{i1.53}">대상자/신청자명</label></div>
+                    <div class="form-conts">
+                        <input type="text" id="searchNm" name="searchNm" class="krds-input"
+                               th:value="${ctsnnManageVO != null ? ctsnnManageVO.searchNm : ''}" th:placeholder="#{search.keyword.placeholder}" placeholder="검색어를 입력하세요" maxlength="100"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="krds-btn primary medium w-100"><i class="bi bi-search"></i> <span th:text="#{button.search}">검색</span></button>
+            </div>
+        </div>
+    </form>
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="text-muted small"><span th:text="#{list.total}">전체</span>
+            <strong th:text="${paginationInfo != null ? paginationInfo.totalRecordCount : 0}">0</strong>
+            <span th:text="#{list.count.unit}">건</span></span>
+    </div>
+
+    <div class="krds-table-wrap">
+        <table class="tbl">
+            <thead>
+            <tr>
+                <th scope="col" style="width:70px;" th:text="#{list.seq}">순번</th>
+                <th scope="col" th:text="#{i1.54}">경조사명</th>
+                <th scope="col" style="width:110px;" th:text="#{i1.55}">대상자</th>
+                <th scope="col" style="width:120px;" th:text="#{i1.56}">신청자</th>
+                <th scope="col" style="width:120px;" th:text="#{i1.57}">신청일</th>
+                <th scope="col" style="width:120px;" th:text="#{i1.58}">발생일</th>
+                <th scope="col" style="width:90px;" th:text="#{i1.49}">승인여부</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item,stat : ${ctsnnManageList}">
+                <td class="text-center" th:text="${stat.count}">1</td>
+                <td>
+                    <a th:href="@{/uss/ion/ctn/EgovCtsnnManageDetail.do(ctsnnId=${item.ctsnnId})}" th:text="${item.ctsnnNm}">경조사명</a>
+                </td>
+                <td class="text-center" th:text="${item.trgterNm}">대상자</td>
+                <td class="text-center" th:text="${item.usNm}">신청자</td>
+                <td class="text-center" th:text="${item.reqstDe}">신청일</td>
+                <td class="text-center" th:text="${item.occrrDe}">발생일</td>
+                <td class="text-center">
+                    <span class="krds-badge" th:classappend="${item.confmAt == 'Y'} ? 'bg-success' : 'bg-gray'"
+                          th:text="${item.confmAt == 'Y'} ? #{i1.51} : #{i1.52}">미승인</span>
+                </td>
+            </tr>
+            <tr th:if="${ctsnnManageList == null or #lists.isEmpty(ctsnnManageList)}">
+                <td colspan="7" class="text-center text-muted py-4" th:text="#{i1.59}">등록된 경조사 내역이 없습니다.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${paginationInfo != null}"
+         th:replace="~{fragments/pagination :: paginationSearch(paginationInfo=${paginationInfo}, baseUrl='/uss/ion/ctn/selectCtsnnManageList.do', searchCondition=${ctsnnManageVO != null ? ctsnnManageVO.searchConfmAt : ''}, searchKeyword=${ctsnnManageVO != null ? ctsnnManageVO.searchNm : ''})}"></div>
+
+
+</div>
+</main>
+</body>
+</html>

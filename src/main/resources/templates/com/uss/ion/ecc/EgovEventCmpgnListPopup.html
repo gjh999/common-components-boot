@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>행사·캠페인 선택</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap-icons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/krds/resources/cdn/krds.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/common.css}"/>
+    <link rel="stylesheet" th:href="@{/css/krds-compat.css}"/>
+    <link rel="stylesheet" th:href="@{/css/krds.css}"/>
+    <link rel="stylesheet" th:href="@{/css/popup.css}"/>
+</head>
+<body>
+  <div class="popup-wrap">
+    <div class="popup-head"><i class="bi bi-megaphone"></i><h1 th:text="#{i2.15}">행사·캠페인 선택</h1></div>
+
+    <form class="popup-search" th:action="@{/uss/ion/ecc/selectEventCmpgnListPopup.do}" method="post">
+        <select class="krds-form-select" name="searchCondition" th:title="#{i2.16}" title="검색조건">
+            <option value="0" th:selected="${eventCmpgnVO.searchCondition == '0'}" th:text="#{i2.17}">행사내용</option>
+            <option value="1" th:selected="${eventCmpgnVO.searchCondition == '1'}" th:text="#{i2.18}">등록자</option>
+        </select>
+        <input class="krds-input" name="searchKeyword" th:value="${eventCmpgnVO.searchKeyword}" maxlength="155" th:placeholder="#{search.keyword}" placeholder="검색어" th:title="#{search.keyword}" title="검색어"/>
+        <button class="krds-btn primary small" type="submit"><i class="bi bi-search"></i> <span th:text="#{button.search}">검색</span></button>
+    </form>
+
+    <div class="popup-table-wrap">
+    <table class="tbl">
+        <caption class="visually-hidden" th:text="#{i2.19}">행사·캠페인 목록</caption>
+        <colgroup><col style="width:50px;"/><col style="width:90px;"/><col/><col style="width:96px;"/><col style="width:96px;"/><col style="width:60px;"/></colgroup>
+        <thead>
+        <tr><th scope="col" th:text="#{i2.20}">번호</th><th scope="col" th:text="#{i2.21}">행사유형</th><th scope="col" th:text="#{i2.17}">행사내용</th><th scope="col" th:text="#{i2.10}">시작일</th><th scope="col" th:text="#{i2.11}">종료일</th><th scope="col" th:text="#{i2.22}">선택</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="item,stat : ${resultList}">
+            <td class="text-center" th:text="${stat.count}">1</td>
+            <td class="text-center" th:text="${item.eventTyCodeNm}">유형</td>
+            <td class="left" th:text="${item.eventCn}">행사내용</td>
+            <td class="text-center" th:text="${item.eventSvcBeginDe}">시작</td>
+            <td class="text-center" th:text="${item.eventSvcEndDe}">종료</td>
+            <td class="text-center">
+                <button type="button" class="krds-btn secondary small"
+                        th:attr="data-id=${item.eventId},data-cn=${item.eventCn}"
+                        onclick="fnSelect(this);" th:text="#{i2.22}">선택</button></td>
+        </tr>
+        <tr th:if="${resultList == null or #lists.isEmpty(resultList)}">
+            <td colspan="6" class="text-center text-muted py-4" th:text="#{i2.23}">조회된 행사가 없습니다.</td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+
+    <div th:replace="~{fragments/pagination :: paginationSearch(paginationInfo=${paginationInfo}, baseUrl='/uss/ion/ecc/selectEventCmpgnListPopup.do', searchCondition=${eventCmpgnVO.searchCondition}, searchKeyword=${eventCmpgnVO.searchKeyword})}"></div>
+
+    <div class="popup-foot">
+        <button class="krds-btn tertiary small" type="button" onclick="window.close();" th:text="#{i2.24}">닫기</button>
+    </div>
+  </div>
+  <script>
+    function fnSelect(btn) {
+        var id = btn.getAttribute('data-id'), cn = btn.getAttribute('data-cn');
+        try {
+            if (window.opener && !window.opener.closed) {
+                var d = window.opener.document;
+                if (d.getElementById('eventId')) d.getElementById('eventId').value = id;
+                if (d.getElementById('eventCn')) d.getElementById('eventCn').value = cn;
+            }
+        } catch (e) {}
+        window.close();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 약도관리(uss/ion/rmm) — COMTNROUGHMAP → TB_ROUGHMAP 표준화(HSQL) -->
+<mapper namespace="RoughMapDAO">
+
+    <sql id="rmmSearch">
+        <if test="searchKeyword != null and searchKeyword != ''">
+            AND (A.ROUGHMAPSJ LIKE CONCAT(CONCAT('%', #{searchKeyword}),'%')
+                 OR A.ROUGHMAPADDRESS LIKE CONCAT(CONCAT('%', #{searchKeyword}),'%'))
+        </if>
+    </sql>
+
+    <select id="selectRoughMapList" parameterType="egovframework.com.uss.ion.rmm.service.RoughMapDefaultVO" resultType="egovframework.com.uss.ion.rmm.service.RoughMapVO">
+        SELECT A.ROUGHMAP_ID AS roughMapId, A.ROUGHMAPSJ AS roughMapSj, A.ROUGHMAPADDRESS AS roughMapAddress,
+               TO_CHAR(A.LAST_UPDT_PNTTM,'YYYY-MM-DD') AS lastUpdusrPnttm
+        FROM TB_ROUGHMAP A
+        WHERE 1=1
+        <include refid="rmmSearch"/>
+        ORDER BY A.ROUGHMAP_ID DESC
+        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+    </select>
+
+    <select id="selectRoughMapListTotCnt" parameterType="egovframework.com.uss.ion.rmm.service.RoughMapDefaultVO" resultType="int">
+        SELECT COUNT(*) FROM TB_ROUGHMAP A WHERE 1=1
+        <include refid="rmmSearch"/>
+    </select>
+
+    <select id="selectRoughMapDetail" parameterType="egovframework.com.uss.ion.rmm.service.RoughMapVO" resultType="egovframework.com.uss.ion.rmm.service.RoughMapVO">
+        SELECT ROUGHMAP_ID AS roughMapId, ROUGHMAPSJ AS roughMapSj, ROUGHMAPADDRESS AS roughMapAddress,
+               LA AS la, LO AS lo, MARKERLA AS markerLa, MARKERLO AS markerLo, INFOWINDOW AS infoWindow, ZOOMLEVEL AS zoomLevel,
+               FRST_REGISTER_ID AS frstRegisterId, TO_CHAR(FRST_REGIST_PNTTM,'YYYY-MM-DD') AS frstRegisterPnttm
+        FROM TB_ROUGHMAP WHERE ROUGHMAP_ID = #{roughMapId}
+    </select>
+
+    <insert id="insertRoughMap" parameterType="egovframework.com.uss.ion.rmm.service.RoughMapVO">
+        INSERT INTO TB_ROUGHMAP (ROUGHMAP_ID, ROUGHMAPSJ, ROUGHMAPADDRESS, LA, LO, MARKERLA, MARKERLO, INFOWINDOW, ZOOMLEVEL, FRST_REGISTER_ID, FRST_REGIST_PNTTM)
+        VALUES (#{roughMapId}, #{roughMapSj}, #{roughMapAddress}, #{la}, #{lo}, #{markerLa}, #{markerLo}, #{infoWindow}, #{zoomLevel}, #{frstRegisterId}, CURRENT_TIMESTAMP)
+    </insert>
+
+    <update id="updateRoughMap" parameterType="egovframework.com.uss.ion.rmm.service.RoughMapVO">
+        UPDATE TB_ROUGHMAP SET ROUGHMAPSJ = #{roughMapSj}, ROUGHMAPADDRESS = #{roughMapAddress}, LA = #{la}, LO = #{lo},
+               MARKERLA = #{markerLa}, MARKERLO = #{markerLo}, INFOWINDOW = #{infoWindow}, ZOOMLEVEL = #{zoomLevel},
+               LAST_UPDUSR_ID = #{lastUpdusrId}, LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
+        WHERE ROUGHMAP_ID = #{roughMapId}
+    </update>
+
+    <delete id="deleteRoughMap" parameterType="egovframework.com.uss.ion.rmm.service.RoughMapVO">
+        DELETE FROM TB_ROUGHMAP WHERE ROUGHMAP_ID = #{roughMapId}
+    </delete>
+
+</mapper>

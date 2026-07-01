@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{i3.17}">개인화 페이지 콘텐츠 관리</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:820px;">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/uss/mpe/selectIndvdlPgeList.do}" th:text="#{i3.17}">개인화 페이지 콘텐츠 관리</a></li>
+        <li class="breadcrumb-item active" th:text="#{button.modify}">수정</li>
+    </ol></nav>
+    <h1 class="h4 mb-3"><i class="bi bi-grid-1x2"></i> <span th:text="#{i3.17}">개인화 페이지 콘텐츠 관리</span> - <span th:text="#{button.modify}">수정</span></h1>
+
+    <form th:action="@{/uss/mpe/updateIndvdlPge.do}" method="post" th:object="${indvdlPgeVO}">
+        <input type="hidden" th:field="*{cntntsId}"/>
+        <fieldset class="krds-form-section">
+            <legend class="krds-form-section-title" th:text="#{i3.18}">콘텐츠명</legend>
+            <div class="row g-3">
+                <div class="col-12"><label class="form-label"><span th:text="#{i3.18}">콘텐츠명</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="text" th:field="*{cntntsNm}" maxlength="100" required/></div>
+                <div class="col-12"><label class="form-label"><span th:text="#{i3.19}">연계 URL</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="text" th:field="*{cntcUrl}" maxlength="255" required/></div>
+                <div class="col-12"><label class="form-label"><span th:text="#{c3.1}">미리보기 URL</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="text" th:field="*{cntntsLinkUrl}" maxlength="1000" required/></div>
+                <div class="col-12"><label class="form-label"><span th:text="#{c3.2}">콘텐츠 설명</span> <span class="frm-rq">*</span></label>
+                    <textarea class="krds-input" th:field="*{cntntsDc}" rows="5" maxlength="250" required></textarea></div>
+                <div class="col-md-6"><label class="form-label"><span th:text="#{i3.20}">사용여부</span> <span class="frm-rq">*</span></label>
+                    <select class="krds-input" th:field="*{cntntsUseAt}" required>
+                        <option value="Y" th:text="#{i3.21}">사용</option>
+                        <option value="N" th:text="#{i3.22}">미사용</option>
+                    </select></div>
+            </div>
+        </fieldset>
+        <div class="form-actions d-flex justify-content-between align-items-center">
+            <a class="krds-btn tertiary" th:href="@{/uss/mpe/selectIndvdlPgeDetail.do(cntntsId=${indvdlPgeVO.cntntsId})}" th:text="#{button.cancel}">취소</a>
+            <button class="krds-btn primary" type="submit"><i class="bi bi-check-lg"></i> <span th:text="#{button.save}">저장</span></button>
+        </div>
+    </form>
+</div>
+</main>
+</body>
+</html>

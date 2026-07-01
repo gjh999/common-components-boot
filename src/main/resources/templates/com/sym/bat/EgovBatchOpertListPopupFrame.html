@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="#{i5.37}">배치작업 목록</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap-icons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/krds.css}"/>
+    <link rel="stylesheet" th:href="@{/css/popup.css}"/>
+</head>
+<body>
+  <div class="popup-wrap">
+    <div class="popup-head"><i class="bi bi-list-task"></i><h1 th:text="#{i5.37}">배치작업 목록</h1></div>
+    <iframe class="popup-frame" th:title="#{i5.38}" title="배치작업목록" id="batchOpertPopupFrame"
+            th:src="@{/sym/bat/getBatchOpertList.do(popupAt='Y')}"
+            width="100%" height="540" frameborder="0" scrolling="auto"></iframe>
+    <div class="popup-foot">
+        <button class="krds-btn tertiary small" type="button" onclick="window.close();" th:text="#{i5.36}">닫기</button>
+    </div>
+  </div>
+</body>
+</html>

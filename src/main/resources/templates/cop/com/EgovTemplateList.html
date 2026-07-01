@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{bbs.tmplat.list}">템플릿 목록</title></head>
+<body>
+<main layout:fragment="content">
+    <div class="container">
+        <nav aria-label="breadcrumb"><ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{nav.home}">홈</a></li>
+            <li class="breadcrumb-item active" th:text="#{bbs.tmplat.list}">템플릿 목록</li>
+        </ol></nav>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h4 mb-0"><i class="bi bi-layout-text-window"></i> <span th:text="#{bbs.tmplat.list}">템플릿 목록</span></h1>
+            <span class="text-muted small"><span th:text="#{common.total}">총</span> <strong th:text="${resultCnt}">0</strong> <span th:text="#{common.unit.case}">건</span></span>
+        </div>
+
+        <form class="row g-2 mb-3" th:action="@{/cop/com/selectTemplateInfs.do}" method="get">
+            <div class="col-auto">
+                <select class="krds-form-select" name="searchCnd" th:title="#{bbs.search.cnd}" title="검색조건">
+                    <option value="0" th:selected="${searchVO != null and searchVO.searchCnd == '0'}" th:text="#{bbs.tmplat.nm}">템플릿명</option>
+                    <option value="1" th:selected="${searchVO != null and searchVO.searchCnd == '1'}" th:text="#{bbs.tmplat.se.full}">템플릿구분</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <input class="krds-input" type="text" name="searchWrd" maxlength="35" th:title="#{bbs.search.wrd}" title="검색어"
+                       th:value="${searchVO != null ? searchVO.searchWrd : ''}" th:placeholder="#{bbs.search.wrd}" placeholder="검색어"/>
+            </div>
+            <div class="col-auto">
+                <button class="krds-btn secondary" type="submit"><i class="bi bi-search"></i> <span th:text="#{button.inquiry}">조회</span></button>
+            </div>
+        </form>
+
+        <div class="krds-table-wrap">
+        <table class="tbl">
+            <thead>
+            <tr>
+                <th scope="col" style="width:110px;" th:text="#{common.no}">번호</th>
+                <th scope="col" th:text="#{bbs.tmplat.nm}">템플릿명</th>
+                <th scope="col" style="width:160px;" th:text="#{bbs.tmplat.se}">구분</th>
+                <th scope="col" style="width:80px;" th:text="#{bbs.use}">사용</th>
+                <th scope="col" style="width:130px;" th:text="#{common.regdate}">등록일</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item, st : ${resultList}">
+                <td class="text-center"
+                    th:text="${searchVO != null ? (searchVO.pageIndex - 1) * searchVO.pageSize + st.count : st.count}">1</td>
+                <td>
+                    <a class="text-decoration-none"
+                       th:href="@{/cop/com/selectTemplateInf.do(tmplatId=${item.tmplatId})}"
+                       th:text="${item.tmplatNm}">템플릿명</a>
+                </td>
+                <td th:text="${item.tmplatSeCodeNm}">구분</td>
+                <td class="text-center">
+                    <span class="krds-badge" th:classappend="${item.useAt == 'Y'} ? 'bg-success' : 'bg-gray'"
+                          th:text="${item.useAt == 'Y'} ? #{bbs.use} : #{bbs.unuse}">사용</span>
+                </td>
+                <td class="text-center" th:text="${item.frstRegisterPnttm}">등록일</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(resultList)}">
+                <td colspan="5" class="text-center text-muted py-4" th:text="#{bbs.tmplat.empty}">등록된 템플릿이 없습니다.</td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+
+        <div th:replace="~{fragments/pagination :: pagination(paginationInfo=${paginationInfo}, baseUrl='/cop/com/selectTemplateInfs.do', searchCnd=${searchVO != null ? searchVO.searchCnd : ''}, searchWrd=${searchVO != null ? searchVO.searchWrd : ''})}"></div>
+
+        <div class="text-end" sec:authorize="isAuthenticated()">
+            <a class="krds-btn primary small" th:href="@{/cop/com/addTemplateInf.do}">
+                <i class="bi bi-plus-lg"></i> <span th:text="#{button.register}">등록</span>
+            </a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

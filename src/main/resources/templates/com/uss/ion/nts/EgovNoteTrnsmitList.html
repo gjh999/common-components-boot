@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head>
+    <title>보낸 쪽지함</title>
+</head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:1050px;">
+
+    <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/examples}" th:text="#{cat.crumb}">공통컴포넌트 예제</a></li>
+            <li class="breadcrumb-item active" th:text="#{i3.59}">보낸 쪽지함</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0"><i class="bi bi-send"></i> <span th:text="#{i3.59}">보낸 쪽지함</span></h1>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="text-muted small"><span th:text="#{list.total}">전체</span>
+            <strong th:text="${paginationInfo != null ? paginationInfo.totalRecordCount : 0}">0</strong>
+            <span th:text="#{list.count.unit}">건</span></span>
+    </div>
+
+    <div class="krds-table-wrap">
+        <table class="tbl">
+            <thead>
+            <tr>
+                <th scope="col" style="width:70px;" th:text="#{list.seq}">순번</th>
+                <th scope="col" style="width:240px;" th:text="#{i3.60}">제목</th>
+                <th scope="col" th:text="#{i3.61}">내용</th>
+                <th scope="col" style="width:150px;" th:text="#{i3.62}">보낸 시각</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item,stat : ${resultList}">
+                <td class="text-center" th:text="${stat.count}">1</td>
+                <td><strong th:text="${item.noteSj}">제목</strong></td>
+                <td class="small text-muted" th:text="${item.noteCn}">내용</td>
+                <td class="text-center" th:text="${item.frstRegisterPnttm}">보낸시각</td>
+            </tr>
+            <tr th:if="${resultList == null or #lists.isEmpty(resultList)}">
+                <td colspan="4" class="text-center text-muted py-4" th:text="#{i3.63}">보낸 쪽지가 없습니다.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${paginationInfo != null}"
+         th:replace="~{fragments/pagination :: pagination(paginationInfo=${paginationInfo}, baseUrl='/uss/ion/nts/listNoteTrnsmit.do', searchCnd='', searchWrd='')}"></div>
+
+</div>
+</main>
+</body>
+</html>

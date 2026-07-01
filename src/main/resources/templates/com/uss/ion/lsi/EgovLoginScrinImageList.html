@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head>
+    <title th:text="#{i4.1}">로그인 화면 이미지 관리</title>
+</head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:1000px;">
+
+    <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/examples}" th:text="#{cat.crumb}">공통컴포넌트 예제</a></li>
+            <li class="breadcrumb-item active" th:text="#{i4.1}">로그인 화면 이미지 관리</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0"><i class="bi bi-card-image"></i> <span th:text="#{i4.1}">로그인 화면 이미지 관리</span></h1>
+        <a class="krds-btn primary" th:href="@{/uss/ion/lsi/addViewLoginScrinImage.do}"><i class="bi bi-plus-lg"></i> <span th:text="#{button.regist}">등록</span></a>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="text-muted small"><span th:text="#{list.total}">전체</span>
+            <strong th:text="${paginationInfo != null ? paginationInfo.totalRecordCount : 0}">0</strong>
+            <span th:text="#{list.count.unit}">건</span></span>
+    </div>
+
+    <div class="krds-table-wrap">
+        <table class="tbl">
+            <thead>
+            <tr>
+                <th scope="col" style="width:70px;" th:text="#{list.seq}">순번</th>
+                <th scope="col" th:text="#{i4.2}">이미지명</th>
+                <th scope="col" th:text="#{i4.3}">설명</th>
+                <th scope="col" style="width:90px;" th:text="#{i4.4}">반영여부</th>
+                <th scope="col" style="width:120px;" th:text="#{common.regdate}">등록일</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item,stat : ${loginScrinImageList}">
+                <td class="text-center" th:text="${stat.count}">1</td>
+                <td><a th:href="@{/uss/ion/lsi/getLoginScrinImage.do(imageId=${item.imageId})}" th:text="${item.imageNm}">이미지명</a></td>
+                <td class="text-muted small" th:text="${item.imageDc}">설명</td>
+                <td class="text-center">
+                    <span class="krds-badge" th:classappend="${item.reflctAt == 'Y'} ? 'bg-success' : 'bg-gray'"
+                          th:text="${item.reflctAt == 'Y'} ? #{i4.5} : #{i4.6}">미반영</span>
+                </td>
+                <td class="text-center" th:text="${item.regDate}">등록일</td>
+            </tr>
+            <tr th:if="${loginScrinImageList == null or #lists.isEmpty(loginScrinImageList)}">
+                <td colspan="5" class="text-center text-muted py-4" th:text="#{i4.7}">등록된 로그인 화면 이미지가 없습니다.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${paginationInfo != null}"
+         th:replace="~{fragments/pagination :: paginationSearch(paginationInfo=${paginationInfo}, baseUrl='/uss/ion/lsi/selectLoginScrinImageList.do', searchCondition='', searchKeyword='')}"></div>
+
+</div>
+</main>
+</body>
+</html>

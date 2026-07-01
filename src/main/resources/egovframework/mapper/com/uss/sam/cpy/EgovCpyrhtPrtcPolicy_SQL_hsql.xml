@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 저작권 보호정책(uss/sam/cpy) — COMTNCPYRHTINFO → TB_CPYRHT_INFO 표준화(HSQL) -->
+<mapper namespace="CpyrhtPrtcPolicyDAO">
+
+    <sql id="cpyCols">
+        A.CPYRHT_ID AS cpyrhtId, A.CPYRHT_PRTC_POLICY_CN AS cpyrhtPrtcPolicyCn,
+        A.FRST_REGISTER_ID AS frstRegisterId, TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS frstRegisterPnttm,
+        A.LAST_UPDUSR_ID AS lastUpdusrId, TO_CHAR(A.LAST_UPDT_PNTTM,'YYYY-MM-DD') AS lastUpdusrPnttm
+    </sql>
+
+    <select id="selectCpyrhtPrtcPolicyList" parameterType="egovframework.com.uss.sam.cpy.service.CpyrhtPrtcPolicyVO" resultType="egovframework.com.uss.sam.cpy.service.CpyrhtPrtcPolicyVO">
+        SELECT <include refid="cpyCols"/>
+        FROM TB_CPYRHT_INFO A WHERE 1=1
+        <if test="searchKeyword != null and searchKeyword != ''">AND A.CPYRHT_PRTC_POLICY_CN LIKE CONCAT(CONCAT('%', #{searchKeyword}),'%')</if>
+        ORDER BY A.FRST_REGIST_PNTTM DESC
+        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+    </select>
+
+    <select id="selectCpyrhtPrtcPolicyListTotCnt" parameterType="egovframework.com.uss.sam.cpy.service.CpyrhtPrtcPolicyVO" resultType="int">
+        SELECT COUNT(*) FROM TB_CPYRHT_INFO A WHERE 1=1
+        <if test="searchKeyword != null and searchKeyword != ''">AND A.CPYRHT_PRTC_POLICY_CN LIKE CONCAT(CONCAT('%', #{searchKeyword}),'%')</if>
+    </select>
+
+    <select id="selectCpyrhtPrtcPolicyDetail" parameterType="egovframework.com.uss.sam.cpy.service.CpyrhtPrtcPolicyVO" resultType="egovframework.com.uss.sam.cpy.service.CpyrhtPrtcPolicyVO">
+        SELECT <include refid="cpyCols"/> FROM TB_CPYRHT_INFO A WHERE A.CPYRHT_ID = #{cpyrhtId}
+    </select>
+
+    <insert id="insertCpyrhtPrtcPolicy" parameterType="egovframework.com.uss.sam.cpy.service.CpyrhtPrtcPolicyVO">
+        INSERT INTO TB_CPYRHT_INFO (CPYRHT_ID, CPYRHT_PRTC_POLICY_CN, FRST_REGISTER_ID, FRST_REGIST_PNTTM)
+        VALUES (#{cpyrhtId}, #{cpyrhtPrtcPolicyCn}, #{frstRegisterId}, CURRENT_TIMESTAMP)
+    </insert>
+
+    <update id="updateCpyrhtPrtcPolicy" parameterType="egovframework.com.uss.sam.cpy.service.CpyrhtPrtcPolicyVO">
+        UPDATE TB_CPYRHT_INFO SET CPYRHT_PRTC_POLICY_CN = #{cpyrhtPrtcPolicyCn}, LAST_UPDUSR_ID = #{lastUpdusrId}, LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
+        WHERE CPYRHT_ID = #{cpyrhtId}
+    </update>
+
+    <delete id="deleteCpyrhtPrtcPolicy" parameterType="egovframework.com.uss.sam.cpy.service.CpyrhtPrtcPolicyVO">
+        DELETE FROM TB_CPYRHT_INFO WHERE CPYRHT_ID = #{cpyrhtId}
+    </delete>
+
+</mapper>

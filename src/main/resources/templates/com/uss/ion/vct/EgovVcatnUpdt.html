@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{i1.199}">휴가 관리</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:820px;">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/uss/ion/vct/EgovVcatnManageList.do}" th:text="#{i1.199}">휴가 관리</a></li>
+        <li class="breadcrumb-item active" th:text="#{button.modify}">수정</li>
+    </ol></nav>
+    <h1 class="h4 mb-3"><i class="bi bi-calendar2-check"></i> <span th:text="#{i1.199}">휴가 관리</span> - <span th:text="#{button.modify}">수정</span></h1>
+
+    <div th:if="${errorMessage != null}" class="krds-alert danger mb-3" th:text="${errorMessage}">오류</div>
+
+    <form th:action="@{/uss/ion/vct/updtVcatnManage.do}" method="post" th:object="${vcatnManageVO}">
+        <input type="hidden" th:field="*{applcntId}"/>
+        <input type="hidden" th:field="*{vcatnSe}"/>
+        <input type="hidden" th:field="*{bgnde}"/>
+        <input type="hidden" th:field="*{endde}"/>
+        <input type="hidden" th:field="*{sanctnerId}"/>
+        <fieldset class="krds-form-section">
+            <legend class="krds-form-section-title" th:text="#{i1.199}">휴가 관리</legend>
+            <div class="row g-3">
+                <div class="col-md-6"><label class="form-label" th:text="#{i1.204}">휴가구분</label>
+                    <input class="krds-input" type="text" th:value="*{vcatnSeNm}" readonly/></div>
+                <div class="col-md-6"><label class="form-label" th:text="#{i1.205}">기간</label>
+                    <input class="krds-input" type="text" th:value="|*{bgnde} ~ *{endde}|" readonly/></div>
+                <div class="col-12"><label class="form-label"><span th:text="#{i1.206}">사유</span> <span class="frm-rq">*</span></label>
+                    <textarea class="krds-input" th:field="*{vcatnResn}" rows="5" maxlength="200" required></textarea></div>
+            </div>
+        </fieldset>
+        <div class="form-actions d-flex justify-content-between align-items-center">
+            <a class="krds-btn tertiary" th:href="@{/uss/ion/vct/EgovVcatnManageDetail.do(applcntId=${vcatnManageVO.applcntId},vcatnSe=${vcatnManageVO.vcatnSe},bgnde=${vcatnManageVO.bgnde},endde=${vcatnManageVO.endde})}" th:text="#{button.cancel}">취소</a>
+            <button class="krds-btn primary" type="submit"><i class="bi bi-check-lg"></i> <span th:text="#{button.save}">저장</span></button>
+        </div>
+    </form>
+</div>
+</main>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 배치스케줄(sym/bat) — COMTNBATCHSCHDUL → TB_BATCH_SCHDUL 표준화(HSQL, 작업명은 OPERT 조인) -->
+<mapper namespace="BatchSchdulDao">
+
+    <sql id="schdulCols">
+        A.BATCH_SCHDUL_ID AS batchSchdulId, A.BATCH_OPERT_ID AS batchOpertId,
+        A.EXECUT_CYCLE AS executCycle, A.EXECUT_SCHDUL_DE AS executSchdulDe, A.EXECUT_SCHDUL_HOUR AS executSchdulHour,
+        A.EXECUT_SCHDUL_MNT AS executSchdulMnt, A.EXECUT_SCHDUL_SECND AS executSchdulSecnd,
+        (SELECT O.BATCH_OPERT_NM FROM TB_BATCH_OPERT O WHERE O.BATCH_OPERT_ID = A.BATCH_OPERT_ID) AS batchOpertNm,
+        (SELECT O.BATCH_PROGRM FROM TB_BATCH_OPERT O WHERE O.BATCH_OPERT_ID = A.BATCH_OPERT_ID) AS batchProgrm,
+        A.FRST_REGISTER_ID AS frstRegisterId, TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS frstRegisterPnttm
+    </sql>
+
+    <sql id="schdulSearch">
+        <if test="searchKeyword != null and searchKeyword != ''">AND A.BATCH_OPERT_ID LIKE CONCAT(CONCAT('%', #{searchKeyword}),'%')</if>
+    </sql>
+
+    <select id="selectBatchSchdulList" parameterType="egovframework.com.sym.bat.service.BatchSchdul" resultType="egovframework.com.sym.bat.service.BatchSchdul">
+        SELECT <include refid="schdulCols"/>
+        FROM TB_BATCH_SCHDUL A WHERE 1=1
+        <include refid="schdulSearch"/>
+        ORDER BY A.BATCH_SCHDUL_ID
+        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+    </select>
+
+    <select id="selectBatchSchdulListCnt" parameterType="egovframework.com.sym.bat.service.BatchSchdul" resultType="int">
+        SELECT COUNT(*) FROM TB_BATCH_SCHDUL A WHERE 1=1
+        <include refid="schdulSearch"/>
+    </select>
+
+    <select id="selectBatchSchdul" parameterType="egovframework.com.sym.bat.service.BatchSchdul" resultType="egovframework.com.sym.bat.service.BatchSchdul">
+        SELECT <include refid="schdulCols"/> FROM TB_BATCH_SCHDUL A WHERE A.BATCH_SCHDUL_ID = #{batchSchdulId}
+    </select>
+
+    <insert id="insertBatchSchdul" parameterType="egovframework.com.sym.bat.service.BatchSchdul">
+        INSERT INTO TB_BATCH_SCHDUL (BATCH_SCHDUL_ID, BATCH_OPERT_ID, EXECUT_CYCLE, EXECUT_SCHDUL_DE, EXECUT_SCHDUL_HOUR, EXECUT_SCHDUL_MNT, EXECUT_SCHDUL_SECND, FRST_REGISTER_ID, FRST_REGIST_PNTTM)
+        VALUES (#{batchSchdulId}, #{batchOpertId}, #{executCycle}, #{executSchdulDe}, #{executSchdulHour}, #{executSchdulMnt}, #{executSchdulSecnd}, #{frstRegisterId}, CURRENT_TIMESTAMP)
+    </insert>
+
+    <update id="updateBatchSchdul" parameterType="egovframework.com.sym.bat.service.BatchSchdul">
+        UPDATE TB_BATCH_SCHDUL SET EXECUT_CYCLE = #{executCycle}, EXECUT_SCHDUL_DE = #{executSchdulDe}, EXECUT_SCHDUL_HOUR = #{executSchdulHour},
+               EXECUT_SCHDUL_MNT = #{executSchdulMnt}, LAST_UPDUSR_ID = #{lastUpdusrId}, LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
+        WHERE BATCH_SCHDUL_ID = #{batchSchdulId}
+    </update>
+
+    <delete id="deleteBatchSchdul" parameterType="egovframework.com.sym.bat.service.BatchSchdul">
+        DELETE FROM TB_BATCH_SCHDUL WHERE BATCH_SCHDUL_ID = #{batchSchdulId}
+    </delete>
+
+    <!-- 비정기(특정일) 스케줄 Dfk — 데모 단순화: 빈 결과 스텁 -->
+    <select id="selectBatchSchdulDfkList" parameterType="egovframework.com.sym.bat.service.BatchSchdul" resultType="egovframework.com.sym.bat.service.BatchSchdulDfk">
+        SELECT '' AS batchSchdulId FROM TB_BATCH_SCHDUL WHERE 1=0
+    </select>
+    <select id="selectBatchSchdulDfkListCnt" parameterType="egovframework.com.sym.bat.service.BatchSchdul" resultType="int">
+        SELECT 0 FROM TB_BATCH_SCHDUL WHERE 1=0
+    </select>
+    <select id="selectBatchSchdulDfk" parameterType="egovframework.com.sym.bat.service.BatchSchdul" resultType="egovframework.com.sym.bat.service.BatchSchdulDfk">
+        SELECT '' AS batchSchdulId FROM TB_BATCH_SCHDUL WHERE 1=0
+    </select>
+    <insert id="insertBatchSchdulDfk" parameterType="egovframework.com.sym.bat.service.BatchSchdulDfk">
+        UPDATE TB_BATCH_SCHDUL SET LAST_UPDT_PNTTM = CURRENT_TIMESTAMP WHERE 1=0
+    </insert>
+    <delete id="deleteBatchSchdulDfk" parameterType="egovframework.com.sym.bat.service.BatchSchdul">
+        DELETE FROM TB_BATCH_SCHDUL WHERE 1=0
+    </delete>
+
+</mapper>

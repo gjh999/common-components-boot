@@ -1,0 +1,21 @@
+package egovframework.com.uss.ion.nws.service;
+
+import java.util.List;
+
+import org.egovframe.rte.fdl.cmmn.exception.FdlException;
+
+public interface EgovNewsService {
+
+	List<NewsVO> selectNewsList(NewsVO newsVO);
+
+	int selectNewsListCnt(NewsVO newsVO);
+
+	void insertNews(NewsVO newsVO) throws FdlException;
+
+	NewsVO selectNewsDetail(NewsVO newsVO) throws Exception;
+
+	void updateNews(NewsVO newsVO);
+
+	void deleteNews(NewsVO newsVO);
+
+}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{i1.230}">회의 관리</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:820px;" th:with="r=${resultList != null and !#lists.isEmpty(resultList)} ? ${resultList[0]} : null">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/uss/olp/mgt/EgovMeetingManageList.do}" th:text="#{i1.230}">회의 관리</a></li>
+        <li class="breadcrumb-item active" th:text="${r != null ? r.mtgNm : ''}">상세</li>
+    </ol></nav>
+    <h1 class="h4 mb-3"><i class="bi bi-people-fill"></i> <span th:text="${r != null ? r.mtgNm : ''}">회의명</span></h1>
+
+    <div class="text-muted" th:if="${r == null}" th:text="#{i1.237}">등록된 회의가 없습니다.</div>
+    <div class="krds-table-wrap" th:if="${r != null}">
+        <table class="tbl col">
+            <tbody>
+            <tr><th scope="row" style="width:140px;" th:text="#{i1.231}">회의명</th><td th:text="${r.mtgNm}">회의명</td></tr>
+            <tr><th scope="row" th:text="#{c6.5}">회의안건</th><td style="white-space:pre-wrap;" th:text="${r.mtgMtrCn}">안건</td></tr>
+            <tr><th scope="row" th:text="#{c6.6}">회의순번</th><td th:text="${r.mtgSn}">순번</td></tr>
+            <tr><th scope="row" th:text="#{c6.7}">회의수</th><td th:text="${r.mtgCo}">회의수</td></tr>
+            <tr><th scope="row" th:text="#{i1.232}">회의일자</th><td th:text="${r.mtgDe}">일자</td></tr>
+            <tr><th scope="row" th:text="#{i1.233}">장소</th><td th:text="${r.mtgPlace}">장소</td></tr>
+            <tr><th scope="row" th:text="#{i1.234}">시간</th><td><span th:text="${r.mtgBeginTime}">시작</span> ~ <span th:text="${r.mtgEndTime}">종료</span></td></tr>
+            <tr><th scope="row" th:text="#{c6.8}">열람개시일자</th><td th:text="${r.readngBeginDe}">열람일</td></tr>
+            <tr><th scope="row" th:text="#{i1.235}">참석</th><td><span th:text="${r.atdrnCo}">0</span><span th:text="#{i1.236}">명</span></td></tr>
+            <tr><th scope="row" th:text="#{c6.10}">회의결과</th><td style="white-space:pre-wrap;" th:text="${r.mtgResultCn}">결과</td></tr>
+            <tr><th scope="row" th:text="#{c6.9}">기타사항</th><td style="white-space:pre-wrap;" th:text="${r.etcMatter}">기타</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-actions d-flex justify-content-between align-items-center" th:if="${r != null}">
+        <a class="krds-btn tertiary" th:href="@{/uss/olp/mgt/EgovMeetingManageList.do}" th:text="#{button.list}">목록</a>
+        <div class="d-flex gap-2">
+            <form th:action="@{/uss/olp/mgt/EgovMeetingManageDetail.do}" method="post" onsubmit="return confirm('삭제하시겠습니까?');" style="display:inline;">
+                <input type="hidden" name="mtgId" th:value="${r.mtgId}"/>
+                <input type="hidden" name="cmd" value="del"/>
+                <button class="krds-btn danger" type="submit"><i class="bi bi-trash"></i> <span th:text="#{button.delete}">삭제</span></button>
+            </form>
+            <form th:action="@{/uss/olp/mgt/EgovMeetingManageModifyView.do}" method="post" style="display:inline;">
+                <input type="hidden" name="mtgId" th:value="${r.mtgId}"/>
+                <button class="krds-btn primary" type="submit"><i class="bi bi-pencil"></i> <span th:text="#{button.modify}">수정</span></button>
+            </form>
+        </div>
+    </div>
+</div>
+</main>
+</body>
+</html>

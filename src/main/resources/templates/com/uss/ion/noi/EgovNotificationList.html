@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head>
+    <title th:text="#{i1.216}">정보 알림 관리</title>
+</head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:1000px;">
+
+    <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/examples}" th:text="#{cat.crumb}">공통컴포넌트 예제</a></li>
+            <li class="breadcrumb-item active" th:text="#{i1.216}">정보 알림 관리</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0"><i class="bi bi-bell"></i> <span th:text="#{i1.216}">정보 알림 관리</span></h1>
+    </div>
+
+    <form th:action="@{/uss/ion/noi/selectNotificationList.do}" method="get" class="search-bar krds-search mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <div class="form-tit"><label for="searchCnd" th:text="#{i1.193}">검색구분</label></div>
+                    <div class="form-conts">
+                        <select id="searchCnd" name="searchCnd" class="krds-form-select">
+                            <option value="1" th:text="#{i1.217}">제목</option>
+                            <option value="2" th:text="#{i1.218}">내용</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="form-tit"><label for="searchWrd" th:text="#{search.keyword}">검색어</label></div>
+                    <div class="form-conts"><input type="text" id="searchWrd" name="searchWrd" class="krds-input"
+                           th:placeholder="#{search.keyword.placeholder}" placeholder="검색어를 입력하세요" maxlength="100"/></div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="krds-btn primary medium w-100"><i class="bi bi-search"></i> <span th:text="#{button.search}">검색</span></button>
+            </div>
+        </div>
+    </form>
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="text-muted small"><span th:text="#{list.total}">전체</span>
+            <strong th:text="${resultCnt != null ? resultCnt : 0}">0</strong>
+            <span th:text="#{list.count.unit}">건</span></span>
+    </div>
+
+    <div class="krds-table-wrap">
+        <table class="tbl">
+            <thead>
+            <tr>
+                <th scope="col" style="width:70px;" th:text="#{list.seq}">순번</th>
+                <th scope="col" th:text="#{i1.219}">알림 제목</th>
+                <th scope="col" style="width:180px;" th:text="#{i1.220}">알림 시각</th>
+                <th scope="col" style="width:150px;" th:text="#{i1.221}">반복 간격</th>
+                <th scope="col" style="width:120px;" th:text="#{common.regdate}">등록일</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item,stat : ${resultList}">
+                <td class="text-center" th:text="${stat.count}">1</td>
+                <td th:text="${item.ntfcSj}">제목</td>
+                <td class="text-center" th:text="${item.ntfcTime}">알림시각</td>
+                <td class="text-center" th:text="${item.bhNtfcIntrvlString}">간격</td>
+                <td class="text-center" th:text="${item.frstRegisterPnttm}">등록일</td>
+            </tr>
+            <tr th:if="${resultList == null or #lists.isEmpty(resultList)}">
+                <td colspan="5" class="text-center text-muted py-4" th:text="#{i1.222}">등록된 알림이 없습니다.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-end mt-2" sec:authorize="isAuthenticated()">
+        <a class="krds-btn primary small" th:href="@{/uss/ion/noi/registNotificationView.do}"><i class="bi bi-plus-lg"></i> <span th:text="#{i1.60}">등록</span></a>
+    </div>
+
+</div>
+</main>
+</body>
+</html>

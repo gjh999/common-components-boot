@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head>
+    <title th:text="${brdMstrVO != null} ? ${brdMstrVO.bbsNm} : #{bbs.mngTitle}">게시판 관리</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{nav.home}">홈</a></li>
+                <li class="breadcrumb-item" th:text="#{bbs.mngTitle}">게시판 관리</li>
+                <li class="breadcrumb-item active" th:text="${brdMstrVO != null} ? ${brdMstrVO.bbsNm} : #{bbs.default}">게시판</li>
+            </ol>
+        </nav>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h4 mb-0" th:text="${brdMstrVO != null} ? ${brdMstrVO.bbsNm} : #{bbs.mngTitle}">게시판 관리</h1>
+        </div>
+
+        <!-- 검색 영역 (KRDS 폼) — 포털 목록 UI 패리티 -->
+        <form th:action="@{/cop/bbs/admin/selectBoardList.do}" method="get" class="search-bar krds-search mb-3">
+            <input type="hidden" name="bbsId" th:value="${boardVO != null ? boardVO.bbsId : (brdMstrVO != null ? brdMstrVO.bbsId : '')}"/>
+            <div class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <div class="form-tit"><label for="searchCnd" th:text="#{bbs.search.cnd}">검색구분</label></div>
+                        <div class="form-conts">
+                            <select id="searchCnd" name="searchCnd" class="krds-form-select" th:title="#{bbs.search.cnd.select}" title="검색구분 선택">
+                                <option value="0" th:selected="${boardVO != null and boardVO.searchCnd == '0'}" th:text="#{bbs.search.cnd.title}">제목</option>
+                                <option value="1" th:selected="${boardVO != null and boardVO.searchCnd == '1'}" th:text="#{bbs.search.cnd.content}">내용</option>
+                                <option value="2" th:selected="${boardVO != null and boardVO.searchCnd == '2'}" th:text="#{bbs.search.cnd.writer}">작성자</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="form-tit"><label for="searchWrd" th:text="#{bbs.search.wrd}">검색어</label></div>
+                        <div class="form-conts">
+                            <input type="text" id="searchWrd" name="searchWrd" class="krds-input"
+                                   th:value="${boardVO != null ? boardVO.searchWrd : ''}" th:placeholder="#{bbs.search.wrd.ph}" placeholder="검색어를 입력하세요" maxlength="100"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="krds-btn primary medium w-100"><i class="bi bi-search"></i> <span th:text="#{button.search}">검색</span></button>
+                </div>
+            </div>
+        </form>
+
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="text-muted small"><span th:text="#{common.total}">총</span> <strong th:text="${resultCnt}">0</strong> <span th:text="#{common.unit.case}">건</span></span>
+        </div>
+
+        <div class="krds-table-wrap">
+        <table class="tbl">
+            <thead>
+            <tr>
+                <th scope="col" style="width:80px;" th:text="#{common.no}">번호</th>
+                <th scope="col" th:text="#{common.title}">제목</th>
+                <th scope="col" style="width:120px;" th:text="#{common.writer}">작성자</th>
+                <th scope="col" style="width:160px;" th:text="#{common.regdate}">등록일</th>
+                <th scope="col" style="width:80px;" th:text="#{common.views}">조회</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${resultList}">
+                <td class="text-center" th:text="${item.nttNo}">1</td>
+                <td>
+                    <a class="text-decoration-none"
+                       th:href="@{/cop/bbs/admin/selectBoardArticle.do(bbsId=${item.bbsId},nttId=${item.nttId})}"
+                       th:text="${item.nttSj}">제목</a>
+                </td>
+                <td class="text-center" th:text="${item.ntcrNm} ?: #{bbs.admin}">작성자</td>
+                <td class="text-center" th:text="${item.frstRegisterPnttm}">등록일</td>
+                <td class="text-center" th:text="${item.inqireCo ?: 0}">0</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(resultList)}">
+                <td colspan="5" class="text-center text-muted py-4" th:text="#{bbs.empty.article}">등록된 게시물이 없습니다.</td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+
+        <div class="text-end" sec:authorize="isAuthenticated()">
+            <a class="krds-btn primary small"
+               th:href="@{/cop/bbs/admin/addBoardArticle.do(bbsId=${boardVO != null ? boardVO.bbsId : ''})}">
+                <i class="bi bi-pencil-square"></i> <span th:text="#{bbs.write}">글쓰기</span>
+            </a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

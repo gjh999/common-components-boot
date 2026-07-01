@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{i2.8}">행사 신청 관리</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:900px;">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/uss/ion/evt/EgovEventReqstManageList.do}" th:text="#{i2.8}">행사 신청 관리</a></li>
+        <li class="breadcrumb-item active" th:text="#{button.regist}">등록</li>
+    </ol></nav>
+    <h1 class="h4 mb-3"><i class="bi bi-calendar-event"></i> <span th:text="#{i2.8}">행사 신청 관리</span> - <span th:text="#{button.regist}">등록</span></h1>
+
+    <form th:action="@{/uss/ion/evt/insertEventManage.do}" method="post" th:object="${eventManage}">
+        <fieldset class="krds-form-section">
+            <legend class="krds-form-section-title" th:text="#{i2.9}">행사명</legend>
+            <div class="row g-3">
+                <div class="col-md-8"><label class="form-label"><span th:text="#{i2.9}">행사명</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="text" th:field="*{eventNm}" maxlength="60" required/></div>
+                <div class="col-md-4"><label class="form-label"><span th:text="#{c4.11}">행사 구분</span> <span class="frm-rq">*</span></label>
+                    <select class="krds-form-select" th:field="*{eventSe}" required>
+                        <option value="" th:text="#{c4.10}">선택</option>
+                        <option th:each="c : ${eventSeCode}" th:value="${c.code}" th:text="${c.codeNm}">구분</option>
+                    </select></div>
+                <div class="col-12"><label class="form-label"><span th:text="#{c4.12}">행사 목적</span> <span class="frm-rq">*</span></label>
+                    <textarea class="krds-input" th:field="*{eventPurps}" rows="3" maxlength="200" required></textarea></div>
+                <div class="col-md-6"><label class="form-label"><span th:text="#{i2.10}">시작일</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="date" th:field="*{eventBeginDe}" required/></div>
+                <div class="col-md-6"><label class="form-label"><span th:text="#{i2.11}">종료일</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="date" th:field="*{eventEndDe}" required/></div>
+                <div class="col-md-6"><label class="form-label"><span th:text="#{c4.13}">주최기관</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="text" th:field="*{eventAuspcInsttNm}" maxlength="60" required/></div>
+                <div class="col-md-6"><label class="form-label"><span th:text="#{i2.13}">주관기관</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="text" th:field="*{eventMngtInsttNm}" maxlength="60" required/></div>
+                <div class="col-12"><label class="form-label"><span th:text="#{i2.12}">장소</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="text" th:field="*{eventPlace}" maxlength="200" required/></div>
+                <div class="col-12"><label class="form-label"><span th:text="#{c4.14}">행사 내용</span> <span class="frm-rq">*</span></label>
+                    <textarea class="krds-input" th:field="*{eventCn}" rows="6" maxlength="1000" required></textarea></div>
+                <div class="col-md-4"><label class="form-label"><span th:text="#{c4.15}">비용발생 여부</span> <span class="frm-rq">*</span></label>
+                    <select class="krds-form-select" th:field="*{ctOccrrncAt}" required>
+                        <option value="Y" th:text="#{c4.23}">발생</option>
+                        <option value="N" th:text="#{c4.24}">미발생</option>
+                    </select></div>
+                <div class="col-md-4"><label class="form-label"><span th:text="#{c4.16}">참가비용</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="number" min="0" th:field="*{partcptCt}" required/></div>
+                <div class="col-md-4"><label class="form-label"><span th:text="#{c4.17}">정원</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="number" min="0" th:field="*{psncpa}" required/></div>
+                <div class="col-12"><label class="form-label" th:text="#{c4.18}">참조 URL</label>
+                    <input class="krds-input" type="text" th:field="*{refrnUrl}" maxlength="500"/></div>
+                <div class="col-md-6"><label class="form-label"><span th:text="#{c4.19}">접수 시작일</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="date" th:field="*{rceptBeginDe}" required/></div>
+                <div class="col-md-6"><label class="form-label"><span th:text="#{c4.20}">접수 종료일</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="date" th:field="*{rceptEndDe}" required/></div>
+            </div>
+        </fieldset>
+        <div class="form-actions d-flex justify-content-between align-items-center">
+            <a class="krds-btn tertiary" th:href="@{/uss/ion/evt/EgovEventReqstManageList.do}" th:text="#{button.cancel}">취소</a>
+            <button class="krds-btn primary" type="submit"><i class="bi bi-check-lg"></i> <span th:text="#{button.regist}">등록</span></button>
+        </div>
+    </form>
+</div>
+</main>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 상담 관리(uss/olp/cns) — COMTNCNSLTLIST → TB_CNSLT_LIST 표준화(HSQL, 직원/조직 조인 단순화) -->
+<mapper namespace="CnsltManageDAO">
+
+    <sql id="cnsltCols">
+        A.CNSLT_ID AS cnsltId, A.CNSLT_SJ AS cnsltSj, A.CNSLT_CN AS cnsltCn, A.OTHBC_AT AS othbcAt,
+        A.EMAIL_ADRES AS emailAdres, A.EMAIL_ANSWER_AT AS emailAnswerAt, A.AREA_NO AS areaNo,
+        A.FRST_REGISTER_ID AS frstRegisterId, TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS frstRegisterPnttm,
+        (SELECT M.USER_NM FROM VW_USER_MASTER M WHERE M.ESNTL_ID = A.FRST_REGISTER_ID) AS emplyrNm
+    </sql>
+
+    <sql id="cnsltSearch">
+        <if test="searchKeyword != null and searchKeyword != ''">AND A.CNSLT_SJ LIKE CONCAT(CONCAT('%', #{searchKeyword}),'%')</if>
+    </sql>
+
+    <select id="selectCnsltList" parameterType="egovframework.com.uss.olp.cns.service.CnsltManageDefaultVO" resultType="egovframework.com.uss.olp.cns.service.CnsltManageVO">
+        SELECT <include refid="cnsltCols"/>
+        FROM TB_CNSLT_LIST A WHERE 1=1
+        <include refid="cnsltSearch"/>
+        ORDER BY A.FRST_REGIST_PNTTM DESC
+        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+    </select>
+
+    <select id="selectCnsltListTotCnt" parameterType="egovframework.com.uss.olp.cns.service.CnsltManageDefaultVO" resultType="int">
+        SELECT COUNT(*) FROM TB_CNSLT_LIST A WHERE 1=1
+        <include refid="cnsltSearch"/>
+    </select>
+
+    <select id="selectCnsltListDetail" parameterType="egovframework.com.uss.olp.cns.service.CnsltManageVO" resultType="egovframework.com.uss.olp.cns.service.CnsltManageVO">
+        SELECT <include refid="cnsltCols"/>, A.CNSLT_CN AS answerCn FROM TB_CNSLT_LIST A WHERE A.CNSLT_ID = #{cnsltId}
+    </select>
+
+    <select id="selectCnsltAnswerList" parameterType="egovframework.com.uss.olp.cns.service.CnsltManageVO" resultType="egovframework.com.uss.olp.cns.service.CnsltManageVO">
+        SELECT <include refid="cnsltCols"/> FROM TB_CNSLT_LIST A WHERE A.CNSLT_ID = #{cnsltId}
+    </select>
+
+    <insert id="insertCnsltDtls" parameterType="egovframework.com.uss.olp.cns.service.CnsltManageVO">
+        INSERT INTO TB_CNSLT_LIST (CNSLT_ID, CNSLT_SJ, CNSLT_CN, OTHBC_AT, EMAIL_ADRES, EMAIL_ANSWER_AT, AREA_NO, FRST_REGISTER_ID, FRST_REGIST_PNTTM)
+        VALUES (#{cnsltId}, #{cnsltSj}, #{cnsltCn}, #{othbcAt}, #{emailAdres}, #{emailAnswerAt}, #{areaNo}, #{frstRegisterId}, CURRENT_TIMESTAMP)
+    </insert>
+
+    <update id="updateCnsltInqireCo" parameterType="egovframework.com.uss.olp.cns.service.CnsltManageVO">
+        UPDATE TB_CNSLT_LIST SET LAST_UPDT_PNTTM = CURRENT_TIMESTAMP WHERE CNSLT_ID = #{cnsltId}
+    </update>
+
+    <update id="updateCnsltDtls" parameterType="egovframework.com.uss.olp.cns.service.CnsltManageVO">
+        UPDATE TB_CNSLT_LIST SET CNSLT_SJ = #{cnsltSj}, CNSLT_CN = #{cnsltCn}, OTHBC_AT = #{othbcAt},
+               LAST_UPDUSR_ID = #{lastUpdusrId}, LAST_UPDT_PNTTM = CURRENT_TIMESTAMP WHERE CNSLT_ID = #{cnsltId}
+    </update>
+
+    <delete id="deleteCnsltDtls" parameterType="egovframework.com.uss.olp.cns.service.CnsltManageVO">
+        DELETE FROM TB_CNSLT_LIST WHERE CNSLT_ID = #{cnsltId}
+    </delete>
+
+</mapper>

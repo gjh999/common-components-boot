@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{i2.64}">회의실 관리</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:820px;">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/uss/ion/mtg/selectMtgPlaceManageList.do}" th:text="#{i2.64}">회의실 관리</a></li>
+        <li class="breadcrumb-item active" th:text="${mtgPlaceManageVO.mtgPlaceNm}">상세</li>
+    </ol></nav>
+    <h1 class="h4 mb-3"><i class="bi bi-easel"></i> <span th:text="${mtgPlaceManageVO.mtgPlaceNm}">회의실명</span></h1>
+
+    <div class="krds-table-wrap">
+        <table class="tbl col">
+            <tbody>
+            <tr><th scope="row" style="width:140px;" th:text="#{i2.65}">회의실명</th><td th:text="${mtgPlaceManageVO.mtgPlaceNm}">회의실명</td></tr>
+            <tr><th scope="row" th:text="#{c1.8}">위치구분</th><td th:text="${mtgPlaceManageVO.lcSe}">위치구분</td></tr>
+            <tr><th scope="row" th:text="#{i2.66}">위치</th><td th:text="${mtgPlaceManageVO.lcDetail}">위치</td></tr>
+            <tr><th scope="row" th:text="#{i2.67}">수용인원</th><td><span th:text="${mtgPlaceManageVO.aceptncPosblNmpr}">0</span><span th:text="#{i2.31}">명</span></td></tr>
+            <tr><th scope="row" th:text="#{i2.68}">운영시간</th><td><span th:text="${mtgPlaceManageVO.opnBeginTm}">0800</span> ~ <span th:text="${mtgPlaceManageVO.opnEndTm}">2000</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-actions d-flex justify-content-between align-items-center">
+        <a class="krds-btn tertiary" th:href="@{/uss/ion/mtg/selectMtgPlaceManageList.do}" th:text="#{button.list}">목록</a>
+        <div class="d-flex gap-2">
+            <form th:action="@{/uss/ion/mtg/deleteMtgPlaceManage.do}" method="post" onsubmit="return confirm('삭제하시겠습니까?');" style="display:inline;">
+                <input type="hidden" name="mtgPlaceId" th:value="${mtgPlaceManageVO.mtgPlaceId}"/>
+                <input type="hidden" name="atchFileId" th:value="${mtgPlaceManageVO.atchFileId}"/>
+                <button class="krds-btn danger" type="submit"><i class="bi bi-trash"></i> <span th:text="#{button.delete}">삭제</span></button>
+            </form>
+            <a class="krds-btn primary" th:href="@{/uss/ion/mtg/selectMtgPlaceManage.do(mtgPlaceId=${mtgPlaceManageVO.mtgPlaceId},cmd='update')}"><i class="bi bi-pencil"></i> <span th:text="#{button.modify}">수정</span></a>
+        </div>
+    </div>
+</div>
+</main>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head>
+    <title th:text="#{i1.37}">도로명주소 연계</title>
+    <th:block layout:fragment="head-css">
+    <style>
+        .adr-wrap{ max-width:920px; margin:0 auto; }
+        .adr-note{ background:rgba(79,107,255,.10); border:1px solid rgba(79,107,255,.3); border-radius:12px; padding:.9rem 1.1rem; font-size:.88rem; color:var(--t-muted,#aab1d6); margin:0 0 1.1rem; line-height:1.6; }
+        .adr-result td, .adr-result th{ font-size:.9rem; }
+        .adr-empty{ text-align:center; color:var(--t-muted,#aab1d6); padding:1.6rem 0; }
+    </style>
+    </th:block>
+</head>
+<body>
+<main layout:fragment="content">
+<div class="container adr-wrap">
+
+    <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/examples}" th:text="#{cat.crumb}">공통컴포넌트 예제</a></li>
+            <li class="breadcrumb-item active" th:text="#{i1.37}">도로명주소 연계</li>
+        </ol>
+    </nav>
+
+    <h1 class="h4 mb-3"><i class="bi bi-mailbox"></i> <span th:text="#{i1.37}">도로명주소 연계</span></h1>
+
+    <div class="adr-note">
+        <i class="bi bi-info-circle"></i> <span th:utext="#{i1.38}">행정안전부 <strong>도로명주소 안내시스템 Open API</strong>(juso.go.kr)를 연계하는 공통컴포넌트입니다.
+        실제 주소 검색에는 <strong>승인키(confmKey)</strong> 발급이 필요합니다
+        (<a href="https://business.juso.go.kr" target="_blank" rel="noopener">business.juso.go.kr</a>에서 신청).
+        아래는 KRDS로 전환한 검색 화면 예시이며, 승인키 입력 시 동작합니다.</span>
+    </div>
+
+    <!-- 검색 폼 (KRDS) -->
+    <form id="adrForm" class="search-bar krds-search mb-3" onsubmit="return false;">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <div class="form-tit"><label for="confmKey" th:text="#{i1.39}">승인키(confmKey)</label></div>
+                    <div class="form-conts"><input type="text" id="confmKey" class="krds-input" placeholder="발급받은 승인키" th:placeholder="#{i1.40}"/></div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="form-tit"><label for="keyword" th:text="#{i1.41}">검색어(도로명/지번/건물명)</label></div>
+                    <div class="form-conts"><input type="text" id="keyword" class="krds-input" placeholder="예) 세종대로 110" th:placeholder="#{i1.42}" maxlength="100"/></div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button type="button" id="adrSearchBtn" class="krds-btn primary medium w-100"><i class="bi bi-search"></i> <span th:text="#{i1.43}">주소 검색</span></button>
+            </div>
+        </div>
+    </form>
+
+    <div class="krds-table-wrap">
+        <table class="tbl adr-result">
+            <thead>
+            <tr>
+                <th scope="col" style="width:120px;" th:text="#{i1.44}">우편번호</th>
+                <th scope="col" th:text="#{i1.45}">도로명주소</th>
+                <th scope="col" th:text="#{i1.46}">지번주소</th>
+            </tr>
+            </thead>
+            <tbody id="adrResultBody">
+            <tr><td colspan="3" class="adr-empty" th:utext="#{i1.47}">승인키와 검색어를 입력하고 <strong>주소 검색</strong>을 눌러주세요.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</main>
+
+<th:block layout:fragment="body-js">
+<script th:inline="javascript">
+(function () {
+    var ctx = /*[[@{/}]]*/ '/';
+    var btn = document.getElementById('adrSearchBtn');
+    var body = document.getElementById('adrResultBody');
+    function esc(s){ return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function render(rows){
+        if(!rows || !rows.length){ body.innerHTML = '<tr><td colspan="3" class="adr-empty">검색 결과가 없습니다.</td></tr>'; return; }
+        body.innerHTML = rows.map(function(r){
+            return '<tr><td class="text-center">'+esc(r.zip)+'</td><td>'+esc(r.road)+'</td><td>'+esc(r.jibun)+'</td></tr>';
+        }).join('');
+    }
+    btn.addEventListener('click', function(){
+        var key = document.getElementById('confmKey').value.trim();
+        var kw  = document.getElementById('keyword').value.trim();
+        if(!key){ alert('승인키(confmKey)를 입력하세요.'); return; }
+        if(!kw){ alert('검색어를 입력하세요.'); return; }
+        body.innerHTML = '<tr><td colspan="3" class="adr-empty">검색 중...</td></tr>';
+        var url = ctx + 'sym/adr/getAdressCntcApi.do?currentPage=1&countPerPage=20&confmKey='
+                + encodeURIComponent(key) + '&keyword=' + encodeURIComponent(kw);
+        fetch(url, { credentials:'same-origin' })
+            .then(function(res){ return res.text(); })
+            .then(function(xmlStr){
+                var doc = new DOMParser().parseFromString(xmlStr, 'text/xml');
+                var err = doc.querySelector('errorCode');
+                if(err && err.textContent !== '0'){
+                    var msg = doc.querySelector('errorMessage');
+                    body.innerHTML = '<tr><td colspan="3" class="adr-empty">'+esc(msg?msg.textContent:'조회 오류')+'</td></tr>';
+                    return;
+                }
+                var items = doc.querySelectorAll('juso');
+                var rows = [];
+                items.forEach(function(j){
+                    rows.push({
+                        zip: (j.querySelector('zipNo')||{}).textContent || '',
+                        road: (j.querySelector('roadAddr')||{}).textContent || '',
+                        jibun: (j.querySelector('jibunAddr')||{}).textContent || ''
+                    });
+                });
+                render(rows);
+            })
+            .catch(function(){ body.innerHTML = '<tr><td colspan="3" class="adr-empty">연계 호출에 실패했습니다.</td></tr>'; });
+    });
+})();
+</script>
+</th:block>
+</body>
+</html>

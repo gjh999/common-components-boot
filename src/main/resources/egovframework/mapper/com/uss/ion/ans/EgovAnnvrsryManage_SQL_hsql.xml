@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 기념일관리(uss/ion/ans) — COMTNANNVRSRYMANAGE → TB_ANNVRSRY_MANAGE 표준화(HSQL) -->
+<mapper namespace="annvrsryManageDAO">
+
+    <sql id="ansCols">
+        A.ANNVRSRY_ID AS annId, A.USER_ID AS usid, A.ANNVRSRY_SE AS annvrsrySe, A.ANNVRSRY_NM AS annvrsryNm,
+        A.ANNVRSRY AS annvrsryDe, A.CLDR_SE AS cldrSe, A.ANNVRSRY_NTCN_SETUP AS annvrsrySetup,
+        A.ANNVRSRY_NTCN_BGNDE AS annvrsryBeginDe, A.MEMO AS memo, A.REPTIT_AT AS reptitSe,
+        A.FRST_REGISTER_ID AS frstRegisterId, TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS frstRegisterPnttm
+    </sql>
+
+    <sql id="ansSearch">
+        <if test="searchKeyword != null and searchKeyword != ''">AND A.ANNVRSRY_NM LIKE CONCAT(CONCAT('%', #{searchKeyword}),'%')</if>
+    </sql>
+
+    <select id="selectAnnvrsryManageList" parameterType="egovframework.com.uss.ion.ans.service.AnnvrsryManageVO" resultType="egovframework.com.uss.ion.ans.service.AnnvrsryManageVO">
+        SELECT <include refid="ansCols"/>
+        FROM TB_ANNVRSRY_MANAGE A WHERE 1=1
+        <include refid="ansSearch"/>
+        ORDER BY A.ANNVRSRY
+        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+    </select>
+
+    <select id="selectAnnvrsryManageListTotCnt" parameterType="egovframework.com.uss.ion.ans.service.AnnvrsryManageVO" resultType="int">
+        SELECT COUNT(*) FROM TB_ANNVRSRY_MANAGE A WHERE 1=1
+        <include refid="ansSearch"/>
+    </select>
+
+    <select id="selectAnnvrsryGdcc" parameterType="egovframework.com.uss.ion.ans.service.AnnvrsryManageVO" resultType="egovframework.com.uss.ion.ans.service.AnnvrsryManageVO">
+        SELECT <include refid="ansCols"/> FROM TB_ANNVRSRY_MANAGE A WHERE A.REPTIT_AT = 'Y' ORDER BY A.ANNVRSRY
+    </select>
+
+    <select id="selectAnnvrsryManage" parameterType="egovframework.com.uss.ion.ans.service.AnnvrsryManageVO" resultType="egovframework.com.uss.ion.ans.service.AnnvrsryManageVO">
+        SELECT <include refid="ansCols"/> FROM TB_ANNVRSRY_MANAGE A WHERE A.ANNVRSRY_ID = #{annId}
+    </select>
+
+    <select id="selectAnnvrsryManageDplctAt" parameterType="egovframework.com.uss.ion.ans.service.AnnvrsryManage" resultType="int">
+        SELECT COUNT(*) FROM TB_ANNVRSRY_MANAGE WHERE ANNVRSRY_NM = #{annvrsryNm} AND ANNVRSRY = #{annvrsryDe}
+    </select>
+
+    <insert id="insertAnnvrsryManage" parameterType="egovframework.com.uss.ion.ans.service.AnnvrsryManage">
+        INSERT INTO TB_ANNVRSRY_MANAGE (ANNVRSRY_ID, USER_ID, ANNVRSRY_SE, ANNVRSRY_NM, ANNVRSRY, CLDR_SE, ANNVRSRY_NTCN_SETUP, ANNVRSRY_NTCN_BGNDE, MEMO, REPTIT_AT, FRST_REGISTER_ID, FRST_REGIST_PNTTM)
+        VALUES (#{annId}, #{usid}, #{annvrsrySe}, #{annvrsryNm}, #{annvrsryDe}, #{cldrSe}, #{annvrsrySetup}, #{annvrsryBeginDe}, #{memo}, #{reptitSe}, #{frstRegisterId}, CURRENT_TIMESTAMP)
+    </insert>
+
+    <update id="updateAnnvrsryManage" parameterType="egovframework.com.uss.ion.ans.service.AnnvrsryManage">
+        UPDATE TB_ANNVRSRY_MANAGE SET ANNVRSRY_SE = #{annvrsrySe}, ANNVRSRY_NM = #{annvrsryNm}, ANNVRSRY = #{annvrsryDe},
+               CLDR_SE = #{cldrSe}, MEMO = #{memo}, REPTIT_AT = #{reptitSe}, LAST_UPDUSR_ID = #{lastUpdusrId}, LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
+        WHERE ANNVRSRY_ID = #{annId}
+    </update>
+
+    <delete id="deleteAnnvrsryManage" parameterType="egovframework.com.uss.ion.ans.service.AnnvrsryManage">
+        DELETE FROM TB_ANNVRSRY_MANAGE WHERE ANNVRSRY_ID = #{annId}
+    </delete>
+
+</mapper>

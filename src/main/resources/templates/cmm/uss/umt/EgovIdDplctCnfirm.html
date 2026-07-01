@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="#{mber.iddupl.title}">아이디 중복확인</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap-icons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/krds/resources/cdn/krds.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/common.css}"/>
+    <link rel="stylesheet" th:href="@{/css/krds-compat.css}"/>
+    <link rel="stylesheet" th:href="@{/css/krds.css}"/>
+    <link rel="stylesheet" th:href="@{/css/popup.css}"/>
+</head>
+<body>
+  <div class="popup-wrap">
+    <div class="popup-head"><i class="bi bi-person-check"></i>
+        <h1 th:text="#{mber.iddupl.title}">아이디 중복확인</h1></div>
+
+    <form class="popup-search" th:action="@{/uss/umt/cmm/EgovIdDplctCnfirm.do}" method="post" name="checkForm">
+        <input class="krds-input" type="text" id="checkId" name="checkId"
+               th:value="${checkId}" maxlength="20" placeholder="사용할 아이디" th:title="#{mber.iddupl.useId}" title="사용할 아이디" required autofocus/>
+        <button class="krds-btn primary small" type="submit"><i class="bi bi-search"></i> <span th:text="#{button.inquiry}">조회</span></button>
+    </form>
+
+    <div th:with="cnt=${usedCnt != null ? #strings.toString(usedCnt) : '-1'}">
+        <div class="alert alert-secondary" th:if="${cnt == '-1'}" th:text="#{mber.iddupl.run}">중복확인을 실행하십시오.</div>
+        <div class="alert alert-success d-flex align-items-center justify-content-between" th:if="${cnt == '0'}">
+            <span><strong th:text="${checkId}">아이디</strong> <span th:text="#{mber.iddupl.available1}"> 는 사용가능한 아이디입니다.</span></span>
+            <button type="button" class="krds-btn primary small" id="btnUse" th:text="#{mber.iddupl.use}">사용</button>
+        </div>
+        <div class="alert alert-danger" th:if="${cnt != '-1' and cnt != '0'}">
+            <strong th:text="${checkId}">아이디</strong> <span th:text="#{mber.iddupl.unavailable1}"> 는 사용할 수 없는 아이디입니다.</span></div>
+    </div>
+
+    <div class="popup-foot">
+        <button class="krds-btn tertiary small" type="button" onclick="window.close();" th:text="#{button.close}">닫기</button>
+    </div>
+  </div>
+  <script th:inline="javascript">
+    /* 결과가 이미 렌더된 상태인지(중복확인 POST 이후). View는 usedCnt='-1'(미조회)로 넘어옴 */
+    var CHECKED = /*[[${usedCnt != null and #strings.toString(usedCnt) != '-1'}]]*/ false;
+    /* 가입화면에서 ?checkId= 로 넘어온 값 프리필 + 즉시 조회(재클릭 불필요) */
+    (function () {
+        var input = document.getElementById('checkId');
+        var urlCheckId = new URLSearchParams(window.location.search).get('checkId');
+        if (input && !input.value && urlCheckId) { input.value = urlCheckId; }
+        /* URL로 아이디가 넘어왔고 아직 조회 전이면 자동으로 중복확인 실행 */
+        if (!CHECKED && urlCheckId && urlCheckId.trim() !== '' && input && input.value.trim() !== '') {
+            document.forms['checkForm'].submit();
+        }
+    })();
+    var useBtn = document.getElementById('btnUse');
+    if (useBtn) {
+        useBtn.addEventListener('click', function () {
+            var id = [[${checkId}]];
+            try {
+                if (window.opener && !window.opener.closed) {
+                    var d = window.opener.document;
+                    /* 개인(mberId)·기업(entrprsMberId)·업무사용자(emplyrId) 폼 필드 모두 대응 */
+                    ['mberId', 'entrprsMberId', 'emplyrId', 'userId'].forEach(function (f) {
+                        if (d.getElementById(f)) { d.getElementById(f).value = id; }
+                    });
+                    if (typeof window.opener.showModalDialogCallback === 'function') {
+                        window.opener.showModalDialogCallback(id);
+                    }
+                    if (typeof window.opener.fnIdCheckReturn === 'function') {
+                        window.opener.fnIdCheckReturn(id);
+                    }
+                }
+            } catch (e) {}
+            window.close();
+        });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head>
+    <title th:text="#{cat.title}">공통컴포넌트 예제 카탈로그</title>
+    <th:block layout:fragment="head-css">
+    <style>
+        .cat-wrap{ max-width:1140px; margin:0 auto; }
+        .cat-intro{ margin:.25rem 0 1.5rem; }
+        .cat-intro h1{ font-size:1.7rem; font-weight:800; margin:0 0 .4rem; }
+        .cat-intro p{ color:var(--t-muted,#58616A); font-size:.96rem; margin:0; line-height:1.6; }
+        .cat-section{ margin:1.6rem 0; }
+        .cat-section > h2{ font-size:1.18rem; font-weight:700; margin:0 0 .9rem; padding-left:.6rem; border-left:4px solid #4f6bff; line-height:1.3; display:flex; align-items:center; gap:.5rem; }
+        .cat-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:14px; }
+        .cat-card{ display:flex; flex-direction:column; gap:.45rem; padding:1.1rem 1.2rem; border:1px solid var(--t-line, rgba(255,255,255,.1)); border-radius:14px;
+                   background:rgba(255,255,255,.04); text-decoration:none; transition:all .18s ease; }
+        .cat-card:hover{ background:rgba(79,107,255,.14); border-color:rgba(79,107,255,.5); transform:translateY(-2px); }
+        .cat-card .t{ font-weight:700; font-size:1rem; color:var(--t-text,#e7ebff); display:flex; align-items:center; gap:.4rem; }
+        .cat-card .d{ font-size:.85rem; color:var(--t-muted,#aab1d6); line-height:1.5; }
+        .cat-card .go{ margin-top:auto; font-size:.82rem; color:#9ab4ff; font-weight:600; }
+        .cat-badge{ display:inline-block; font-size:.72rem; font-weight:700; padding:1px 8px; border-radius:999px; background:rgba(79,107,255,.22); color:#cdd9ff; }
+    </style>
+    </th:block>
+</head>
+<body>
+<main layout:fragment="content">
+<div class="container cat-wrap">
+
+    <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{common.home}">홈</a></li>
+            <li class="breadcrumb-item active" th:text="#{cat.crumb}">공통컴포넌트 예제</li>
+        </ol>
+    </nav>
+
+    <div class="cat-intro">
+        <h1><i class="bi bi-grid-3x3-gap-fill"></i> <span th:text="#{cat.title}">공통컴포넌트 예제 카탈로그</span></h1>
+        <p th:utext="#{cat.intro.desc}">전자정부 표준프레임워크 공통컴포넌트를 <strong>Spring Boot + Thymeleaf + KRDS</strong>로 제공합니다.
+           각 카드를 클릭하면 실제 동작 화면으로 이동합니다.</p>
+    </div>
+
+    <!-- 사용 안내 배너 -->
+    <div class="cat-notice" style="display:flex; flex-wrap:wrap; align-items:center; gap:.8rem; padding:.9rem 1.1rem; margin:0 0 1.4rem; border:1px solid rgba(79,107,255,.35); border-radius:12px; background:rgba(79,107,255,.08);">
+        <span style="font-weight:700;"><i class="bi bi-unlock"></i> <span th:text="#{cat.notice.badge}">로그인 없이 사용</span></span>
+        <span style="color:var(--t-muted,#aab1d6); font-size:.9rem; flex:1 1 320px;" th:utext="#{cat.notice.desc}"><strong>로그인 없이 모든 예제</strong>를 바로 둘러볼 수 있습니다(익명 접근). 실제 DB와 연동되어 목록·검색·페이징이 동작합니다.</span>
+        <a th:href="@{/examples/guide}" class="krds-btn primary small" style="white-space:nowrap;"><i class="bi bi-info-circle"></i> <span th:text="#{cat.notice.guide}">사용 안내 · 구현 가이드</span></a>
+    </div>
+
+    <!-- 카탈로그 실시간 검색 필터 -->
+    <div style="margin:0 0 1.6rem;">
+        <div style="position:relative; max-width:520px;">
+            <i class="bi bi-search" style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--t-muted,#aab1d6);"></i>
+            <input type="text" id="catFilter" th:placeholder="#{cat.search.ph}" placeholder="컴포넌트 이름·설명으로 검색 (예: 게시판, 통계, 메일)" autocomplete="off"
+                   style="width:100%; height:48px; padding:0 1rem 0 2.6rem; border-radius:12px; border:1px solid var(--t-line-strong, rgba(255,255,255,.18)); background:rgba(255,255,255,.05); color:var(--t-text,#e7ebff); font-size:.98rem;"/>
+        </div>
+        <div id="catFilterEmpty" style="display:none; color:var(--t-muted,#aab1d6); padding:1.2rem 0;" th:text="#{cat.search.empty}">검색 결과가 없습니다.</div>
+    </div>
+
+    <!-- 게시판/콘텐츠 -->
+    <section class="cat-section">
+        <h2><i class="bi bi-card-list"></i> <span th:text="#{cat.sec.board}">게시판 · 콘텐츠</span></h2>
+        <div class="cat-grid">
+            <a class="cat-card" th:href="@{/cop/bbs/selectBoardList.do(bbsId='BBSMSTR_AAAAAAAAAAAA')}">
+                <span class="t"><i class="bi bi-megaphone"></i> <span th:text="#{cat.c1.t}">공지·게시판</span></span>
+                <span class="d" th:text="#{i1.61}">공지/갤러리/자료실 — 목록·상세·등록·수정·답글·첨부·논리삭제</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/cop/bbs/SelectBBSMasterInfs.do}">
+                <span class="t"><i class="bi bi-table"></i> <span th:text="#{cat.c2.t}">게시판마스터 관리</span></span>
+                <span class="d" th:text="#{i1.62}">게시판 생성·속성·사용정보 관리</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/cop/com/selectTemplateInfs.do}">
+                <span class="t"><i class="bi bi-file-earmark-code"></i> <span th:text="#{cat.c3.t}">템플릿 관리</span></span>
+                <span class="d" th:text="#{i1.63}">게시판 출력 템플릿</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/olh/faq/FaqListInqire.do}">
+                <span class="t"><i class="bi bi-question-circle"></i> <span th:text="#{cat.c4.t}">FAQ</span></span>
+                <span class="d" th:text="#{i1.64}">자주 묻는 질문 — 아코디언</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/olh/qna/QnaListInqire.do}">
+                <span class="t"><i class="bi bi-chat-dots"></i> <span th:text="#{cat.c5.t}">Q&amp;A</span></span>
+                <span class="d" th:text="#{i1.65}">묻고 답하기 — 작성자 본인 수정/관리자 답변</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/olp/qnn/EgovQustnrRespondInfoManageList.do}">
+                <span class="t"><i class="bi bi-clipboard-check"></i> <span th:text="#{cat.c6.t}">설문조사</span></span>
+                <span class="d" th:text="#{i1.66}">설문 참여·문항·응답·통계</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/bnr/selectBannerListView.do}">
+                <span class="t"><i class="bi bi-image"></i> <span th:text="#{cat.c7.t}">배너관리</span></span>
+                <span class="d" th:text="#{i1.67}">메인/팝업/푸터 배너 — 유형·게시기간·노출여부</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+        </div>
+    </section>
+
+    <!-- 회원/권한 -->
+    <section class="cat-section">
+        <h2><i class="bi bi-people"></i> <span th:text="#{cat.sec.member}">회원 · 권한</span></h2>
+        <div class="cat-grid">
+            <a class="cat-card" th:href="@{/uss/umt/mber/EgovMberManage.do}">
+                <span class="t"><i class="bi bi-person-gear"></i> <span th:text="#{cat.c8.t}">회원관리</span></span>
+                <span class="d" th:text="#{i1.68}">업무/일반/기업 3유형 통합조회·승인·삭제</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/umt/mypage.do}">
+                <span class="t"><i class="bi bi-person-vcard"></i> <span th:text="#{cat.c9.t}">마이페이지</span></span>
+                <span class="d" th:text="#{i1.69}">본인 회원정보 수정·비밀번호 변경(데모 사용자)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/umt/user/EgovUserManage.do}">
+                <span class="t"><i class="bi bi-person-badge"></i> <span th:text="#{cat.c10.t}">업무사용자관리</span></span>
+                <span class="d" th:text="#{i1.70}">업무사용자 등록·수정·ID중복확인</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/sec/ram/EgovAuthorListView.do}">
+                <span class="t"><i class="bi bi-shield-lock"></i> <span th:text="#{cat.c11.t}">권한관리</span></span>
+                <span class="d" th:text="#{i1.71}">권한 등록·롤 매핑</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/sec/rmt/EgovRoleListView.do}">
+                <span class="t"><i class="bi bi-shield-check"></i> <span th:text="#{cat.c12.t}">롤관리</span></span>
+                <span class="d" th:text="#{i1.72}">롤 등록·롤타입(url/method/pointcut)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/sec/gmt/EgovGroupListView.do}">
+                <span class="t"><i class="bi bi-diagram-3"></i> <span th:text="#{cat.c13.t}">그룹관리</span></span>
+                <span class="d" th:text="#{i1.73}">권한그룹 관리</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/cmm/user-types}">
+                <span class="t"><i class="bi bi-people-fill"></i> <span th:text="#{cat.c14.t}">사용자 구분 안내</span></span>
+                <span class="d" th:text="#{i1.74}">업무/일반/기업 구분·분기 예시</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+        </div>
+    </section>
+
+    <!-- 코드/메뉴/프로그램 -->
+    <section class="cat-section">
+        <h2><i class="bi bi-list-columns"></i> <span th:text="#{cat.sec.code}">코드 · 메뉴 · 프로그램</span></h2>
+        <div class="cat-grid">
+            <a class="cat-card" th:href="@{/sym/ccm/cca/EgovCcmCmmnCodeList.do}">
+                <span class="t"><i class="bi bi-upc-scan"></i> <span th:text="#{cat.c15.t}">공통코드관리</span></span>
+                <span class="d" th:text="#{i1.75}">분류→공통→상세코드 계층</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/sym/ccm/ccc/EgovCcmCmmnClCodeList.do}">
+                <span class="t"><i class="bi bi-diagram-2"></i> <span th:text="#{cat.c16.t}">공통분류코드</span></span>
+                <span class="d" th:text="#{i1.76}">분류코드 관리</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/sym/ccm/cde/EgovCcmCmmnDetailCodeList.do}">
+                <span class="t"><i class="bi bi-list-ol"></i> <span th:text="#{cat.c17.t}">공통상세코드</span></span>
+                <span class="d" th:text="#{i1.77}">상세코드 관리</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/sym/ccm/zip/EgovCcmZipList.do}">
+                <span class="t"><i class="bi bi-mailbox"></i> <span th:text="#{cat.c18.t}">우편번호</span></span>
+                <span class="d" th:text="#{i1.78}">우편번호 검색·관리</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/sym/mnu/mpm/EgovMenuManageSelect.do}">
+                <span class="t"><i class="bi bi-menu-button-wide"></i> <span th:text="#{cat.c19.t}">메뉴목록관리</span></span>
+                <span class="d" th:text="#{i1.79}">메뉴 정보 관리</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/sym/mnu/mcm/EgovMenuCreatManageSelect.do}">
+                <span class="t"><i class="bi bi-menu-app"></i> <span th:text="#{cat.c20.t}">메뉴생성관리</span></span>
+                <span class="d" th:text="#{i1.80}">메뉴 생성·구조</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/sym/prm/EgovProgramListManageSelect.do}">
+                <span class="t"><i class="bi bi-window-stack"></i> <span th:text="#{cat.c21.t}">프로그램관리</span></span>
+                <span class="d" th:text="#{i1.81}">프로그램 목록·변경요청 워크플로</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+        </div>
+    </section>
+
+    <!-- 로그/통계 -->
+    <section class="cat-section">
+        <h2><i class="bi bi-graph-up"></i> <span th:text="#{cat.sec.log}">로그 · 통계</span></h2>
+        <div class="cat-grid">
+            <a class="cat-card" th:href="@{/sym/log/clg/SelectLoginLogList.do}">
+                <span class="t"><i class="bi bi-box-arrow-in-right"></i> <span th:text="#{cat.c22.t}">접속로그조회</span></span>
+                <span class="d" th:text="#{i1.82}">로그인 로그 — 기간검색·상세</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/sym/log/lgm/SelectSysLogList.do}">
+                <span class="t"><i class="bi bi-terminal"></i> <span th:text="#{cat.c23.t}">시스템로그조회</span></span>
+                <span class="d" th:text="#{i1.83}">시스템 로그 — 서비스·처리구분</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/sts/cst/selectConectStats.do}">
+                <span class="t"><i class="bi bi-bar-chart"></i> <span th:text="#{cat.c24.t}">접속통계</span></span>
+                <span class="d" th:text="#{i1.84}">서비스별·일자별 접속 통계</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+        </div>
+    </section>
+
+    <!-- 기준정보/정책/안내 -->
+    <section class="cat-section">
+        <h2><i class="bi bi-sliders"></i> <span th:text="#{cat.sec.base}">기준정보 · 정책 · 안내</span></h2>
+        <div class="cat-grid">
+            <a class="cat-card" th:href="@{/sym/cal/EgovRestdeList.do}">
+                <span class="t"><i class="bi bi-calendar3"></i> <span th:text="#{cat.c25.t}">휴일·달력관리</span></span>
+                <span class="d" th:text="#{i1.85}">월간 격자 달력·휴일 관리</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/sam/terms/list.do}">
+                <span class="t"><i class="bi bi-file-text"></i> <span th:text="#{cat.c26.t}">약관·개인정보처리방침</span></span>
+                <span class="d" th:text="#{i1.86}">통합관리·버전·대표지정·푸터 모달</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uat/uap/selectLoginPolicyListView.do}">
+                <span class="t"><i class="bi bi-key"></i> <span th:text="#{cat.c27.t}">로그인정책관리</span></span>
+                <span class="d" th:text="#{i1.87}">로그인 정책 설정</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/cmm/krds/EgovKrdsSample.do}">
+                <span class="t"><i class="bi bi-palette"></i> <span th:text="#{cat.c28.t}">KRDS 컴포넌트 예시</span></span>
+                <span class="d" th:text="#{i1.88}">표·탭·아코디언·버튼·폼 등 KRDS 마크업</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/sym/adr/getAdressCntcInitPage.do}">
+                <span class="t"><i class="bi bi-mailbox"></i> <span th:text="#{cat.c29.t}">도로명주소 연계</span></span>
+                <span class="d" th:text="#{i1.89}">행안부 주소 Open API(juso.go.kr) 연계 — KRDS 전환</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/ctn/selectCtsnnManageList.do}">
+                <span class="t"><i class="bi bi-gift"></i> <span th:text="#{cat.c30.t}">직원 경조사 관리</span></span>
+                <span class="d" th:text="#{i1.90}">경조사 신청·승인 (COMTNCTSNNMANAGE → TB_CTSNN_MANAGE 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/rss/listRssTagManage.do}">
+                <span class="t"><i class="bi bi-rss"></i> <span th:text="#{cat.c31.t}">RSS 태그 관리</span></span>
+                <span class="d" th:text="#{i1.91}">RSS 피드 태그 관리 (COMTNRSS → TB_RSS 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/noi/selectNotificationList.do}">
+                <span class="t"><i class="bi bi-bell"></i> <span th:text="#{cat.c32.t}">정보 알림 관리</span></span>
+                <span class="d" th:text="#{i1.92}">알림 등록·반복 (COMTNNTFCINFO → TB_NTFC_INFO 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/isg/selectIntnetSvcGuidanceListView.do}">
+                <span class="t"><i class="bi bi-globe2"></i> <span th:text="#{cat.c33.t}">인터넷서비스 안내</span></span>
+                <span class="d" th:text="#{i1.93}">서비스 안내·반영여부 (COMTNINTNETSVC → TB_INTNET_SVC 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/rec/selectRecomendSiteList.do}">
+                <span class="t"><i class="bi bi-hand-thumbs-up"></i> <span th:text="#{cat.c34.t}">추천 사이트 관리</span></span>
+                <span class="d" th:text="#{i1.94}">추천사이트 승인·관리 (COMTNRECOMENDSITEINFO → TB_RECOMEND_SITE_INFO 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/com/uss/ion/rmm/selectRoughMapList.do}">
+                <span class="t"><i class="bi bi-geo-alt"></i> <span th:text="#{cat.c35.t}">약도 관리</span></span>
+                <span class="d" th:text="#{i1.95}">위치 약도·좌표 (COMTNROUGHMAP → TB_ROUGHMAP 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/ulm/listUnityLink.do}">
+                <span class="t"><i class="bi bi-link-45deg"></i> <span th:text="#{cat.c36.t}">통합 링크 관리</span></span>
+                <span class="d" th:text="#{i1.96}">사이트 통합링크 (COMTNUNITYLINK → TB_UNITY_LINK 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/sit/selectSiteList.do}">
+                <span class="t"><i class="bi bi-window"></i> <span th:text="#{cat.c37.t}">사이트 관리</span></span>
+                <span class="d" th:text="#{i1.97}">사이트 등록·활성/사용 (COMTNSITELIST → TB_SITE_LIST 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/pwm/listPopup.do}">
+                <span class="t"><i class="bi bi-window-stack"></i> <span th:text="#{cat.c38.t}">팝업창 관리</span></span>
+                <span class="d" th:text="#{i1.98}">팝업 게시기간·노출 (COMTNPOPUPMANAGE → TB_POPUP_MANAGE 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/wik/bmk/listWikiBookmark.do}">
+                <span class="t"><i class="bi bi-bookmark-star"></i> <span th:text="#{cat.c39.t}">Wiki 북마크</span></span>
+                <span class="d" th:text="#{i1.99}">사용자별 북마크 (COMTNWIKIBKMK → TB_WIKI_BKMK 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/evt/EgovEventReqstManageList.do}">
+                <span class="t"><i class="bi bi-calendar-event"></i> <span th:text="#{cat.c40.t}">행사 신청 관리</span></span>
+                <span class="d" th:text="#{i1.100}">행사 등록·기간·장소 (COMTNEVENTMANAGE → TB_EVENT_MANAGE 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/rwd/selectRwardManageList.do}">
+                <span class="t"><i class="bi bi-award"></i> <span th:text="#{cat.c41.t}">포상 관리</span></span>
+                <span class="d" th:text="#{i1.101}">포상 신청·승인 (COMTNRWARDMANAGE → TB_RWARD_MANAGE 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/nws/selectNewsList.do}">
+                <span class="t"><i class="bi bi-newspaper"></i> <span th:text="#{cat.c42.t}">뉴스 관리</span></span>
+                <span class="d" th:text="#{i1.102}">뉴스 등록·첨부 (COMTNNEWSINFO → TB_NEWS_INFO 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/msi/selectMainImageList.do}">
+                <span class="t"><i class="bi bi-image"></i> <span th:text="#{cat.c43.t}">메인 이미지 관리</span></span>
+                <span class="d" th:text="#{i1.103}">메인화면 이미지 (COMTNMAINIMAGE → TB_MAIN_IMAGE 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/lsi/selectLoginScrinImageList.do}">
+                <span class="t"><i class="bi bi-card-image"></i> <span th:text="#{cat.c44.t}">로그인 이미지 관리</span></span>
+                <span class="d" th:text="#{i1.104}">로그인화면 이미지 (COMTNLOGINSCRINIMAGE → TB_LOGIN_SCRIN_IMAGE 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/mtg/selectMtgPlaceManageList.do}">
+                <span class="t"><i class="bi bi-easel"></i> <span th:text="#{cat.c45.t}">회의실 관리</span></span>
+                <span class="d" th:text="#{i1.105}">회의실 등록·운영시간 (COMTNMTGPLACEMANAGE → TB_MTG_PLACE_MANAGE 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/olh/wor/selectWordDicaryList.do}">
+                <span class="t"><i class="bi bi-journal-text"></i> <span th:text="#{cat.c46.t}">용어 사전</span></span>
+                <span class="d" th:text="#{i1.106}">용어/영문/설명 (COMTNWORDDICARYINFO → TB_WORD_DICARY_INFO 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/olh/hpc/selectHpcmList.do}">
+                <span class="t"><i class="bi bi-question-square"></i> <span th:text="#{cat.c47.t}">도움말 관리</span></span>
+                <span class="d" th:text="#{i1.107}">도움말 제목·설명 (COMTNHPCMINFO → TB_HPCM_INFO 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/mpe/selectIndvdlPgeList.do}">
+                <span class="t"><i class="bi bi-grid-1x2"></i> <span th:text="#{cat.c48.t}">개인화 페이지 콘텐츠</span></span>
+                <span class="d" th:text="#{i1.108}">위젯 콘텐츠 (COMTNINDVDLPGECNTNTS → TB_INDVDL_PGE_CNTNTS 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/cmt/EgovCmtManageList.do}">
+                <span class="t"><i class="bi bi-clock-history"></i> <span th:text="#{cat.c49.t}">출퇴근 관리</span></span>
+                <span class="d" th:text="#{i1.109}">출퇴근 기록·근무시간 (COMTNCOMMUTE → TB_COMMUTE 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/olh/awm/selectAdministrationWordList.do}">
+                <span class="t"><i class="bi bi-translate"></i> <span th:text="#{cat.c50.t}">행정 용어 사전</span></span>
+                <span class="d" th:text="#{i1.110}">행정용어·영문·정의 (COMTNADMINISTRATIONWORD → TB_ADMINISTRATION_WORD 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/rsn/listRssTagService.do}">
+                <span class="t"><i class="bi bi-broadcast"></i> <span th:text="#{cat.c51.t}">RSS 태그 서비스</span></span>
+                <span class="d" th:text="#{i1.111}">RSS 피드 서비스 제공 (TB_RSS 재사용)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/nts/listNoteTrnsmit.do}">
+                <span class="t"><i class="bi bi-send"></i> <span th:text="#{cat.c52.t}">보낸 쪽지함</span></span>
+                <span class="d" th:text="#{i1.112}">쪽지 송신·수신 (COMTNNOTE/TRNSMIT/RECPTN → TB_NOTE* 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/ntr/listNoteRecptn.do}">
+                <span class="t"><i class="bi bi-inbox"></i> <span th:text="#{cat.c53.t}">받은 쪽지함</span></span>
+                <span class="d" th:text="#{i1.113}">수신 쪽지·읽음여부 (TB_NOTE* 재사용)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/yrc/EgovIndvdlYrycManageList.do}">
+                <span class="t"><i class="bi bi-calendar2-check"></i> <span th:text="#{cat.c54.t}">개인 연차 관리</span></span>
+                <span class="d" th:text="#{i1.114}">연차 발생·사용·잔여 (COMTNINDVDLYRYCMANAGE → TB_INDVDL_YRYC_MANAGE 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/ans/selectAnnvrsryManageList.do}">
+                <span class="t"><i class="bi bi-calendar-heart"></i> <span th:text="#{cat.c55.t}">기념일 관리</span></span>
+                <span class="d" th:text="#{i1.115}">기념일·반복·엑셀 (COMTNANNVRSRYMANAGE → TB_ANNVRSRY_MANAGE 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/olp/mgt/EgovMeetingManageList.do}">
+                <span class="t"><i class="bi bi-people-fill"></i> <span th:text="#{cat.c56.t}">회의 관리</span></span>
+                <span class="d" th:text="#{i1.116}">회의 일정·장소·참석 (COMTNMTGINFO → TB_MTG_INFO 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/rsm/listRecentSrchwrd.do}">
+                <span class="t"><i class="bi bi-search-heart"></i> <span th:text="#{cat.c57.t}">최근 검색어 관리</span></span>
+                <span class="d" th:text="#{i1.117}">검색어 통계·연계 (COMTNRECENTSRCHWRDMANAGE → TB_RECENT_SRCHWRD_MANAGE 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/ecc/selectEventCmpgnList.do}">
+                <span class="t"><i class="bi bi-megaphone"></i> <span th:text="#{cat.c58.t}">행사 관리</span></span>
+                <span class="d" th:text="#{i1.118}">행사 일정·담당·승인 (COMTNEVENTINFO → TB_EVENT_INFO 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/vct/EgovVcatnManageList.do}">
+                <span class="t"><i class="bi bi-calendar2-check"></i> <span th:text="#{cat.c59.t}">휴가 관리</span></span>
+                <span class="d" th:text="#{i1.119}">연차·휴가 신청/결재 (COMTNVCATNMANAGE → TB_VCATN_MANAGE 표준화, 개인연차 연계)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/ion/bnt/EgovBndtManageList.do}">
+                <span class="t"><i class="bi bi-moon-stars"></i> <span th:text="#{cat.c60.t}">당직 관리</span></span>
+                <span class="d" th:text="#{i1.120}">당직 일정·일지 (COMTNBNDTMANAGE/DIARY → TB_BNDT_* 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/sym/bat/getBatchOpertList.do}">
+                <span class="t"><i class="bi bi-cpu"></i> <span th:text="#{cat.c61.t}">배치 작업 관리</span></span>
+                <span class="d" th:text="#{i1.121}">배치 작업 정의·프로그램 (COMTNBATCHOPERT → TB_BATCH_OPERT, Quartz)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/sym/bat/getBatchSchdulList.do}">
+                <span class="t"><i class="bi bi-calendar-week"></i> <span th:text="#{cat.c62.t}">배치 스케줄 관리</span></span>
+                <span class="d" th:text="#{i1.122}">실행 주기·시각 스케줄 (COMTNBATCHSCHDUL → TB_BATCH_SCHDUL)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/sym/bat/getBatchResultList.do}">
+                <span class="t"><i class="bi bi-clipboard-data"></i> <span th:text="#{cat.c63.t}">배치 결과 조회</span></span>
+                <span class="d" th:text="#{i1.123}">배치 실행 성공/실패 이력 (COMTNBATCHRESULT → TB_BATCH_RESULT)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/cop/ncm/selectNcrdInfs.do}">
+                <span class="t"><i class="bi bi-person-vcard"></i> <span th:text="#{cat.c64.t}">명함 관리</span></span>
+                <span class="d" th:text="#{i1.124}">전자 명함 등록·공개 (COMTNNCRD → TB_NCRD 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/cop/adb/selectAdbkList.do}">
+                <span class="t"><i class="bi bi-journal-bookmark"></i> <span th:text="#{cat.c65.t}">주소록</span></span>
+                <span class="d" th:text="#{i1.125}">주소록·공개범위 관리 (COMTNADBKMANAGE → TB_ADBK_MANAGE 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/cop/cmt/selectArticleCommentList.do(bbsId='BBSMSTR_AAAAAAAAAAAA',nttId=1)}">
+                <span class="t"><i class="bi bi-chat-square-text"></i> <span th:text="#{cat.c66.t}">게시글 댓글</span></span>
+                <span class="d" th:text="#{i1.126}">댓글 조회·작성·삭제 (COMTNCOMMENT → TB_COMMENT 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/cop/smt/mtm/selectMemoTodoList.do}">
+                <span class="t"><i class="bi bi-check2-square"></i> <span th:text="#{cat.c67.t}">메모 / 할일</span></span>
+                <span class="d" th:text="#{i1.127}">개인 메모·할일 관리 (COMTNMEMOTODO → TB_MEMO_TODO 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/cop/smt/sam/EgovAllSchdulManageList.do}">
+                <span class="t"><i class="bi bi-calendar3"></i> <span th:text="#{cat.c68.t}">일정 관리</span></span>
+                <span class="d" th:text="#{i1.128}">전체 일정·기간·장소 (COMTNSCHDULINFO → TB_SCHDUL_INFO 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/dam/app/EgovComDamAppraisalList.do}">
+                <span class="t"><i class="bi bi-patch-check"></i> <span th:text="#{cat.c69.t}">지식 평가</span></span>
+                <span class="d" th:text="#{i1.129}">지식 평가·승인 (COMTNDAMKNOIFM → TB_DAM_KNO_IFM 재사용)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/cop/ems/selectSndngMailList.do}">
+                <span class="t"><i class="bi bi-envelope"></i> <span th:text="#{i1.151}">메일 발송</span><span class="cat-badge" style="background:rgba(255,159,67,.2);color:#ff9f43;" th:text="#{i1.150}">더미</span></span><span class="d" th:text="#{i1.130}">SMTP 연동 필요 — 더미데이터로 1사이클 시연 (COMTHEMAILDSPTCHMANAGE)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/cop/sms/selectSmsList.do}">
+                <span class="t"><i class="bi bi-chat-text"></i> <span th:text="#{i1.153}">SMS 발송</span><span class="cat-badge" style="background:rgba(255,159,67,.2);color:#ff9f43;" th:text="#{i1.152}">더미</span></span><span class="d" th:text="#{i1.131}">SMS 게이트웨이 필요 — 더미데이터로 시연 (COMTNSMS)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/sts/bst/selectBbsStats.do}">
+                <span class="t"><i class="bi bi-graph-up"></i> <span th:text="#{i1.155}">게시판 통계</span><span class="cat-badge" style="background:rgba(255,159,67,.2);color:#ff9f43;" th:text="#{i1.154}">더미</span></span><span class="d" th:text="#{i1.132}">집계배치 필요 — 더미 집계로 시연 (COMTSBBSSUMMARY)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/cop/scp/selectArticleScrapList.do}">
+                <span class="t"><i class="bi bi-bookmark-star"></i> <span th:text="#{i1.157}">게시글 스크랩</span><span class="cat-badge" style="background:rgba(255,159,67,.2);color:#ff9f43;" th:text="#{i1.156}">더미</span></span><span class="d" th:text="#{i1.133}">Article 연계 필요 — 더미데이터로 시연 (COMTNSCRAP)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/cop/bbs/selectBlogList.do}">
+                <span class="t"><i class="bi bi-journal-richtext"></i> <span th:text="#{i1.159}">블로그 관리</span><span class="cat-badge" style="background:rgba(255,159,67,.2);color:#ff9f43;" th:text="#{i1.158}">더미</span></span><span class="d" th:text="#{i1.134}">블로그 개설·구독 — 더미데이터로 시연 (COMTNBLOG)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/sts/dst/selectDtaUseStatsList.do}">
+                <span class="t"><i class="bi bi-file-earmark-bar-graph"></i> <span th:text="#{i1.161}">데이터활용 통계</span><span class="cat-badge" style="background:rgba(255,159,67,.2);color:#ff9f43;" th:text="#{i1.160}">더미</span></span><span class="d" th:text="#{i1.135}">다운로드 집계 필요 — 더미로 시연 (COMTNDTAUSESTATS)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/sts/wlg/selectWebLogStats.do}">
+                <span class="t"><i class="bi bi-bar-chart-line"></i> <span th:text="#{i1.163}">웹로그 통계</span><span class="cat-badge" style="background:rgba(255,159,67,.2);color:#ff9f43;" th:text="#{i1.162}">더미</span></span><span class="d" th:text="#{i1.136}">웹로그 수집·집계 필요 — 더미로 시연 (COMTSWEBLOGSUMMARY)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/ext/oauth/loginInfo.do}">
+                <span class="t"><i class="bi bi-box-arrow-in-right"></i> <span th:text="#{i1.165}">소셜 로그인</span><span class="cat-badge" style="background:rgba(255,159,67,.2);color:#ff9f43;" th:text="#{i1.164}">더미</span></span><span class="d" th:text="#{i1.137}">OAuth2 제공자 필요 — 구조/구현법 안내 (구글·네이버·카카오)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/ext/captcha/captchaInfo.do}">
+                <span class="t"><i class="bi bi-shield-lock"></i> <span th:text="#{i1.167}">캡차</span><span class="cat-badge" style="background:rgba(255,159,67,.2);color:#ff9f43;" th:text="#{i1.166}">더미</span></span><span class="d" th:text="#{i1.138}">reCAPTCHA/kaptcha 필요 — 구조/구현법 안내</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/ext/ldap/ldapInfo.do}">
+                <span class="t"><i class="bi bi-diagram-3"></i> <span th:text="#{i1.169}">LDAP 연동</span><span class="cat-badge" style="background:rgba(255,159,67,.2);color:#ff9f43;" th:text="#{i1.168}">더미</span></span><span class="d" th:text="#{i1.139}">LDAP/AD 서버 필요 — 구조/구현법 안내</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/cop/smt/dsm/EgovDiaryManageList.do}">
+                <span class="t"><i class="bi bi-journal-check"></i> <span th:text="#{i1.171}">업무 일지</span><span class="cat-badge" style="background:rgba(79,107,255,.2);color:#9ab4ff;" th:text="#{i1.170}">간이</span></span><span class="d" th:text="#{i1.140}">업무 일지·진행률 (COMTNDIARYINFO 실데이터)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/utl/sys/srm/EgovServerResrcInfo.do}">
+                <span class="t"><i class="bi bi-hdd-rack"></i> <span th:text="#{i1.173}">서버 자원 관리</span><span class="cat-badge" style="background:rgba(255,159,67,.2);color:#ff9f43;" th:text="#{i1.172}">더미</span></span><span class="d" th:text="#{i1.141}">모니터링 에이전트 필요 — 더미로 시연 (COMTNSERVEREQPMNINFO)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/ssi/syi/EgovCntcSystemList.do}">
+                <span class="t"><i class="bi bi-hdd-network"></i> <span th:text="#{i1.175}">연계 시스템 관리</span><span class="cat-badge" style="background:rgba(255,159,67,.2);color:#ff9f43;" th:text="#{i1.174}">더미</span></span><span class="d" th:text="#{i1.142}">대외기관 연계 필요 — 더미로 시연 (COMTNCNTCSYSTEM)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/sts/sst/selectNttStats.do}">
+                <span class="t"><i class="bi bi-clipboard-data"></i> <span th:text="#{i1.177}">게시글 통계</span><span class="cat-badge" style="background:rgba(255,159,67,.2);color:#ff9f43;" th:text="#{i1.176}">더미</span></span><span class="d" th:text="#{i1.143}">조회 집계배치 필요 — 더미로 시연 (COMTNNTTSTATS)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/dam/mgm/EgovComDamManagementList.do}">
+                <span class="t"><i class="bi bi-lightbulb"></i> <span th:text="#{cat.c70.t}">지식 관리</span></span>
+                <span class="d" th:text="#{i1.144}">지식정보 등록·평가·공개 (COMTNDAMKNOIFM → TB_DAM_KNO_IFM 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/olp/opm/listOnlinePollManage.do}">
+                <span class="t"><i class="bi bi-bar-chart-line"></i> <span th:text="#{cat.c71.t}">온라인 투표 관리</span></span>
+                <span class="d" th:text="#{i1.145}">설문/투표 항목·기간 (COMTNONLINEPOLLMANAGE → TB_ONLINE_POLL_MANAGE 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/olp/cns/CnsltListInqire.do}">
+                <span class="t"><i class="bi bi-chat-dots"></i> <span th:text="#{cat.c72.t}">상담 관리</span></span>
+                <span class="d" th:text="#{i1.146}">상담 접수·공개/답변 (COMTNCNSLTLIST → TB_CNSLT_LIST 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/olh/omm/selectOnlineManualList.do}">
+                <span class="t"><i class="bi bi-journal-text"></i> <span th:text="#{cat.c73.t}">온라인 매뉴얼</span></span>
+                <span class="d" th:text="#{i1.147}">사용자/관리자 매뉴얼 (COMTNONLINEMANUAL → TB_ONLINE_MANUAL 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uss/sam/cpy/CpyrhtPrtcPolicyListInqire.do}">
+                <span class="t"><i class="bi bi-c-circle"></i> <span th:text="#{cat.c74.t}">저작권 보호정책</span></span>
+                <span class="d" th:text="#{i1.148}">저작권/공공누리 정책 (COMTNCPYRHTINFO → TB_CPYRHT_INFO 표준화)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+            <a class="cat-card" th:href="@{/uat/uia/egovLoginUsr.do}">
+                <span class="t"><i class="bi bi-door-open"></i> <span th:text="#{cat.c75.t}">로그인</span></span>
+                <span class="d" th:text="#{i1.149}">세션 기반 로그인(업무/일반/기업)</span><span class="go" th:text="#{cat.card.go}">바로가기 →</span></a>
+        </div>
+    </section>
+
+</div>
+</main>
+<th:block layout:fragment="body-js">
+<script>
+(function(){
+    var input = document.getElementById('catFilter');
+    if(!input) return;
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.cat-card'));
+    var sections = Array.prototype.slice.call(document.querySelectorAll('.cat-section'));
+    var empty = document.getElementById('catFilterEmpty');
+    function apply(){
+        var q = input.value.trim().toLowerCase();
+        var shown = 0;
+        cards.forEach(function(c){
+            var t = (c.textContent || '').toLowerCase();
+            var hit = q === '' || t.indexOf(q) !== -1;
+            c.style.display = hit ? '' : 'none';
+            if(hit) shown++;
+        });
+        sections.forEach(function(s){
+            var vis = s.querySelectorAll('.cat-card');
+            var any = Array.prototype.some.call(vis, function(c){ return c.style.display !== 'none'; });
+            s.style.display = any ? '' : 'none';
+        });
+        if(empty) empty.style.display = shown === 0 ? '' : 'none';
+    }
+    input.addEventListener('input', apply);
+})();
+</script>
+</th:block>
+</body>
+</html>

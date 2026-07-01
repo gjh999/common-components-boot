@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 행정용어사전(uss/olh/awm) — COMTNADMINISTRATIONWORD → TB_ADMINISTRATION_WORD 표준화(HSQL, 코드/직원 조인 단순화) -->
+<mapper namespace="AdministrationWord">
+
+    <sql id="awmCols">
+        A.ADMINIST_WORD_ID AS administWordId, A.ADMINIST_WORD_NM AS administWordNm, A.ADMINIST_WORD_ENG_NM AS administWordEngNm,
+        A.ADMINIST_WORD_ABRV_NM AS administWordAbrv, A.THEMA_RELM AS themaRelm, A.WORD_SE AS wordDomn, A.WORD_SE AS wordDomnNm,
+        A.RELATE_STD_WORD AS stdWord, A.ADMINIST_WORD_DFN AS administWordDf, A.ADMINIST_WORD_DC AS administWordDc,
+        A.FRST_REGISTER_ID AS frstRegisterId, TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS frstRegisterPnttm
+    </sql>
+
+    <sql id="awmSearch">
+        <if test="searchKeyword != null and searchKeyword != ''">
+            AND (A.ADMINIST_WORD_NM LIKE CONCAT(CONCAT('%', #{searchKeyword}),'%') OR A.ADMINIST_WORD_ENG_NM LIKE CONCAT(CONCAT('%', #{searchKeyword}),'%'))
+        </if>
+    </sql>
+
+    <select id="selectAdministrationWordList" parameterType="egovframework.com.uss.olh.awm.service.AdministrationWordVO" resultType="egovframework.com.uss.olh.awm.service.AdministrationWordVO">
+        SELECT <include refid="awmCols"/>
+        FROM TB_ADMINISTRATION_WORD A WHERE 1=1
+        <include refid="awmSearch"/>
+        ORDER BY A.ADMINIST_WORD_NM
+        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+    </select>
+
+    <select id="selectAdministrationWordListCnt" parameterType="egovframework.com.uss.olh.awm.service.AdministrationWordVO" resultType="int">
+        SELECT COUNT(*) FROM TB_ADMINISTRATION_WORD A WHERE 1=1
+        <include refid="awmSearch"/>
+    </select>
+
+    <select id="selectAdministrationWordDetail" parameterType="egovframework.com.uss.olh.awm.service.AdministrationWordVO" resultType="egovframework.com.uss.olh.awm.service.AdministrationWordVO">
+        SELECT <include refid="awmCols"/> FROM TB_ADMINISTRATION_WORD A WHERE A.ADMINIST_WORD_ID = #{administWordId}
+    </select>
+
+    <insert id="insertAdministrationWord" parameterType="egovframework.com.uss.olh.awm.service.AdministrationWordVO">
+        INSERT INTO TB_ADMINISTRATION_WORD (ADMINIST_WORD_ID, ADMINIST_WORD_NM, ADMINIST_WORD_ENG_NM, ADMINIST_WORD_ABRV_NM,
+               THEMA_RELM, WORD_SE, RELATE_STD_WORD, ADMINIST_WORD_DFN, ADMINIST_WORD_DC, FRST_REGIST_PNTTM, FRST_REGISTER_ID)
+        VALUES (#{administWordId}, #{administWordNm}, #{administWordEngNm}, #{administWordAbrv},
+               #{themaRelm}, #{wordDomn}, #{stdWord}, #{administWordDf}, #{administWordDc}, CURRENT_TIMESTAMP, #{frstRegisterId})
+    </insert>
+
+    <update id="updateAdministrationWord" parameterType="egovframework.com.uss.olh.awm.service.AdministrationWordVO">
+        UPDATE TB_ADMINISTRATION_WORD SET ADMINIST_WORD_NM = #{administWordNm}, ADMINIST_WORD_ENG_NM = #{administWordEngNm},
+               ADMINIST_WORD_ABRV_NM = #{administWordAbrv}, THEMA_RELM = #{themaRelm}, WORD_SE = #{wordDomn},
+               RELATE_STD_WORD = #{stdWord}, ADMINIST_WORD_DFN = #{administWordDf}, ADMINIST_WORD_DC = #{administWordDc},
+               LAST_UPDUSR_ID = #{lastUpdusrId}, LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
+        WHERE ADMINIST_WORD_ID = #{administWordId}
+    </update>
+
+    <delete id="deleteAdministrationWord" parameterType="egovframework.com.uss.olh.awm.service.AdministrationWordVO">
+        DELETE FROM TB_ADMINISTRATION_WORD WHERE ADMINIST_WORD_ID = #{administWordId}
+    </delete>
+
+</mapper>

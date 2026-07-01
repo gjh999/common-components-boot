@@ -1,0 +1,497 @@
+package egovframework.com.uss.ion.pwm.web;
+
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.egovframe.rte.fdl.property.EgovPropertyService;
+import org.egovframe.rte.psl.dataaccess.util.EgovMap;
+import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import egovframework.com.cmm.ComDefaultCodeVO;
+import egovframework.com.cmm.EgovMessageSource;
+import egovframework.com.cmm.EgovWebUtil;
+import egovframework.com.cmm.LoginVO;
+import egovframework.com.cmm.annotation.IncludedInfo;
+import egovframework.com.cmm.util.EgovUserDetailsHelper;
+import egovframework.com.uss.ion.pwm.service.EgovPopupManageService;
+import egovframework.com.uss.ion.pwm.service.PopupManageVO;
+import egovframework.com.utl.fcc.service.EgovStringUtil;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+
+/**
+ * <pre>
+ * 개요 - 팝업창에 대한 Controller를 정의한다.
+ *
+ * 상세내용 - 팝업창에 대한 등록, 수정, 삭제, 조회, 반영확인 기능을 제공한다. - 팝업창의 조회기능은 목록조회, 상세조회로, 사용자
+ * 화면 보기로 구분된다.
+ * </pre>
+ *
+ * @author 이창원
+ * @since 2009.08.05
+ * @version 1.0
+ * @see
+ *
+ *      <pre>
+ *  == 개정이력(Modification Information) ==
+ *
+ *   수정일      수정자           수정내용
+ *  -------    --------    ---------------------------
+ *   2009.08.05  이창원          최초 생성
+ *   2011.08.26  정진오          IncludedInfo annotation 추가
+ *   2019.05.17  신용호          취약점 조치 및 보완
+ *   2025.08.11  이백행          2025년 컨트리뷰션 PMD로 소프트웨어 보안약점 진단하고 제거하기-CloseResource(부적절한 자원 해제)
+ *   2025.08.11  이백행          2025년 컨트리뷰션 PMD로 소프트웨어 보안약점 진단하고 제거하기-AvoidReassigningParameters(넘겨받는 메소드 parameter 값을 직접 변경하는 코드 탐지)
+ *
+ *      </pre>
+ */
+@Controller
+public class EgovPopupManageController {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(EgovPopupManageController.class);
+
+	/** EgovMessageSource */
+	@Resource(name = "egovMessageSource")
+	EgovMessageSource egovMessageSource;
+
+	/** EgovPropertyService */
+	@Resource(name = "propertiesService")
+	protected EgovPropertyService propertiesService;
+
+	/** EgovPopupManageService */
+	@Resource(name = "egovPopupManageService")
+	private EgovPopupManageService egovPopupManageService;
+
+	/**
+	 * 팝업창관리 목록을 조회한다.
+	 *
+	 * @param popupManageVO
+	 * @param model
+	 * @return "com/uss/ion/pwm/listPopupManage"
+	 * @throws Exception
+	 */
+	@IncludedInfo(name = "팝업창관리", order = 720, gid = 50)
+	@RequestMapping(value = "/uss/ion/pwm/listPopup.do")
+	public String egovPopupManageList(@RequestParam Map<?, ?> commandMap, PopupManageVO popupManageVO, ModelMap model)
+			throws Exception {
+
+		/** EgovPropertyService.sample */
+		popupManageVO.setPageUnit(propertiesService.getInt("pageUnit"));
+		popupManageVO.setPageSize(propertiesService.getInt("pageSize"));
+
+		/** pageing */
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(popupManageVO.getPageIndex());
+		paginationInfo.setRecordCountPerPage(popupManageVO.getPageUnit());
+		paginationInfo.setPageSize(popupManageVO.getPageSize());
+
+		popupManageVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		popupManageVO.setLastIndex(paginationInfo.getLastRecordIndex());
+		popupManageVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+
+		List<EgovMap> reusltList = egovPopupManageService.selectPopupList(popupManageVO);
+		model.addAttribute("resultList", reusltList);
+
+		model.addAttribute("searchKeyword",
+				commandMap.get("searchKeyword") == null ? "" : (String) commandMap.get("searchKeyword"));
+		model.addAttribute("searchCondition",
+				commandMap.get("searchCondition") == null ? "" : (String) commandMap.get("searchCondition"));
+
+		int totCnt = egovPopupManageService.selectPopupListCount(popupManageVO);
+		paginationInfo.setTotalRecordCount(totCnt);
+		model.addAttribute("paginationInfo", paginationInfo);
+		model.addAttribute("popupManageVO", popupManageVO);
+
+		return "com/uss/ion/pwm/EgovPopupList";
+	}
+
+	/**
+	 * 통합링크관리 목록을 상세조회 조회한다.
+	 *
+	 * @param popupManageVO
+	 * @param commandMap
+	 * @param model
+	 * @return "/uss/ion/pwm/detailPopupManage"
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/uss/ion/pwm/detailPopup.do")
+	public String egovPopupManageDetail(PopupManageVO popupManageVO, @RequestParam Map<?, ?> commandMap, ModelMap model)
+			throws Exception {
+
+		String sLocationUrl = "egovframework/com/uss/ion/pwm/EgovPopupDetail";
+
+		String sCmd = commandMap.get("cmd") == null ? "" : (String) commandMap.get("cmd");
+
+		if (sCmd.equals("del")) {
+			egovPopupManageService.deletePopup(popupManageVO);
+			sLocationUrl = "forward:/uss/ion/pwm/listPopup.do";
+		} else {
+			// 상세정보 불러오기
+			PopupManageVO popupManageVOs = egovPopupManageService.selectPopup(popupManageVO);
+			model.addAttribute("popupManageVO", popupManageVOs);
+		}
+
+		return sLocationUrl;
+	}
+
+	/**
+	 * 팝업창관리 등록 화면을 위한 등록 전 단계처리
+	 *
+	 * @param popupManageVO
+	 * @param model
+	 * @return "com/uss/ion/pwm/EgovPopupRegist"
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/uss/ion/pwm/insertPopupView.do")
+	public String insertPopupView(@ModelAttribute("popupManageVO") PopupManageVO popupManageVO, ModelMap model)
+			throws Exception {
+		model.addAttribute("popupManageVO", popupManageVO);
+
+		// 팝업창시작일자(시)
+		model.addAttribute("ntceBgndeHH", getTimeHH());
+		// 팝업창시작일자(분)
+		model.addAttribute("ntceBgndeMM", getTimeMM());
+		// 팝업창종료일자(시)
+		model.addAttribute("ntceEnddeHH", getTimeHH());
+		// 팝업창종료일자(분)
+		model.addAttribute("ntceEnddeMM", getTimeMM());
+
+		return "com/uss/ion/pwm/EgovPopupRegist";
+	}
+
+	/**
+	 * 팝업창관리 수정 화면을 위한 수정 전 단계처리
+	 *
+	 * @param popupManageVO
+	 * @param model
+	 * @return "com/uss/ion/pwm/EgovPopupUpdt"
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/uss/ion/pwm/updatePopupView.do")
+	public String updatePopupView(@ModelAttribute("popupManageVO") PopupManageVO popupManageVO, ModelMap model)
+			throws Exception {
+		PopupManageVO resultVO = egovPopupManageService.selectPopup(popupManageVO);
+
+		String sNtceBgnde = resultVO.getNtceBgnde();
+		String sNtceEndde = resultVO.getNtceEndde();
+
+		if (sNtceBgnde != null && sNtceBgnde.length() >= 12) {
+			resultVO.setNtceBgndeHH(sNtceBgnde.substring(8, 10));
+			resultVO.setNtceBgndeMM(sNtceBgnde.substring(10, 12));
+		}
+		if (sNtceEndde != null && sNtceEndde.length() >= 12) {
+			resultVO.setNtceEnddeHH(sNtceEndde.substring(8, 10));
+			resultVO.setNtceEnddeMM(sNtceEndde.substring(10, 12));
+		}
+
+		model.addAttribute("popupManageVO", resultVO);
+		// 팝업창시작일자(시)
+		model.addAttribute("ntceBgndeHH", getTimeHH());
+		// 팝업창시작일자(분)
+		model.addAttribute("ntceBgndeMM", getTimeMM());
+		// 팝업창종료일자(시)
+		model.addAttribute("ntceEnddeHH", getTimeHH());
+		// 팝업창종료일자(분)
+		model.addAttribute("ntceEnddeMM", getTimeMM());
+
+		return "com/uss/ion/pwm/EgovPopupUpdt";
+	}
+
+	/**
+	 * 팝업창관리를 수정한다.
+	 *
+	 * @param commandMap
+	 * @param popupManageVO
+	 * @param bindingResult
+	 * @param model
+	 * @return "/uss/ion/pwm/updtPopupManage"
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/uss/ion/pwm/updtPopup.do")
+	public String egovPopupManageUpdt(@RequestParam Map<?, ?> commandMap,
+			@Valid @ModelAttribute("popupManageVO") PopupManageVO popupManageVO,
+			BindingResult bindingResult, ModelMap model) throws Exception {
+		// 0. Spring Security 사용자권한 처리
+		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+		if (!isAuthenticated) {
+			model.addAttribute("message", egovMessageSource.getMessage("fail.common.login"));
+			return "redirect:/uat/uia/egovLoginUsr.do";
+		}
+
+		// 로그인 객체 선언
+		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+
+		String sLocationUrl = "egovframework/com/uss/ion/pwm/EgovPopupUpdt";
+
+		String sCmd = commandMap.get("cmd") == null ? "" : (String) commandMap.get("cmd");
+
+		// 팝업창시작일자(시)
+		model.addAttribute("ntceBgndeHH", getTimeHH());
+		// 팝업창시작일자(분)
+		model.addAttribute("ntceBgndeMM", getTimeMM());
+		// 팝업창종료일자(시)
+		model.addAttribute("ntceEnddeHH", getTimeHH());
+		// 팝업창정료일자(분)
+		model.addAttribute("ntceEnddeMM", getTimeMM());
+
+		if (sCmd.equals("save")) {
+			sLocationUrl = "forward:/uss/ion/pwm/listPopup.do";
+
+			if (bindingResult.hasErrors()) {
+				model.addAttribute("popupManageVO", popupManageVO);
+				return "com/uss/ion/pwm/EgovPopupUpdt";
+			}
+			// 아이디 설정
+			popupManageVO.setFrstRegisterId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
+			popupManageVO.setLastUpdusrId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
+			// 저장
+			egovPopupManageService.updatePopup(popupManageVO);
+		} else {
+
+			PopupManageVO popupManageVOs = egovPopupManageService.selectPopup(popupManageVO);
+
+			String sNtceBgnde = popupManageVOs.getNtceBgnde();
+			String sNtceEndde = popupManageVOs.getNtceEndde();
+
+			popupManageVOs.setNtceBgndeHH(sNtceBgnde.substring(8, 10));
+			popupManageVOs.setNtceBgndeMM(sNtceBgnde.substring(10, 12));
+
+			popupManageVOs.setNtceEnddeHH(sNtceEndde.substring(8, 10));
+			popupManageVOs.setNtceEnddeMM(sNtceEndde.substring(10, 12));
+
+			model.addAttribute("popupManageVO", popupManageVOs);
+		}
+
+		return sLocationUrl;
+	}
+
+	/**
+	 * 통합링크관리를 등록한다.
+	 *
+	 * @param commandMap
+	 * @param popupManageVO
+	 * @param bindingResult
+	 * @param model
+	 * @return "/uss/ion/pwm/registPopupManage"
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/uss/ion/pwm/registPopup.do")
+	public String egovPopupManageRegist(@RequestParam Map<?, ?> commandMap,
+			@Valid @ModelAttribute("popupManageVO") PopupManageVO popupManageVO, BindingResult bindingResult, ModelMap model)
+			throws Exception {
+		// 0. Spring Security 사용자권한 처리
+		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+		if (!isAuthenticated) {
+			model.addAttribute("message", egovMessageSource.getMessage("fail.common.login"));
+			return "redirect:/uat/uia/egovLoginUsr.do";
+		}
+
+		// 로그인 객체 선언
+		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+
+		String sLocationUrl = "egovframework/com/uss/ion/pwm/EgovPopupRegist";
+
+		String sCmd = commandMap.get("cmd") == null ? "" : (String) commandMap.get("cmd");
+		LOGGER.info("cmd => {}", sCmd);
+
+		if (sCmd.equals("save")) {
+
+			if (bindingResult.hasErrors()) {
+				model.addAttribute("popupManageVO", popupManageVO);
+				model.addAttribute("ntceBgndeHH", getTimeHH());
+				model.addAttribute("ntceBgndeMM", getTimeMM());
+				model.addAttribute("ntceEnddeHH", getTimeHH());
+				model.addAttribute("ntceEnddeMM", getTimeMM());
+				return sLocationUrl;
+			}
+			// 아이디 설정
+			popupManageVO.setFrstRegisterId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
+			popupManageVO.setLastUpdusrId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
+			// 저장
+			egovPopupManageService.insertPopup(popupManageVO);
+
+			sLocationUrl = "forward:/uss/ion/pwm/listPopup.do";
+		}
+
+		// 팝업창시작일자(시)
+		model.addAttribute("ntceBgndeHH", getTimeHH());
+		// 팝업창시작일자(분)
+		model.addAttribute("ntceBgndeMM", getTimeMM());
+		// 팝업창종료일자(시)
+		model.addAttribute("ntceEnddeHH", getTimeHH());
+		// 팝업창정료일자(분)
+		model.addAttribute("ntceEnddeMM", getTimeMM());
+
+		return sLocationUrl;
+	}
+
+	/**
+	 * 팝업창정보를 조회한다.
+	 *
+	 * @param commandMap
+	 * @param popupManageVO
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/uss/ion/pwm/ajaxPopupManageInfo.do")
+	public void egovPopupManageInfoAjax(@RequestParam Map<?, ?> commandMap, HttpServletResponse response,
+			PopupManageVO popupManageVO) throws Exception {
+
+		// 2026.02.28 KISA 취약점 조취
+		response.setContentType("text/html;charset=utf-8");
+		PrintWriter out = response.getWriter();
+
+			LOGGER.debug("commandMap : {}", commandMap);
+			LOGGER.debug("popupManageVO : {}", popupManageVO);
+
+			PopupManageVO popupManageVOs = egovPopupManageService.selectPopup(popupManageVO);
+
+			String sPrint = popupManageVOs.getFileUrl() + "||" + popupManageVOs.getPopupWSize() + "||"
+					+ popupManageVOs.getPopupHSize() + "||" + popupManageVOs.getPopupHlc() + "||"
+					+ popupManageVOs.getPopupWlc() + "||" + popupManageVOs.getStopVewAt();
+
+		out.print(EgovWebUtil.clearXSSMinimum(sPrint));
+		out.flush();
+
+	}
+
+	/**
+	 * 팝업창을 오픈 한다.
+	 *
+	 * @param commandMap
+	 * @param popupManageVO
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/uss/ion/pwm/openPopupManage.do")
+	public String egovPopupManagePopupOpen(@RequestParam("fileUrl") String fileUrl,
+			@RequestParam("stopVewAt") String stopVewAt, @RequestParam("popupId") String popupId, ModelMap model)
+			throws Exception {
+
+		model.addAttribute("stopVewAt", stopVewAt);
+		model.addAttribute("popupId", popupId);
+
+		String fileUrl2 = EgovWebUtil.filePathBlackList(fileUrl);
+
+		List<EgovMap> popupWhiteList = egovPopupManageService.selectPopupWhiteList();
+		LOGGER.debug("Open Popup > WhiteList Count = {}", popupWhiteList.size());
+		if (fileUrl2 == null) {
+			fileUrl2 = "";
+		}
+		for (Object obj : popupWhiteList) {
+			EgovMap map = (EgovMap) obj;
+			LOGGER.debug("Open Popup > whiteList fileUrl = " + map.get("fileUrl"));
+			if (fileUrl2.equals(map.get("fileUrl"))) {
+				return fileUrl2;
+			}
+		}
+		// System.out.println("===>>> "+popupWhiteList.size());
+		LOGGER.debug("Open Popup > WhiteList mismatch! Please check Admin page!");
+		return "egovframework/com/cmm/egovError";
+	}
+
+	/**
+	 * 팝업창관리 메인 테스트 목록을 조회한다.
+	 *
+	 * @param popupManageVO
+	 * @param model
+	 * @return "com/uss/ion/pwm/listMainPopup"
+	 * @throws Exception 팝업창리스트를 가져온다.
+	 */
+	@RequestMapping(value = "/uss/ion/pwm/listMainPopup.do")
+
+	public ModelAndView egovPopupManageMainList(PopupManageVO popupManageVO, ModelMap model) throws Exception {
+		List<EgovMap> resultList = egovPopupManageService.selectPopupMainList(popupManageVO);
+		ModelAndView mav = new ModelAndView("jsonView");
+		mav.addObject("resultList", resultList);
+		return mav;
+	}
+
+	/**
+	 * 시간을 LIST를 반환한다.
+	 *
+	 * @return List
+	 * @throws
+	 */
+	@SuppressWarnings("unused")
+	private List<ComDefaultCodeVO> getTimeHH() {
+		ArrayList<ComDefaultCodeVO> listHH = new ArrayList<ComDefaultCodeVO>();
+		HashMap<?, ?> hmHHMM;
+		for (int i = 0; i < 24; i++) {
+			String sHH = "";
+			String strI = String.valueOf(i);
+			if (i < 10) {
+				sHH = "0" + strI;
+			} else {
+				sHH = strI;
+			}
+
+			ComDefaultCodeVO codeVO = new ComDefaultCodeVO();
+			codeVO.setCode(sHH);
+			codeVO.setCodeNm(sHH);
+
+			listHH.add(codeVO);
+		}
+
+		return listHH;
+	}
+
+	/**
+	 * 분을 LIST를 반환한다.
+	 *
+	 * @return List
+	 * @throws
+	 */
+	@SuppressWarnings("unused")
+	private List<ComDefaultCodeVO> getTimeMM() {
+		ArrayList<ComDefaultCodeVO> listMM = new ArrayList<ComDefaultCodeVO>();
+		HashMap<?, ?> hmHHMM;
+		for (int i = 0; i < 60; i++) {
+
+			String sMM = "";
+			String strI = String.valueOf(i);
+			if (i < 10) {
+				sMM = "0" + strI;
+			} else {
+				sMM = strI;
+			}
+
+			ComDefaultCodeVO codeVO = new ComDefaultCodeVO();
+			codeVO.setCode(sMM);
+			codeVO.setCodeNm(sMM);
+
+			listMM.add(codeVO);
+		}
+		return listMM;
+	}
+
+	/**
+	 * 0을 붙여 반환
+	 *
+	 * @return String
+	 * @throws
+	 */
+	public String dateTypeIntForString(int iInput) {
+		String sOutput = "";
+		if (Integer.toString(iInput).length() == 1) {
+			sOutput = "0" + Integer.toString(iInput);
+		} else {
+			sOutput = Integer.toString(iInput);
+		}
+
+		return sOutput;
+	}
+}

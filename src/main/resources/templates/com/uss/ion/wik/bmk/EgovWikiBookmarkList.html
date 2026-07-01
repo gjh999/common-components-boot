@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head>
+    <title>Wiki 북마크 관리</title>
+</head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:900px;">
+
+    <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/examples}" th:text="#{cat.crumb}">공통컴포넌트 예제</a></li>
+            <li class="breadcrumb-item active" th:text="#{i3.24}">Wiki 북마크</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0"><i class="bi bi-bookmark-star"></i> <span th:text="#{i3.25}">Wiki 북마크 관리</span></h1>
+    </div>
+
+    <p class="text-muted small mb-3" th:text="#{i3.26}">로그인한 사용자 본인이 등록한 북마크만 표시됩니다.</p>
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="text-muted small"><span th:text="#{list.total}">전체</span>
+            <strong th:text="${paginationInfo != null ? paginationInfo.totalRecordCount : 0}">0</strong>
+            <span th:text="#{list.count.unit}">건</span></span>
+    </div>
+
+    <div class="krds-table-wrap">
+        <table class="tbl">
+            <thead>
+            <tr>
+                <th scope="col" style="width:70px;" th:text="#{list.seq}">순번</th>
+                <th scope="col" th:text="#{i3.27}">북마크명</th>
+                <th scope="col" style="width:140px;" th:text="#{common.regdate}">등록일</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item,stat : ${resultList}">
+                <td class="text-center" th:text="${stat.count}">1</td>
+                <td th:text="${item.wikiBkmkNm}">북마크명</td>
+                <td class="text-center" th:text="${item.frstRegisterPnttm}">등록일</td>
+            </tr>
+            <tr th:if="${resultList == null or #lists.isEmpty(resultList)}">
+                <td colspan="3" class="text-center text-muted py-4" th:text="#{i3.28}">등록된 북마크가 없습니다.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${paginationInfo != null}"
+         th:replace="~{fragments/pagination :: paginationSearch(paginationInfo=${paginationInfo}, baseUrl='/uss/ion/wik/bmk/listWikiBookmark.do', searchCondition='', searchKeyword='')}"></div>
+
+    <div class="text-end mt-2" sec:authorize="isAuthenticated()">
+        <a class="krds-btn primary small" th:href="@{/uss/ion/wik/bmk/registWikiBookmark.do}"><i class="bi bi-plus-lg"></i> <span th:text="#{i3.29}">등록</span></a>
+    </div>
+
+</div>
+</main>
+</body>
+</html>

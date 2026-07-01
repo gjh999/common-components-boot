@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head>
+    <title>RSS 태그 서비스</title>
+</head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:1100px;">
+
+    <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/examples}" th:text="#{cat.crumb}">공통컴포넌트 예제</a></li>
+            <li class="breadcrumb-item active" th:text="#{i2.1}">RSS 태그 서비스</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0"><i class="bi bi-broadcast"></i> <span th:text="#{i2.1}">RSS 태그 서비스</span></h1>
+    </div>
+    <p class="text-muted small mb-3" th:text="#{i2.2}">등록된 RSS 태그를 기반으로 제공되는 피드 서비스 목록입니다.</p>
+
+    <form th:action="@{/uss/ion/rsn/listRssTagService.do}" method="get" class="search-bar krds-search mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-9">
+                <div class="form-group">
+                    <div class="form-tit"><label for="searchKeyword" th:text="#{search.keyword}">검색어</label></div>
+                    <div class="form-conts"><input type="text" id="searchKeyword" name="searchKeyword" class="krds-input"
+                           th:value="${searchKeyword}" th:placeholder="#{search.keyword.placeholder}" placeholder="서비스명/제목 검색" maxlength="100"/></div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="krds-btn primary medium w-100"><i class="bi bi-search"></i> <span th:text="#{button.search}">검색</span></button>
+            </div>
+        </div>
+    </form>
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="text-muted small"><span th:text="#{list.total}">전체</span>
+            <strong th:text="${paginationInfo != null ? paginationInfo.totalRecordCount : 0}">0</strong>
+            <span th:text="#{list.count.unit}">건</span></span>
+    </div>
+
+    <div class="krds-table-wrap">
+        <table class="tbl">
+            <thead>
+            <tr>
+                <th scope="col" style="width:70px;" th:text="#{list.seq}">순번</th>
+                <th scope="col" th:text="#{i2.3}">서비스명</th>
+                <th scope="col" style="width:140px;" th:text="#{i2.4}">대상 테이블</th>
+                <th scope="col" th:text="#{i2.5}">피드 제목</th>
+                <th scope="col" style="width:90px;" th:text="#{i2.6}">피드</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item,stat : ${resultList}">
+                <td class="text-center" th:text="${stat.count}">1</td>
+                <td th:text="${item.trgetSvcNm}">서비스명</td>
+                <td class="text-center" th:text="${item.trgetSvcTable}">테이블</td>
+                <td th:text="${item.hderTitle}">제목</td>
+                <td class="text-center"><a th:href="${item.hderLink}" target="_blank" rel="noopener" class="krds-btn tertiary small"><i class="bi bi-rss"></i></a></td>
+            </tr>
+            <tr th:if="${resultList == null or #lists.isEmpty(resultList)}">
+                <td colspan="5" class="text-center text-muted py-4" th:text="#{i2.7}">제공 중인 RSS 서비스가 없습니다.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${paginationInfo != null}"
+         th:replace="~{fragments/pagination :: paginationSearch(paginationInfo=${paginationInfo}, baseUrl='/uss/ion/rsn/listRssTagService.do', searchCondition='', searchKeyword=${searchKeyword})}"></div>
+
+</div>
+</main>
+</body>
+</html>

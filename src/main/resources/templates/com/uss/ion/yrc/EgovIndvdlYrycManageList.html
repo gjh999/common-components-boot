@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head>
+    <title th:text="#{i1.223}">개인 연차 관리</title>
+</head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:1000px;">
+
+    <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/examples}" th:text="#{cat.crumb}">공통컴포넌트 예제</a></li>
+            <li class="breadcrumb-item active" th:text="#{i1.223}">개인 연차 관리</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0"><i class="bi bi-calendar2-check"></i> <span th:text="#{i1.223}">개인 연차 관리</span></h1>
+        <a class="krds-btn primary" th:href="@{/uss/ion/yrc/EgovIndvdlYrycRegist.do}"><i class="bi bi-plus-lg"></i> <span th:text="#{button.regist}">등록</span></a>
+    </div>
+
+    <form th:action="@{/uss/ion/yrc/EgovIndvdlYrycManageList.do}" method="get" class="search-bar krds-search mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-9">
+                <div class="form-group">
+                    <div class="form-tit"><label for="searchKeyword" th:text="#{i1.224}">대상자명</label></div>
+                    <div class="form-conts"><input type="text" id="searchKeyword" name="searchKeyword" class="krds-input"
+                           th:value="${searchKeyword}" th:placeholder="#{search.keyword.placeholder}" placeholder="대상자명 검색" maxlength="100"/></div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="krds-btn primary medium w-100"><i class="bi bi-search"></i> <span th:text="#{button.search}">검색</span></button>
+            </div>
+        </div>
+    </form>
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="text-muted small"><span th:text="#{list.total}">전체</span>
+            <strong th:text="${paginationInfo != null ? paginationInfo.totalRecordCount : 0}">0</strong>
+            <span th:text="#{list.count.unit}">건</span></span>
+    </div>
+
+    <div class="krds-table-wrap">
+        <table class="tbl">
+            <thead>
+            <tr>
+                <th scope="col" style="width:70px;" th:text="#{list.seq}">순번</th>
+                <th scope="col" style="width:100px;" th:text="#{i1.225}">발생연도</th>
+                <th scope="col" th:text="#{i1.55}">대상자</th>
+                <th scope="col" style="width:110px;" th:text="#{i1.226}">발생연차</th>
+                <th scope="col" style="width:110px;" th:text="#{i1.227}">사용연차</th>
+                <th scope="col" style="width:110px;" th:text="#{i1.228}">잔여연차</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item,stat : ${resultList}">
+                <td class="text-center" th:text="${stat.count}">1</td>
+                <td class="text-center" th:text="${item.occrrncYear}">연도</td>
+                <td th:text="${item.mberNm}">대상자</td>
+                <td class="text-center"><span th:text="${item.occrncYrycCo}">0</span><span th:text="#{i1.201}">일</span></td>
+                <td class="text-center"><span th:text="${item.useYrycCo}">0</span><span th:text="#{i1.201}">일</span></td>
+                <td class="text-center"><strong class="text-primary"><span th:text="${item.remndrYrycCo}">0</span><span th:text="#{i1.201}">일</span></strong></td>
+            </tr>
+            <tr th:if="${resultList == null or #lists.isEmpty(resultList)}">
+                <td colspan="6" class="text-center text-muted py-4" th:text="#{i1.229}">등록된 연차 정보가 없습니다.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${paginationInfo != null}"
+         th:replace="~{fragments/pagination :: paginationSearch(paginationInfo=${paginationInfo}, baseUrl='/uss/ion/yrc/EgovIndvdlYrycManageList.do', searchCondition='', searchKeyword=${searchKeyword})}"></div>
+
+</div>
+</main>
+</body>
+</html>

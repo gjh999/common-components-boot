@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>부서 선택</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap-icons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/krds/resources/cdn/krds.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/common.css}"/>
+    <link rel="stylesheet" th:href="@{/css/krds-compat.css}"/>
+    <link rel="stylesheet" th:href="@{/css/krds.css}"/>
+    <link rel="stylesheet" th:href="@{/css/popup.css}"/>
+</head>
+<body>
+  <div class="popup-wrap">
+    <div class="popup-head"><i class="bi bi-diagram-3"></i><h1 th:text="#{i3.1}">부서 선택</h1></div>
+
+    <form class="popup-search" th:action="@{/uss/olp/mgt/EgovMeetingManageLisAuthorGroupPopup.do}" method="post">
+        <input class="krds-input" name="searchKeyword" th:value="${searchVO != null ? searchVO.searchKeyword : ''}" maxlength="100" placeholder="부서명 검색" th:placeholder="#{i3.2}" title="부서명" th:title="#{i3.3}"/>
+        <button class="krds-btn primary small" type="submit"><i class="bi bi-search"></i> <span th:text="#{button.search}">검색</span></button>
+    </form>
+
+    <div class="popup-table-wrap">
+    <table class="tbl">
+        <caption class="visually-hidden" th:text="#{i3.4}">부서 목록</caption>
+        <colgroup><col style="width:50px;"/><col style="width:140px;"/><col/><col style="width:60px;"/></colgroup>
+        <thead>
+        <tr><th scope="col" th:text="#{i3.5}">번호</th><th scope="col" th:text="#{i3.6}">부서명</th><th scope="col" th:text="#{i3.7}">부서설명</th><th scope="col" th:text="#{i3.8}">선택</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="item,stat : ${resultList}">
+            <td class="text-center" th:text="${stat.count}">1</td>
+            <td class="left" th:text="${item.orgnztNm}">부서명</td>
+            <td class="left" th:text="${item.orgnztDc}">부서설명</td>
+            <td class="text-center">
+                <button type="button" class="krds-btn secondary small"
+                        th:attr="data-id=${item.orgnztId},data-nm=${item.orgnztNm}"
+                        onclick="fnSelect(this);" th:text="#{i3.8}">선택</button></td>
+        </tr>
+        <tr th:if="${resultList == null or #lists.isEmpty(resultList)}">
+            <td colspan="4" class="text-center text-muted py-4" th:text="#{i3.9}">조회된 부서가 없습니다.</td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+
+    <div class="popup-foot">
+        <button class="krds-btn tertiary small" type="button" onclick="window.close();" th:text="#{i3.10}">닫기</button>
+    </div>
+  </div>
+  <script>
+    /* 부모창의 부서ID/부서명 입력필드에 값 전달(대표 필드명 순차 시도) */
+    function fnSelect(btn) {
+        var id = btn.getAttribute('data-id'), nm = btn.getAttribute('data-nm');
+        try {
+            if (window.opener && !window.opener.closed) {
+                var d = window.opener.document;
+                var idFields = ['mnaerDeptId', 'mngtDeptId', 'schdulDeptId', 'deptId', 'orgnztId'];
+                var nmFields = ['mnaerDeptNm', 'mngtDeptNm', 'schdulDeptName', 'deptNm', 'orgnztNm'];
+                idFields.forEach(function (f) { if (d.getElementById(f)) d.getElementById(f).value = id; });
+                nmFields.forEach(function (f) { if (d.getElementById(f)) d.getElementById(f).value = nm; });
+            }
+        } catch (e) {}
+        window.close();
+    }
+  </script>
+</body>
+</html>

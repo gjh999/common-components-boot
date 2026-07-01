@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{i5.8}">지식 평가</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:1050px;">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/examples}" th:text="#{cat.crumb}">공통컴포넌트 예제</a></li>
+        <li class="breadcrumb-item active" th:text="#{i5.8}">지식 평가</li></ol></nav>
+    <div class="d-flex justify-content-between align-items-center mb-3"><h1 class="h4 mb-0"><i class="bi bi-patch-check"></i> <span th:text="#{i5.8}">지식 평가</span></h1></div>
+    <form th:action="@{/dam/app/EgovComDamAppraisalList.do}" method="get" class="search-bar krds-search mb-3"><div class="row g-2 align-items-end">
+        <input type="hidden" name="searchCondition" value="1"/>
+        <div class="col-md-9"><div class="form-group"><div class="form-tit"><label for="searchKeyword" th:text="#{search.keyword}">검색어</label></div>
+            <div class="form-conts"><input type="text" id="searchKeyword" name="searchKeyword" class="krds-input" th:value="${searchKeyword}" th:placeholder="#{i5.2}" placeholder="지식명 검색" maxlength="100"/></div></div></div>
+        <div class="col-md-3"><button type="submit" class="krds-btn primary medium w-100"><i class="bi bi-search"></i> <span th:text="#{button.search}">검색</span></button></div>
+    </div></form>
+    <div class="d-flex justify-content-between align-items-center mb-2"><span class="text-muted small"><span th:text="#{list.total}">전체</span>
+        <strong th:text="${paginationInfo != null ? paginationInfo.totalRecordCount : 0}">0</strong> <span th:text="#{list.count.unit}">건</span></span></div>
+    <div class="krds-table-wrap"><table class="tbl">
+        <thead><tr>
+            <th scope="col" style="width:70px;" th:text="#{list.seq}">순번</th>
+            <th scope="col" th:text="#{i5.3}">지식명</th><th scope="col" style="width:120px;" th:text="#{i5.4}">유형</th>
+            <th scope="col" style="width:110px;" th:text="#{i5.5}">등록자</th><th scope="col" style="width:110px;" th:text="#{i5.9}">평가상태</th>
+        </tr></thead>
+        <tbody>
+        <tr th:each="item,stat : ${resultList}">
+            <td class="text-center" th:text="${stat.count}">1</td>
+            <td th:text="${item.knoNm}">지식명</td>
+            <td class="text-center"><span class="krds-badge bg-info" th:text="${item.knoTypeNm}">유형</span></td>
+            <td class="text-center" th:text="${item.userNm}">등록자</td>
+            <td class="text-center"><span class="krds-badge" th:classappend="${item.knoAps == '1'} ? 'bg-success' : 'bg-gray'" th:text="${item.regstNm}">상태</span></td>
+        </tr>
+        <tr th:if="${resultList == null or #lists.isEmpty(resultList)}"><td colspan="5" class="text-center text-muted py-4" th:text="#{i5.10}">평가할 지식이 없습니다.</td></tr>
+        </tbody>
+    </table></div>
+    <div th:if="${paginationInfo != null}" th:replace="~{fragments/pagination :: paginationSearch(paginationInfo=${paginationInfo}, baseUrl='/dam/app/EgovComDamAppraisalList.do', searchCondition='1', searchKeyword=${searchKeyword})}"></div>
+</div>
+</main>
+</body>
+</html>

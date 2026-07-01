@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{i2.70}">당직 관리</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:820px;">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/uss/ion/bnt/EgovBndtManageList.do}" th:text="#{i2.70}">당직 관리</a></li>
+        <li class="breadcrumb-item active" th:text="${bndtManageVO.bndtDe}">상세</li>
+    </ol></nav>
+    <h1 class="h4 mb-3"><i class="bi bi-moon-stars"></i> <span th:text="#{i2.70}">당직 관리</span></h1>
+
+    <div class="krds-table-wrap">
+        <table class="tbl col">
+            <tbody>
+            <tr><th scope="row" style="width:140px;" th:text="#{c5.1}">당직 ID</th><td th:text="${bndtManageVO.bndtId}">당직ID</td></tr>
+            <tr><th scope="row" th:text="#{i2.73}">당직 일자</th><td th:text="${bndtManageVO.bndtDe}">당직일자</td></tr>
+            <tr><th scope="row" th:text="#{i2.74}">비고</th><td style="white-space:pre-wrap;" th:text="${bndtManageVO.remark}">비고</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-actions d-flex justify-content-between align-items-center">
+        <a class="krds-btn tertiary" th:href="@{/uss/ion/bnt/EgovBndtManageList.do}" th:text="#{button.list}">목록</a>
+        <div class="d-flex gap-2">
+            <form th:action="@{/uss/ion/bnt/deleteBndtManage.do}" method="post" onsubmit="return confirm('삭제하시겠습니까?');" style="display:inline;">
+                <input type="hidden" name="bndtId" th:value="${bndtManageVO.bndtId}"/>
+                <input type="hidden" name="bndtDe" th:value="${bndtManageVO.bndtDe}"/>
+                <button class="krds-btn danger" type="submit"><i class="bi bi-trash"></i> <span th:text="#{button.delete}">삭제</span></button>
+            </form>
+            <a class="krds-btn primary" th:href="@{/uss/ion/bnt/EgovBndtManageDetail.do(cmd='updt',bndtId=${bndtManageVO.bndtId},bndtDe=${bndtManageVO.bndtDe})}"><i class="bi bi-pencil"></i> <span th:text="#{button.modify}">수정</span></a>
+        </div>
+    </div>
+</div>
+</main>
+</body>
+</html>

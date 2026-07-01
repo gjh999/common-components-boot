@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="#{i5.23}">명함 상세</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap-icons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/krds/resources/cdn/krds.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/common.css}"/>
+    <link rel="stylesheet" th:href="@{/css/krds-compat.css}"/>
+    <link rel="stylesheet" th:href="@{/css/krds.css}"/>
+    <link rel="stylesheet" th:href="@{/css/popup.css}"/>
+</head>
+<body>
+  <div class="popup-wrap">
+    <div class="popup-head"><i class="bi bi-person-vcard"></i><h1 th:text="#{i5.23}">명함 상세</h1></div>
+
+    <div class="popup-info-table" th:if="${ncrdVO != null and ncrdVO.ncrdId != null and ncrdVO.ncrdId != ''}">
+    <table class="tbl">
+        <caption class="visually-hidden" th:text="#{i5.24}">명함 상세 정보</caption>
+        <tbody>
+        <tr><th scope="row" th:text="#{i5.25}">이름</th><td colspan="3" th:text="${ncrdVO.ncrdNm}">이름</td></tr>
+        <tr><th scope="row" th:text="#{i5.26}">회사명</th><td th:text="${ncrdVO.cmpnyNm}">회사</td>
+            <th scope="row" th:text="#{i5.27}">부서명</th><td th:text="${ncrdVO.deptNm}">부서</td></tr>
+        <tr><th scope="row" th:text="#{i5.28}">직위</th><td th:text="${ncrdVO.ofcpsNm}">직위</td>
+            <th scope="row" th:text="#{i5.29}">직급</th><td th:text="${ncrdVO.clsfNm}">직급</td></tr>
+        <tr><th scope="row" th:text="#{i5.30}">이메일</th><td colspan="3" th:text="${ncrdVO.emailAdres}">email</td></tr>
+        <tr><th scope="row" th:text="#{i5.31}">전화번호</th><td th:text="${ncrdVO.areaNo} + '-' + ${ncrdVO.middleTelNo} + '-' + ${ncrdVO.endTelNo}">전화</td>
+            <th scope="row" th:text="#{i5.32}">휴대폰</th><td th:text="${ncrdVO.idntfcNo} + '-' + ${ncrdVO.middleMbtlNum} + '-' + ${ncrdVO.endMbtlNum}">휴대폰</td></tr>
+        <tr><th scope="row" th:text="#{i5.33}">주소</th><td colspan="3" th:text="${ncrdVO.adres}">주소</td></tr>
+        <tr><th scope="row" th:text="#{i5.34}">비고</th><td colspan="3" th:text="${ncrdVO.remark}">비고</td></tr>
+        </tbody>
+    </table>
+    </div>
+    <div th:unless="${ncrdVO != null and ncrdVO.ncrdId != null and ncrdVO.ncrdId != ''}" class="alert alert-secondary"
+         th:text="#{i5.35}">조회할 명함(ncrdId)이 지정되지 않았습니다.</div>
+
+    <div class="popup-foot">
+        <button class="krds-btn tertiary small" type="button" onclick="window.close();" th:text="#{i5.36}">닫기</button>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{survey.qrm.list.title}">설문응답자 관리</title></head>
+<body>
+<main layout:fragment="content">
+    <div class="container">
+        <nav aria-label="breadcrumb"><ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{common.home}">홈</a></li>
+            <li class="breadcrumb-item active" th:text="#{survey.qrm.list.title}">설문응답자 관리</li>
+        </ol></nav>
+        <h1 class="h4 mb-3"><i class="bi bi-people"></i> <span th:text="#{survey.qrm.list.heading}">설문응답자 관리</span></h1>
+        <div class="krds-table-wrap"><table class="tbl">
+            <thead><tr>
+                <th scope="col" style="width:60px;" th:text="#{survey.label.no}">번호</th>
+                <th scope="col" th:text="#{survey.col.qestnrSj}">설문제목</th>
+                <th scope="col" style="width:140px;" th:text="#{survey.col.respondNmFull}">응답자명</th>
+                <th scope="col" style="width:120px;" th:text="#{survey.col.brthdy}">생년월일</th>
+                <th scope="col" style="width:160px;" th:text="#{survey.col.telno}">연락처</th>
+                <th scope="col" style="width:120px;" th:text="#{survey.label.regdate}">등록일</th>
+            </tr></thead>
+            <tbody>
+            <tr th:each="item, st : ${resultList}">
+                <td class="text-center" th:text="${st.count}">1</td>
+                <td><a th:href="@{/uss/olp/qrm/EgovQustnrRespondManageDetail.do(qestnrRespondId=${item['qestnrrespondid']})}" th:text="${item['qestnrsj']}">설문제목</a></td>
+                <td class="text-center" th:text="${item['respondnm']}">응답자</td>
+                <td class="text-center" th:text="${item['brthdy']}">생년월일</td>
+                <td class="text-center">
+                    <span th:if="${item['areano'] != null}" th:text="${item['areano']} + '-' + ${item['middletelno']} + '-' + ${item['endtelno']}">연락처</span>
+                </td>
+                <td class="text-center" th:text="${item['frstregisterpnttm']}">등록일</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(resultList)}"><td colspan="6" class="text-center text-muted py-4" th:text="#{survey.empty.qrm}">등록된 응답자가 없습니다.</td></tr>
+            </tbody>
+        </table></div>
+    </div>
+</main>
+</body>
+</html>

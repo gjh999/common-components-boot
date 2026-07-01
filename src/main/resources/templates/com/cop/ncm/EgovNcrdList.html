@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{i4.20}">명함 관리</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:1100px;">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/examples}" th:text="#{cat.crumb}">공통컴포넌트 예제</a></li>
+        <li class="breadcrumb-item active" th:text="#{i4.20}">명함 관리</li></ol></nav>
+    <div class="d-flex justify-content-between align-items-center mb-3"><h1 class="h4 mb-0"><i class="bi bi-person-vcard"></i> <span th:text="#{i4.20}">명함 관리</span></h1></div>
+    <form th:action="@{/cop/ncm/selectNcrdInfs.do}" method="get" class="search-bar krds-search mb-3"><div class="row g-2 align-items-end">
+        <div class="col-md-9"><div class="form-group"><div class="form-tit"><label for="searchWrd" th:text="#{search.keyword}">검색어</label></div>
+            <div class="form-conts"><input type="text" id="searchWrd" name="searchWrd" class="krds-input" th:value="${searchVO != null ? searchVO.searchWrd : ''}" th:placeholder="#{i4.21}" placeholder="이름·회사명 검색" maxlength="100"/></div></div></div>
+        <div class="col-md-3"><button type="submit" class="krds-btn primary medium w-100"><i class="bi bi-search"></i> <span th:text="#{button.search}">검색</span></button></div>
+    </div></form>
+    <div class="d-flex justify-content-between align-items-center mb-2"><span class="text-muted small"><span th:text="#{list.total}">전체</span>
+        <strong th:text="${paginationInfo != null ? paginationInfo.totalRecordCount : 0}">0</strong> <span th:text="#{list.count.unit}">건</span></span></div>
+    <div class="krds-table-wrap"><table class="tbl">
+        <thead><tr>
+            <th scope="col" style="width:70px;" th:text="#{list.seq}">순번</th>
+            <th scope="col" style="width:110px;" th:text="#{i4.22}">이름</th><th scope="col" th:text="#{i4.23}">소속</th>
+            <th scope="col" style="width:90px;" th:text="#{i4.24}">직위</th><th scope="col" style="width:150px;" th:text="#{i4.25}">연락처</th>
+            <th scope="col" style="width:90px;" th:text="#{i4.26}">공개</th>
+        </tr></thead>
+        <tbody>
+        <tr th:each="item,stat : ${resultList}">
+            <td class="text-center" th:text="${stat.count}">1</td>
+            <td class="text-center" th:text="${item.ncrdNm}">이름</td>
+            <td><span th:text="${item.cmpnyNm}">회사</span> <span class="text-muted small" th:text="${item.deptNm}">부서</span></td>
+            <td class="text-center" th:text="${item.ofcpsNm}">직위</td>
+            <td class="text-center small">010-<span th:text="${item.middleMbtlNum}">0000</span>-<span th:text="${item.endMbtlNum}">0000</span></td>
+            <td class="text-center"><span class="krds-badge" th:classappend="${item.othbcAt == 'Y'} ? 'bg-success' : 'bg-gray'" th:text="${item.othbcAt == 'Y'} ? #{i4.26} : #{i4.27}">공개</span></td>
+        </tr>
+        <tr th:if="${resultList == null or #lists.isEmpty(resultList)}"><td colspan="6" class="text-center text-muted py-4" th:text="#{i4.28}">등록된 명함이 없습니다.</td></tr>
+        </tbody>
+    </table></div>
+    <div th:if="${paginationInfo != null}" th:replace="~{fragments/pagination :: paginationSearch(paginationInfo=${paginationInfo}, baseUrl='/cop/ncm/selectNcrdInfs.do', searchCondition='', searchKeyword=${searchVO != null ? searchVO.searchWrd : ''})}"></div>
+</div>
+</main>
+</body>
+</html>

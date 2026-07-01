@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{i2.8}">행사 신청 관리</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:900px;">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/uss/ion/evt/EgovEventReqstManageList.do}" th:text="#{i2.8}">행사 신청 관리</a></li>
+        <li class="breadcrumb-item active" th:text="${eventManageVO.eventNm}">상세</li>
+    </ol></nav>
+    <h1 class="h4 mb-3"><i class="bi bi-calendar-event"></i> <span th:text="${eventManageVO.eventNm}">행사명</span></h1>
+
+    <div class="krds-table-wrap">
+        <table class="tbl col">
+            <tbody>
+            <tr><th scope="row" style="width:160px;" th:text="#{i2.9}">행사명</th><td th:text="${eventManageVO.eventNm}">행사명</td></tr>
+            <tr><th scope="row" th:text="#{c4.11}">행사 구분</th><td th:text="${eventManageVO.eventSe}">구분</td></tr>
+            <tr><th scope="row" th:text="#{c4.12}">행사 목적</th><td style="white-space:pre-wrap;" th:text="${eventManageVO.eventPurps}">목적</td></tr>
+            <tr><th scope="row" th:text="#{i2.10}">시작일</th><td th:text="${eventManageVO.eventBeginDe}">시작일</td></tr>
+            <tr><th scope="row" th:text="#{i2.11}">종료일</th><td th:text="${eventManageVO.eventEndDe}">종료일</td></tr>
+            <tr><th scope="row" th:text="#{c4.13}">주최기관</th><td th:text="${eventManageVO.eventAuspcInsttNm}">주최기관</td></tr>
+            <tr><th scope="row" th:text="#{i2.13}">주관기관</th><td th:text="${eventManageVO.eventMngtInsttNm}">주관기관</td></tr>
+            <tr><th scope="row" th:text="#{i2.12}">장소</th><td th:text="${eventManageVO.eventPlace}">장소</td></tr>
+            <tr><th scope="row" th:text="#{c4.14}">행사 내용</th><td style="white-space:pre-wrap;" th:text="${eventManageVO.eventCn}">내용</td></tr>
+            <tr><th scope="row" th:text="#{c4.15}">비용발생 여부</th><td th:text="${eventManageVO.ctOccrrncAt == 'Y'} ? #{c4.23} : #{c4.24}">여부</td></tr>
+            <tr><th scope="row" th:text="#{c4.16}">참가비용</th><td th:text="${eventManageVO.partcptCt}">참가비용</td></tr>
+            <tr><th scope="row" th:text="#{c4.17}">정원</th><td th:text="${eventManageVO.psncpa}">정원</td></tr>
+            <tr><th scope="row" th:text="#{c4.18}">참조 URL</th><td th:text="${eventManageVO.refrnUrl}">URL</td></tr>
+            <tr><th scope="row" th:text="#{c4.19}">접수 시작일</th><td th:text="${eventManageVO.rceptBeginDe}">접수시작</td></tr>
+            <tr><th scope="row" th:text="#{c4.20}">접수 종료일</th><td th:text="${eventManageVO.rceptEndDe}">접수종료</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-actions d-flex justify-content-between align-items-center">
+        <a class="krds-btn tertiary" th:href="@{/uss/ion/evt/EgovEventReqstManageList.do}" th:text="#{button.list}">목록</a>
+        <div class="d-flex gap-2">
+            <form th:action="@{/uss/ion/evt/EgovEventReqstDelete.do}" method="post" onsubmit="return confirm('삭제하시겠습니까?');" style="display:inline;">
+                <input type="hidden" name="eventId" th:value="${eventManageVO.eventId}"/>
+                <button class="krds-btn danger" type="submit"><i class="bi bi-trash"></i> <span th:text="#{button.delete}">삭제</span></button>
+            </form>
+            <a class="krds-btn primary" th:href="@{/uss/ion/evt/EgovEventReqstDetail.do(eventId=${eventManageVO.eventId}, cmd='updt')}"><i class="bi bi-pencil"></i> <span th:text="#{button.modify}">수정</span></a>
+        </div>
+    </div>
+</div>
+</main>
+</body>
+</html>

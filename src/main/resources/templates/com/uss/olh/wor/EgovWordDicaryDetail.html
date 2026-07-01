@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{i1.210}">용어 사전 관리</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:820px;">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/uss/olh/wor/selectWordDicaryList.do}" th:text="#{i1.210}">용어 사전 관리</a></li>
+        <li class="breadcrumb-item active" th:text="${result.wordNm}">상세</li>
+    </ol></nav>
+    <h1 class="h4 mb-3"><i class="bi bi-journal-text"></i> <span th:text="${result.wordNm}">용어명</span></h1>
+
+    <div class="krds-table-wrap">
+        <table class="tbl col">
+            <tbody>
+            <tr><th scope="row" style="width:140px;" th:text="#{i1.212}">용어명</th><td th:text="${result.wordNm}">용어명</td></tr>
+            <tr><th scope="row" th:text="#{i1.214}">영문명</th><td th:text="${result.engNm}">영문명</td></tr>
+            <tr><th scope="row" th:text="#{i1.213}">설명</th><td style="white-space:pre-wrap;" th:text="${result.wordDc}">설명</td></tr>
+            <tr><th scope="row" th:text="#{c4.1}">동의어</th><td th:text="${result.synonm}">동의어</td></tr>
+            <tr><th scope="row" th:text="#{i1.197}">등록자</th><td th:text="${result.emplyrNm}">등록자</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-actions d-flex justify-content-between align-items-center">
+        <a class="krds-btn tertiary" th:href="@{/uss/olh/wor/selectWordDicaryList.do}" th:text="#{button.list}">목록</a>
+        <div class="d-flex gap-2">
+            <form th:action="@{/uss/olh/wor/deleteWordDicary.do}" method="post" onsubmit="return confirm('삭제하시겠습니까?');" style="display:inline;">
+                <input type="hidden" name="wordId" th:value="${result.wordId}"/>
+                <button class="krds-btn danger" type="submit"><i class="bi bi-trash"></i> <span th:text="#{button.delete}">삭제</span></button>
+            </form>
+            <a class="krds-btn primary" th:href="@{/uss/olh/wor/updateWordDicaryView.do(wordId=${result.wordId})}"><i class="bi bi-pencil"></i> <span th:text="#{button.modify}">수정</span></a>
+        </div>
+    </div>
+</div>
+</main>
+</body>
+</html>

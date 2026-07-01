@@ -1,0 +1,165 @@
+package egovframework.com.uss.ion.yrc.web;
+
+import java.util.List;
+
+import org.egovframe.rte.fdl.string.EgovDateUtil;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import egovframework.com.cmm.EgovMessageSource;
+import egovframework.com.cmm.LoginVO;
+import egovframework.com.cmm.annotation.IncludedInfo;
+import egovframework.com.cmm.util.EgovUserDetailsHelper;
+import egovframework.com.uss.ion.yrc.service.EgovIndvdlYrycManageService;
+import egovframework.com.uss.ion.yrc.service.IndvdlYrycManage;
+import egovframework.com.utl.fcc.service.EgovStringUtil;
+import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
+
+/**
+ * 개요
+ * - 개인연차관리에 대한 controller 클래스를 정의한다.
+ *
+ * 상세내용
+ * - 개인연차관리에 대한 등록, 수정, 삭제, 조회 기능을 제공한다.
+ * @author 표준프레임워크센터
+ * @version 1.0
+ * @created 2014.11.14
+ * <pre>
+ * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
+ *
+ *     수정일      	수정자          수정내용
+ *  -----------    --------    ---------------------------
+ *   2014.11.14		이기하          최초 생성
+ *
+ * </pre>
+ */
+@Controller
+public class EgovIndvdlYrycManageController {
+
+    @Resource(name = "egovIndvdlYrycManageService")
+    private EgovIndvdlYrycManageService egovIndvdlYrycManageService;
+
+    @Resource(name = "egovMessageSource")
+    private EgovMessageSource egovMessageSource;
+
+    /**
+     * 개인연차관리정보를 관리하기 위해 등록된 개인연차관리 목록을 조회한다.
+     *
+     * @param IndvdlYrycManage - 개인연차관리 VO
+     * @return String - 리턴 Url
+     */
+    @IncludedInfo(name = "개인연차관리", order = 902, gid = 50)
+    @RequestMapping(value = "/uss/ion/yrc/EgovIndvdlYrycManageList.do")
+    public String selectIndvdlYrycManageList(IndvdlYrycManage indvdlYrycManage, ModelMap model) throws Exception {
+
+        LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+        if (user == null) {
+            return "redirect:/uat/uia/egovLoginUsr.do";
+        }
+
+        indvdlYrycManage.setMberId(user.getUniqId());
+
+        List<IndvdlYrycManage> resultList = egovIndvdlYrycManageService.selectIndvdlYrycManageList(indvdlYrycManage);
+        model.addAttribute("resultList", resultList);
+
+        return "com/uss/ion/yrc/EgovIndvdlYrycManageList";
+    }
+
+    /**
+     * 개인별연차관리 등록 화면으로 이동한다.
+     *
+     * @param indvdlYrycManage - 연차관리 model
+     * @return String - 리턴 Url
+     */
+    @RequestMapping(value = "/uss/ion/yrc/EgovIndvdlYrycRegist.do", method = RequestMethod.GET)
+    public String insertViewIndvdlYrycManage(@ModelAttribute IndvdlYrycManage indvdlYrycManage, ModelMap model) throws Exception {
+
+        LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+        indvdlYrycManage.setMberId(user == null ? "" : EgovStringUtil.isNullToString(user.getUniqId()));
+        indvdlYrycManage.setMberNm(user == null ? "" : EgovStringUtil.isNullToString(user.getName()));
+
+        List<IndvdlYrycManage> resultList = egovIndvdlYrycManageService.selectIndvdlYrycManageList(indvdlYrycManage);
+        indvdlYrycManage.setOccrrncYear(EgovDateUtil.getCurrentYearAsString());
+
+        int totCnt = egovIndvdlYrycManageService.selectIndvdlYrycManageListTotCnt(indvdlYrycManage);
+
+        model.addAttribute("resultList", resultList);
+        model.addAttribute("totCnt", totCnt);
+
+        return "com/uss/ion/yrc/EgovIndvdlYrycRegist";
+    }
+
+    /**
+     * 개인별연차관리 등록한다.
+     *
+     * @param indvdlYrycManage - 연차관리 model
+     * @return String - 리턴 Url
+     */
+    @RequestMapping(value = "/uss/ion/yrc/EgovIndvdlYrycRegist.do", method = RequestMethod.POST)
+    public String insertIndvdlYrycManage(
+		@Valid @ModelAttribute IndvdlYrycManage indvdlYrycManage,
+		BindingResult bindingResult, ModelMap model) throws Exception {
+
+        LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+        indvdlYrycManage.setMberId((user == null || user.getUniqId() == null) ? "" : user.getUniqId());
+
+        // Bean Validation 에러 체크 (잔여연차 검증 포함)
+        if (bindingResult.hasErrors()) {
+            // 등록 화면으로 다시 이동하기 위한 데이터 설정
+            indvdlYrycManage.setMberNm(user == null ? "" : EgovStringUtil.isNullToString(user.getName()));
+            indvdlYrycManage.setOccrrncYear(org.egovframe.rte.fdl.string.EgovDateUtil.getCurrentYearAsString());
+
+            List<IndvdlYrycManage> resultList = egovIndvdlYrycManageService.selectIndvdlYrycManageList(indvdlYrycManage);
+            int totCnt = egovIndvdlYrycManageService.selectIndvdlYrycManageListTotCnt(indvdlYrycManage);
+
+            model.addAttribute("resultList", resultList);
+            model.addAttribute("totCnt", totCnt);
+            model.addAttribute("indvdlYrycManage", indvdlYrycManage);
+            return "com/uss/ion/yrc/EgovIndvdlYrycRegist";
+        }
+        
+        // 잔여연차 계산 및 설정 (검증 통과 후이므로 null 체크 불필요)
+        Double remndrYrycCo = indvdlYrycManage.getOccrncYrycCo() - indvdlYrycManage.getUseYrycCo();
+        indvdlYrycManage.setRemndrYrycCo(remndrYrycCo);
+
+        int totCnt = egovIndvdlYrycManageService.selectIndvdlYrycManageListTotCnt(indvdlYrycManage);
+
+        if (totCnt >= 1) {
+            egovIndvdlYrycManageService.updtIndvdlYrycManage(indvdlYrycManage);
+        } else {
+            egovIndvdlYrycManageService.insertIndvdlYrycManage(indvdlYrycManage);
+        }
+
+        List<IndvdlYrycManage> resultList = egovIndvdlYrycManageService.selectIndvdlYrycManageList(indvdlYrycManage);
+        model.addAttribute("resultList", resultList);
+        model.addAttribute("totCnt", totCnt);
+
+        return "com/uss/ion/yrc/EgovIndvdlYrycManageList";
+    }
+
+	/**
+	 * 개인별연차관리 삭제한다.
+	 * @param indvdlYrycManage - 연차관리 model
+	 * @return String - 리턴 Url
+	 */
+	@RequestMapping(value = "/uss/ion/yrc/deleteIndvdlYryc.do", method = RequestMethod.POST)
+	public String deleteIndvdlYrycManage(IndvdlYrycManage indvdlYrycManage) throws Exception {
+
+		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+		indvdlYrycManage.setMberId((user == null || user.getUniqId() == null) ? "" : user.getUniqId());
+
+		int totCnt = egovIndvdlYrycManageService.selectIndvdlYrycManageListTotCnt(indvdlYrycManage);
+
+		if (totCnt >= 1) {
+			egovIndvdlYrycManageService.deleteIndvdlYrycManage(indvdlYrycManage);
+		}
+
+		return "com/uss/ion/yrc/EgovIndvdlYrycManageList";
+	}
+
+}

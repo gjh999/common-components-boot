@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{i1.192}">RSS 태그 관리</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:820px;">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/uss/ion/rss/listRssTagManage.do}" th:text="#{i1.192}">RSS 태그 관리</a></li>
+        <li class="breadcrumb-item active" th:text="#{button.modify}">수정</li>
+    </ol></nav>
+    <h1 class="h4 mb-3"><i class="bi bi-rss"></i> <span th:text="#{i1.192}">RSS 태그 관리</span> - <span th:text="#{button.modify}">수정</span></h1>
+
+    <form th:action="@{/uss/ion/rss/updtRssTagManage.do}" method="post" th:object="${rssManage}">
+        <input type="hidden" th:field="*{rssId}"/>
+        <input type="hidden" name="cmd" value="save"/>
+        <fieldset class="krds-form-section">
+            <legend class="krds-form-section-title" th:text="#{c2.26}">대상 서비스</legend>
+            <div class="row g-3">
+                <div class="col-12"><label class="form-label"><span th:text="#{i1.194}">대상 서비스명</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="text" th:field="*{trgetSvcNm}" maxlength="255" required/></div>
+                <div class="col-md-8"><label class="form-label"><span th:text="#{i1.195}">대상 테이블</span> <span class="frm-rq">*</span></label>
+                    <select class="krds-form-select" th:field="*{trgetSvcTable}" required>
+                        <option value="" th:text="#{c2.4}">선택</option>
+                        <option th:each="tbl : ${trgetSvcTableList}" th:value="${tbl.code}" th:text="${tbl.codeNm}">테이블</option>
+                    </select></div>
+                <div class="col-md-4"><label class="form-label"><span th:text="#{c2.16}">목록 개수</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="number" th:field="*{trgetSvcListCo}" min="1" max="99999" required/></div>
+            </div>
+        </fieldset>
+        <fieldset class="krds-form-section">
+            <legend class="krds-form-section-title" th:text="#{c2.27}">헤더 정보</legend>
+            <div class="row g-3">
+                <div class="col-12"><label class="form-label"><span th:text="#{i1.196}">헤더 제목</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="text" th:field="*{hderTitle}" maxlength="255" required/></div>
+                <div class="col-12"><label class="form-label"><span th:text="#{c2.17}">헤더 링크</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="text" th:field="*{hderLink}" maxlength="255" required/></div>
+                <div class="col-12"><label class="form-label"><span th:text="#{c2.18}">헤더 설명</span> <span class="frm-rq">*</span></label>
+                    <textarea class="krds-input" th:field="*{hderDescription}" rows="3" maxlength="4000" required></textarea></div>
+                <div class="col-md-6"><label class="form-label" th:text="#{c2.19}">헤더 태그</label>
+                    <input class="krds-input" type="text" th:field="*{hderTag}" maxlength="255"/></div>
+                <div class="col-md-6"><label class="form-label" th:text="#{c2.20}">헤더 기타</label>
+                    <input class="krds-input" type="text" th:field="*{hderEtc}" maxlength="255"/></div>
+            </div>
+        </fieldset>
+        <fieldset class="krds-form-section">
+            <legend class="krds-form-section-title" th:text="#{c2.28}">본문 정보</legend>
+            <div class="row g-3">
+                <div class="col-12"><label class="form-label"><span th:text="#{c2.21}">본문 제목</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="text" th:field="*{bdtTitle}" maxlength="255" required/></div>
+                <div class="col-12"><label class="form-label"><span th:text="#{c2.22}">본문 링크</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="text" th:field="*{bdtLink}" maxlength="255" required/></div>
+                <div class="col-12"><label class="form-label"><span th:text="#{c2.23}">본문 설명</span> <span class="frm-rq">*</span></label>
+                    <textarea class="krds-input" th:field="*{bdtDescription}" rows="3" maxlength="4000" required></textarea></div>
+                <div class="col-md-6"><label class="form-label" th:text="#{c2.24}">본문 태그</label>
+                    <input class="krds-input" type="text" th:field="*{bdtTag}" maxlength="255"/></div>
+                <div class="col-md-6"><label class="form-label" th:text="#{c2.25}">본문 기타</label>
+                    <input class="krds-input" type="text" th:field="*{bdtEtc}" maxlength="255"/></div>
+            </div>
+        </fieldset>
+        <div class="form-actions d-flex justify-content-between align-items-center">
+            <a class="krds-btn tertiary" th:href="@{/uss/ion/rss/detailRssTagManage.do(rssId=${rssManage.rssId})}" th:text="#{button.cancel}">취소</a>
+            <button class="krds-btn primary" type="submit"><i class="bi bi-check-lg"></i> <span th:text="#{button.save}">저장</span></button>
+        </div>
+    </form>
+</div>
+</main>
+</body>
+</html>

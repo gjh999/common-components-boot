@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 회의실관리(uss/ion/mtg) — COMTNMTGPLACEMANAGE → TB_MTG_PLACE_MANAGE 표준화(HSQL, 예약그리드/코드 조인 단순화) -->
+<mapper namespace="mtgPlaceManageDAO">
+
+    <sql id="mtgCols">
+        A.MTGRUM_ID AS mtgPlaceId, A.MTGRUM_NM AS mtgPlaceNm, A.OPN_BEGIN_TM AS opnBeginTm, A.OPN_END_TM AS opnEndTm,
+        A.ACEPTNC_POSBL_NMPR AS aceptncPosblNmpr, A.LC_SE AS lcSe, A.LC_DETAIL AS lcDetail, A.ATCH_FILE_ID AS atchFileId,
+        A.FRST_REGISTER_ID AS frstRegisterId, A.LAST_UPDUSR_ID AS lastUpdusrId,
+        TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS frstRegisterPnttm
+    </sql>
+
+    <sql id="mtgSearch">
+        <if test="searchKeyword != null and searchKeyword != ''">AND A.MTGRUM_NM LIKE CONCAT(CONCAT('%', #{searchKeyword}),'%')</if>
+    </sql>
+
+    <select id="selectMtgPlaceManageList" parameterType="egovframework.com.uss.ion.mtg.service.MtgPlaceManageVO" resultType="egovframework.com.uss.ion.mtg.service.MtgPlaceManageVO">
+        SELECT <include refid="mtgCols"/>
+        FROM TB_MTG_PLACE_MANAGE A WHERE 1=1
+        <include refid="mtgSearch"/>
+        ORDER BY A.MTGRUM_NM
+        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+    </select>
+
+    <select id="selectMtgPlaceManageListTotCnt" parameterType="egovframework.com.uss.ion.mtg.service.MtgPlaceManageVO" resultType="int">
+        SELECT COUNT(*) FROM TB_MTG_PLACE_MANAGE A WHERE 1=1
+        <include refid="mtgSearch"/>
+    </select>
+
+    <select id="selectMtgPlaceManage" parameterType="egovframework.com.uss.ion.mtg.service.MtgPlaceManageVO" resultType="egovframework.com.uss.ion.mtg.service.MtgPlaceManageVO">
+        SELECT <include refid="mtgCols"/> FROM TB_MTG_PLACE_MANAGE A WHERE A.MTGRUM_ID = #{mtgPlaceId}
+    </select>
+
+    <insert id="insertMtgPlaceManage" parameterType="egovframework.com.uss.ion.mtg.service.MtgPlaceManageVO">
+        INSERT INTO TB_MTG_PLACE_MANAGE (MTGRUM_ID, MTGRUM_NM, OPN_BEGIN_TM, OPN_END_TM, ACEPTNC_POSBL_NMPR, LC_SE, LC_DETAIL, ATCH_FILE_ID, FRST_REGISTER_ID, FRST_REGIST_PNTTM)
+        VALUES (#{mtgPlaceId}, #{mtgPlaceNm}, #{opnBeginTm}, #{opnEndTm}, #{aceptncPosblNmpr}, #{lcSe}, #{lcDetail}, #{atchFileId}, #{frstRegisterId}, CURRENT_TIMESTAMP)
+    </insert>
+
+    <update id="updtMtgPlaceManage" parameterType="egovframework.com.uss.ion.mtg.service.MtgPlaceManageVO">
+        UPDATE TB_MTG_PLACE_MANAGE SET MTGRUM_NM = #{mtgPlaceNm}, OPN_BEGIN_TM = #{opnBeginTm}, OPN_END_TM = #{opnEndTm},
+               ACEPTNC_POSBL_NMPR = #{aceptncPosblNmpr}, LC_SE = #{lcSe}, LC_DETAIL = #{lcDetail},
+               LAST_UPDUSR_ID = #{lastUpdusrId}, LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
+        WHERE MTGRUM_ID = #{mtgPlaceId}
+    </update>
+
+    <delete id="deleteMtgPlaceManage" parameterType="egovframework.com.uss.ion.mtg.service.MtgPlaceManageVO">
+        DELETE FROM TB_MTG_PLACE_MANAGE WHERE MTGRUM_ID = #{mtgPlaceId}
+    </delete>
+
+</mapper>

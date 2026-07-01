@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 통합링크관리(uss/ion/ulm) — COMTNUNITYLINK → TB_UNITY_LINK 표준화(HSQL) -->
+<mapper namespace="UnityLink">
+
+    <resultMap id="UnityLink" type="egovframework.com.uss.ion.ulm.service.UnityLink">
+        <result property="unityLinkId" column="UNITY_LINK_ID"/>
+        <result property="unityLinkSeCode" column="UNITY_LINK_SE_CODE"/>
+        <result property="unityLinkNm" column="UNITY_LINK_NM"/>
+        <result property="unityLinkUrl" column="UNITY_LINK_URL"/>
+        <result property="unityLinkDc" column="UNITY_LINK_DC"/>
+        <result property="frstRegisterPnttm" column="FRST_REGIST_PNTTM"/>
+        <result property="frstRegisterId" column="FRST_REGISTER_ID"/>
+        <result property="lastUpdusrPnttm" column="LAST_UPDT_PNTTM"/>
+        <result property="lastUpdusrId" column="LAST_UPDUSR_ID"/>
+    </resultMap>
+
+    <sql id="ulmCols">
+        A.UNITY_LINK_ID, A.UNITY_LINK_SE_CODE, A.UNITY_LINK_NM, A.UNITY_LINK_URL, A.UNITY_LINK_DC,
+        A.FRST_REGISTER_ID, TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS FRST_REGIST_PNTTM
+    </sql>
+
+    <sql id="ulmSearch">
+        <if test="searchKeyword != null and searchKeyword != ''">
+            AND (A.UNITY_LINK_NM LIKE CONCAT(CONCAT('%', #{searchKeyword}),'%')
+                 OR A.UNITY_LINK_DC LIKE CONCAT(CONCAT('%', #{searchKeyword}),'%'))
+        </if>
+    </sql>
+
+    <select id="selectUnityLink" parameterType="egovframework.com.uss.ion.ulm.service.UnityLink" resultMap="UnityLink">
+        SELECT <include refid="ulmCols"/>
+        FROM TB_UNITY_LINK A WHERE 1=1
+        <include refid="ulmSearch"/>
+        ORDER BY A.FRST_REGIST_PNTTM DESC
+        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+    </select>
+
+    <select id="selectUnityLinkSample" parameterType="egovframework.com.uss.ion.ulm.service.UnityLink" resultMap="UnityLink">
+        SELECT <include refid="ulmCols"/> FROM TB_UNITY_LINK A WHERE 1=1
+        <include refid="ulmSearch"/>
+        ORDER BY A.FRST_REGIST_PNTTM DESC
+    </select>
+
+    <select id="selectUnityLinkCnt" parameterType="egovframework.com.uss.ion.ulm.service.UnityLink" resultType="int">
+        SELECT COUNT(*) FROM TB_UNITY_LINK A WHERE 1=1
+        <include refid="ulmSearch"/>
+    </select>
+
+    <select id="selectUnityLinkDetail" parameterType="egovframework.com.uss.ion.ulm.service.UnityLink" resultMap="UnityLink">
+        SELECT <include refid="ulmCols"/> FROM TB_UNITY_LINK A WHERE A.UNITY_LINK_ID = #{unityLinkId}
+    </select>
+
+    <insert id="insertUnityLink" parameterType="egovframework.com.uss.ion.ulm.service.UnityLink">
+        INSERT INTO TB_UNITY_LINK (UNITY_LINK_ID, UNITY_LINK_SE_CODE, UNITY_LINK_NM, UNITY_LINK_URL, UNITY_LINK_DC, FRST_REGIST_PNTTM, FRST_REGISTER_ID)
+        VALUES (#{unityLinkId}, #{unityLinkSeCode}, #{unityLinkNm}, #{unityLinkUrl}, #{unityLinkDc}, CURRENT_TIMESTAMP, #{frstRegisterId})
+    </insert>
+
+    <update id="updateUnityLink" parameterType="egovframework.com.uss.ion.ulm.service.UnityLink">
+        UPDATE TB_UNITY_LINK SET UNITY_LINK_SE_CODE = #{unityLinkSeCode}, UNITY_LINK_NM = #{unityLinkNm},
+               UNITY_LINK_URL = #{unityLinkUrl}, UNITY_LINK_DC = #{unityLinkDc},
+               LAST_UPDT_PNTTM = CURRENT_TIMESTAMP, LAST_UPDUSR_ID = #{lastUpdusrId}
+        WHERE UNITY_LINK_ID = #{unityLinkId}
+    </update>
+
+    <delete id="deleteUnityLink" parameterType="egovframework.com.uss.ion.ulm.service.UnityLink">
+        DELETE FROM TB_UNITY_LINK WHERE UNITY_LINK_ID = #{unityLinkId}
+    </delete>
+
+</mapper>

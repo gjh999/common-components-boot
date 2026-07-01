@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{i4.60}">배치 결과 조회</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:1100px;">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/examples}" th:text="#{cat.crumb}">공통컴포넌트 예제</a></li>
+        <li class="breadcrumb-item active" th:text="#{i4.60}">배치 결과 조회</li></ol></nav>
+    <div class="d-flex justify-content-between align-items-center mb-3"><h1 class="h4 mb-0"><i class="bi bi-clipboard-data"></i> <span th:text="#{i4.60}">배치 결과 조회</span></h1></div>
+    <div class="d-flex justify-content-between align-items-center mb-2"><span class="text-muted small"><span th:text="#{list.total}">전체</span>
+        <strong th:text="${paginationInfo != null ? paginationInfo.totalRecordCount : 0}">0</strong> <span th:text="#{list.count.unit}">건</span></span></div>
+    <div class="krds-table-wrap"><table class="tbl">
+        <thead><tr>
+            <th scope="col" style="width:70px;" th:text="#{list.seq}">순번</th>
+            <th scope="col" th:text="#{i4.53}">대상 작업</th><th scope="col" style="width:90px;" th:text="#{i4.61}">결과</th>
+            <th scope="col" style="width:160px;" th:text="#{i4.62}">실행 시작</th><th scope="col" th:text="#{i4.63}">오류 정보</th>
+        </tr></thead>
+        <tbody>
+        <tr th:each="item,stat : ${resultList}">
+            <td class="text-center" th:text="${stat.count}">1</td>
+            <td th:text="${item.batchOpertNm}">작업명</td>
+            <td class="text-center"><span class="krds-badge" th:classappend="${item.sttus == 'S'} ? 'bg-success' : (${item.sttus == 'F'} ? 'bg-danger' : 'bg-gray')" th:text="${item.sttusNm}">성공</span></td>
+            <td class="text-center small" th:text="${item.executBeginTime}">시작시각</td>
+            <td class="small text-danger" th:text="${item.errorInfo}"></td>
+        </tr>
+        <tr th:if="${resultList == null or #lists.isEmpty(resultList)}"><td colspan="5" class="text-center text-muted py-4" th:text="#{i4.64}">배치 실행 결과가 없습니다.</td></tr>
+        </tbody>
+    </table></div>
+    <div th:if="${paginationInfo != null}" th:replace="~{fragments/pagination :: paginationSearch(paginationInfo=${paginationInfo}, baseUrl='/sym/bat/getBatchResultList.do', searchCondition='', searchKeyword=${searchKeyword})}"></div>
+</div>
+</main>
+</body>
+</html>

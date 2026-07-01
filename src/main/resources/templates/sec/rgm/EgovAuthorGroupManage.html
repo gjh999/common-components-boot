@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{sec.authorGroup.title}">사용자별 권한 관리</title></head>
+<body>
+<main layout:fragment="content">
+    <div class="container">
+        <nav aria-label="breadcrumb"><ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{common.home}">홈</a></li>
+            <li class="breadcrumb-item active" th:text="#{sec.authorGroup.title}">사용자별 권한 관리</li>
+        </ol></nav>
+        <h1 class="h4 mb-3"><i class="bi bi-person-badge"></i> <span th:text="#{sec.authorGroup.title}">사용자별 권한 관리</span></h1>
+
+        <form id="searchForm" th:action="@{/sec/rgm/EgovAuthorGroupList.do}" method="post" class="row g-2 mb-3">
+            <div class="col-auto">
+                <select class="krds-form-select" name="searchCondition" th:with="sc=${authorGroupVO != null ? authorGroupVO.searchCondition : ''}">
+                    <option value="1" th:selected="${sc == '1'}" th:text="#{sec.authorGroup.cond.userId}">사용자 ID</option>
+                    <option value="2" th:selected="${sc == '2'}" th:text="#{sec.authorGroup.cond.userNm}">사용자 명</option>
+                    <option value="3" th:selected="${sc == '3'}" th:text="#{sec.authorGroup.cond.group}">그룹</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <input type="text" class="krds-input" name="searchKeyword"
+                       th:value="${authorGroupVO != null ? authorGroupVO.searchKeyword : ''}" th:placeholder="#{sec.authorGroup.placeholder}" placeholder="검색어"/>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="krds-btn secondary small"><i class="bi bi-search"></i> <span th:text="#{button.inquiry}">조회</span></button>
+            </div>
+        </form>
+
+        <form id="authorGroupForm" method="post">
+            <input type="hidden" name="userIds" id="userIds"/>
+            <input type="hidden" name="authorCodes" id="authorCodes"/>
+            <input type="hidden" name="regYns" id="regYns"/>
+            <input type="hidden" name="mberTyCodes" id="mberTyCodes"/>
+
+            <div class="krds-table-wrap">
+            <table class="tbl">
+                <caption class="visually-hidden" th:text="#{sec.authorGroup.caption}">사용자별 권한 목록</caption>
+                <thead><tr>
+                    <th scope="col" style="width:40px;"><input type="checkbox" id="checkAll"/></th>
+                    <th scope="col" th:text="#{sec.authorGroup.userId}">사용자ID</th><th scope="col" th:text="#{sec.authorGroup.userNm}">사용자명</th><th scope="col" th:text="#{sec.authorGroup.userTy}">사용자 유형</th><th scope="col" style="width:200px;" th:text="#{sec.authorGroup.author}">권한</th><th scope="col" style="width:100px;" th:text="#{sec.authorGroup.regYn}">등록여부</th>
+                </tr></thead>
+                <tbody>
+                <tr th:each="item : ${authorGroupList}">
+                    <td>
+                        <input type="checkbox" class="rowChk"
+                               th:attr="data-uniqid=${item.uniqId},data-regyn=${item.regYn},data-mbertycode=${item.mberTyCode}"/>
+                    </td>
+                    <td th:text="${item.userId}">ID</td>
+                    <td th:text="${item.userNm}">명</td>
+                    <td th:text="${item.mberTyNm}">유형</td>
+                    <td>
+                        <select class="krds-form-select rowAuthor">
+                            <option th:each="a : ${authorManageList}" th:value="${a.authorCode}" th:text="${a.authorNm}"
+                                    th:selected="${a.authorCode == item.authorCode}">권한</option>
+                        </select>
+                    </td>
+                    <td class="text-center" th:text="${item.regYn}">등록여부</td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(authorGroupList)}"><td colspan="6" class="text-center text-muted py-4" th:text="#{sec.authorGroup.empty}">조회된 사용자가 없습니다.</td></tr>
+                </tbody>
+            </table>
+            </div>
+            <div class="text-end">
+                <button type="button" class="krds-btn primary small" onclick="submitAuthorGroup('insert')"><i class="bi bi-save"></i> <span th:text="#{sec.authorGroup.register}">권한등록</span></button>
+                <button type="button" class="krds-btn danger small" onclick="submitAuthorGroup('delete')"><i class="bi bi-x-circle"></i> <span th:text="#{sec.authorGroup.cancelReg}">등록취소</span></button>
+            </div>
+        </form>
+    </div>
+    <script th:inline="javascript">
+        var INSERT_URL = /*[[@{/sec/rgm/EgovAuthorGroupInsert.do}]]*/ '';
+        var DELETE_URL = /*[[@{/sec/rgm/EgovAuthorGroupDelete.do}]]*/ '';
+        document.getElementById('checkAll').addEventListener('change', function () {
+            document.querySelectorAll('.rowChk').forEach(c => c.checked = this.checked);
+        });
+        function submitAuthorGroup(mode) {
+            var rows = document.querySelectorAll('#authorGroupForm tbody tr');
+            var ids = [], authors = [], regs = [], mbers = [];
+            rows.forEach(function (tr) {
+                var chk = tr.querySelector('.rowChk');
+                if (chk && chk.checked) {
+                    ids.push(chk.getAttribute('data-uniqid'));
+                    var sel = tr.querySelector('.rowAuthor');
+                    authors.push(sel ? sel.value : '');
+                    regs.push(chk.getAttribute('data-regyn'));
+                    mbers.push(chk.getAttribute('data-mbertycode'));
+                }
+            });
+            if (ids.length === 0) { alert([[#{sec.authorGroup.js.noItem}]]); return; }
+            if (!confirm(mode === 'insert' ? [[#{sec.authorGroup.js.confirmRegister}]] : [[#{sec.authorGroup.js.confirmCancel}]])) return;
+            var f = document.getElementById('authorGroupForm');
+            document.getElementById('userIds').value = ids.join(';');
+            document.getElementById('authorCodes').value = authors.join(';');
+            document.getElementById('regYns').value = regs.join(';');
+            document.getElementById('mberTyCodes').value = mbers.join(';');
+            f.action = (mode === 'insert') ? INSERT_URL : DELETE_URL;
+            f.submit();
+        }
+    </script>
+</main>
+</body>
+</html>

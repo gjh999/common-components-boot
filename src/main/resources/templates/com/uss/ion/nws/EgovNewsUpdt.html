@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{i3.54}">뉴스 관리</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:820px;">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/uss/ion/nws/selectNewsList.do}" th:text="#{i3.54}">뉴스 관리</a></li>
+        <li class="breadcrumb-item active" th:text="#{button.modify}">수정</li>
+    </ol></nav>
+    <h1 class="h4 mb-3"><i class="bi bi-newspaper"></i> <span th:text="#{i3.54}">뉴스 관리</span> - <span th:text="#{button.modify}">수정</span></h1>
+
+    <form th:action="@{/uss/ion/nws/updateNews.do}" method="post" enctype="multipart/form-data" th:object="${newsVO}">
+        <input type="hidden" th:field="*{newsId}"/>
+        <input type="hidden" th:field="*{atchFileId}"/>
+        <fieldset class="krds-form-section">
+            <legend class="krds-form-section-title" th:text="#{i3.55}">뉴스 제목</legend>
+            <div class="row g-3">
+                <div class="col-12"><label class="form-label"><span th:text="#{i3.55}">뉴스 제목</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="text" th:field="*{newsSj}" maxlength="100" required/></div>
+                <div class="col-md-6"><label class="form-label" th:text="#{i3.56}">출처</label>
+                    <input class="krds-input" type="text" th:field="*{newsOrigin}" maxlength="60"/></div>
+                <div class="col-md-6"><label class="form-label" th:text="#{i3.57}">게시일</label>
+                    <input class="krds-input" type="date" th:field="*{ntceDe}"/></div>
+                <div class="col-12"><label class="form-label"><span th:text="#{i1.218}">내용</span> <span class="frm-rq">*</span></label>
+                    <textarea class="krds-input" th:field="*{newsCn}" rows="8" maxlength="1000" required></textarea></div>
+            </div>
+        </fieldset>
+        <div class="form-actions d-flex justify-content-between align-items-center">
+            <a class="krds-btn tertiary" th:href="@{/uss/ion/nws/selectNewsDetail.do(newsId=${newsVO.newsId})}" th:text="#{button.cancel}">취소</a>
+            <button class="krds-btn primary" type="submit"><i class="bi bi-check-lg"></i> <span th:text="#{button.save}">저장</span></button>
+        </div>
+    </form>
+</div>
+</main>
+</body>
+</html>

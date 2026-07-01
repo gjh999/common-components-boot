@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head>
+    <title th:text="#{i1.1}">사용 안내 · 구현 가이드</title>
+    <th:block layout:fragment="head-css">
+    <style>
+        .gd-wrap{ max-width:1000px; margin:0 auto; }
+        .gd-intro h1{ font-size:1.7rem; font-weight:800; margin:0 0 .4rem; }
+        .gd-intro p{ color:var(--t-muted,#58616A); line-height:1.7; margin:0; }
+        .gd-section{ margin:1.8rem 0; }
+        .gd-section > h2{ font-size:1.2rem; font-weight:700; margin:0 0 1rem; padding-left:.6rem; border-left:4px solid #4f6bff; display:flex; align-items:center; gap:.5rem; }
+        .gd-card{ border:1px solid var(--t-line, rgba(255,255,255,.1)); border-radius:14px; padding:1.1rem 1.3rem; margin-bottom:.9rem; background:rgba(255,255,255,.03); }
+        .gd-card .t{ font-weight:700; font-size:1.04rem; display:flex; align-items:center; gap:.45rem; margin-bottom:.35rem; }
+        .gd-card .why{ color:var(--t-muted,#aab1d6); font-size:.9rem; margin-bottom:.6rem; }
+        .gd-card .how{ font-size:.9rem; line-height:1.65; }
+        .gd-card .how b{ color:#9ab4ff; }
+        .gd-badge{ display:inline-block; font-size:.72rem; font-weight:700; padding:1px 9px; border-radius:999px; margin-left:.4rem; }
+        .gd-badge.ext{ background:rgba(255,159,67,.18); color:#ffb877; }
+        .gd-badge.batch{ background:rgba(46,213,115,.16); color:#7bed9f; }
+        .gd-badge.base{ background:rgba(123,104,238,.18); color:#b8a9ff; }
+        .gd-step{ background:rgba(79,107,255,.08); border-radius:8px; padding:.5rem .8rem; margin-top:.5rem; font-size:.86rem; color:var(--t-text,#dfe6ff); }
+        .gd-use{ display:flex; gap:.7rem; padding:.7rem .2rem; border-bottom:1px dashed rgba(255,255,255,.08); }
+        .gd-use .n{ flex:0 0 1.7rem; height:1.7rem; border-radius:50%; background:#4f6bff; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.85rem; }
+        .gd-use .x{ font-size:.92rem; line-height:1.6; }
+    </style>
+    </th:block>
+</head>
+<body>
+<main layout:fragment="content">
+<div class="container gd-wrap">
+
+    <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/examples}" th:text="#{cat.crumb}">공통컴포넌트 예제</a></li>
+            <li class="breadcrumb-item active" th:text="#{i1.1}">사용 안내 · 구현 가이드</li>
+        </ol>
+    </nav>
+
+    <div class="gd-intro mb-2">
+        <h1><i class="bi bi-info-circle"></i> <span th:text="#{i1.1}">사용 안내 · 구현 가이드</span></h1>
+        <p th:utext="#{i1.2}">이 페이지는 ① 예제 카탈로그를 <strong>로그인 없이</strong> 사용하는 방법과,
+           ② 외부 인프라(메일·SMS·OAuth) 또는 배치 집계가 <strong>선행되어야 동작하는 모듈</strong>을 어떻게 구현하는지 설명합니다.</p>
+    </div>
+
+    <!-- 사용 안내 -->
+    <section class="gd-section">
+        <h2><i class="bi bi-mouse"></i> <span th:text="#{i1.3}">카탈로그 사용 안내</span></h2>
+        <div class="gd-card">
+            <div class="gd-use"><span class="n">1</span><span class="x" th:utext="#{i1.4}"><b>로그인 불필요</b> — 카탈로그와 모든 예제 화면은 로그인 없이 바로 사용할 수 있습니다. 방문 시 데모 관리자(admin) 세션이 <em>자동 적용</em>되어, 권한이 필요한 관리화면(코드·메뉴·권한·배치 등)도 그대로 열립니다.</span></div>
+            <div class="gd-use"><span class="n">2</span><span class="x" th:utext="#{i1.5}"><b>실제 동작</b> — 각 카드를 클릭하면 인메모리 HSQL DB와 연동된 실제 화면으로 이동합니다. 목록·검색·페이징·상세가 모두 동작합니다.</span></div>
+            <div class="gd-use"><span class="n">3</span><span class="x" th:utext="#{i1.6}"><b>표준화 규칙</b> — 모든 테이블은 <code>TB_</code> 접두 + 대문자 스네이크 + 감사컬럼(FRST_REGIST_PNTTM 등)으로 표준화했고, 매퍼는 7-DBMS(HSQL/PostgreSQL/MySQL/Oracle/Tibero/CUBRID/Altibase)로 제공됩니다.</span></div>
+            <div class="gd-use"><span class="n">4</span><span class="x" th:utext="#{i1.7}"><b>직접 로그인</b>도 가능 — 상단의 <a th:href="@{/uat/uia/egovLoginUsr.do}">로그인</a> 화면에서 <code>admin / 1</code> 로 로그인하면 로그인 흐름 자체를 예제로 확인할 수 있습니다.</span></div>
+        </div>
+    </section>
+
+    <!-- 구현 가이드: 외부 인프라 필요 -->
+    <section class="gd-section">
+        <h2><i class="bi bi-plug"></i> <span th:text="#{i1.8}">외부 인프라가 필요한 모듈</span> <span class="gd-badge ext" th:text="#{i1.9}">외부연동</span></h2>
+
+        <div class="gd-card">
+            <div class="t"><i class="bi bi-envelope"></i> <span th:text="#{i1.10}">메일 발송 (cop/ems)</span></div>
+            <div class="why" th:text="#{i1.11}">외부 SMTP 메일 서버가 있어야 실제 발송이 가능합니다.</div>
+            <div class="how"><span th:utext="#{i1.12}">① <b>spring-boot-starter-mail</b> 의존 추가 → ② <code>application.yml</code>에 <code>spring.mail.host/port/username/password</code> 설정(사내 메일릴레이 또는 SMTP 사업자) → ③ <b>JavaMailSender</b> 빈을 주입받아 <code>MimeMessage</code>로 발송 → ④ 발송 이력 테이블에 결과 적재.</span>
+                <div class="gd-step" th:text="#{i1.13}">필요 조건: 운영 SMTP 계정·발신 도메인 SPF/DKIM 설정</div></div>
+        </div>
+
+        <div class="gd-card">
+            <div class="t"><i class="bi bi-chat-text"></i> <span th:text="#{i1.14}">SMS/MMS 발송 (cop/sms)</span></div>
+            <div class="why" th:text="#{i1.15}">통신사/문자 사업자의 발송 게이트웨이 API가 필요합니다.</div>
+            <div class="how"><span th:utext="#{i1.16}">① 문자 사업자(예: NHN Cloud·알리고·AWS SNS) 가입 후 <b>API 키·발신번호 사전등록</b> → ② REST 클라이언트로 발송 요청 → ③ 발송 결과 콜백(Webhook) 수신·저장.</span>
+                <div class="gd-step" th:text="#{i1.17}">필요 조건: 발신번호 사전등록(전기통신사업법), API 인증키</div></div>
+        </div>
+
+        <div class="gd-card">
+            <div class="t"><i class="bi bi-box-arrow-in-right"></i> <span th:text="#{i1.18}">소셜 로그인 (ext/oauth)</span></div>
+            <div class="why" th:text="#{i1.19}">구글·네이버·카카오 등 OAuth2 제공자 등록이 필요합니다.</div>
+            <div class="how"><span th:utext="#{i1.20}">① <b>spring-boot-starter-oauth2-client</b> 추가 → ② 각 제공자 콘솔에서 <b>clientId·secret·redirect URI</b> 발급 → ③ <code>spring.security.oauth2.client.registration.*</code> 설정 → ④ SecurityConfig에 <code>oauth2Login()</code> 활성화.</span>
+                <div class="gd-step" th:text="#{i1.21}">필요 조건: 각 제공자 개발자 등록, 콜백 URL 화이트리스트</div></div>
+        </div>
+
+        <div class="gd-card">
+            <div class="t"><i class="bi bi-shield-check"></i> <span th:text="#{i1.22}">캡차 / LDAP (ext/captcha · ext/ldapumt)</span></div>
+            <div class="why" th:text="#{i1.23}">이미지 캡차 라이브러리(또는 reCAPTCHA), LDAP/AD 디렉터리 서버가 필요합니다.</div>
+            <div class="how" th:utext="#{i1.24}"><b>캡차</b>: kaptcha로 서버 이미지 생성하거나 구글 reCAPTCHA(사이트키·시크릿) 서버 검증. <b>LDAP</b>: <b>spring-boot-starter-data-ldap</b> + 디렉터리 접속정보 → 사용자 동기화 배치.</div>
+        </div>
+    </section>
+
+    <!-- 구현 가이드: 배치 집계 필요 -->
+    <section class="gd-section">
+        <h2><i class="bi bi-bar-chart-steps"></i> <span th:text="#{i1.25}">배치 집계가 선행되는 모듈</span> <span class="gd-badge batch" th:text="#{i1.26}">배치집계</span></h2>
+        <div class="gd-card">
+            <div class="t"><i class="bi bi-graph-up"></i> <span th:text="#{i1.27}">사용현황 통계 (sts/bst·dst·rst·sst·ust)</span></div>
+            <div class="why" th:utext="#{i1.28}">통계 화면은 <b>일배치가 미리 적재한 집계 summary 테이블</b>을 조회하는 구조입니다.</div>
+            <div class="how"><span th:utext="#{i1.29}">① 원천 테이블(게시판 <code>TB_BBS</code>·접속로그 등)을 ② <b>일배치(이미 구현된 sym/bat Quartz 스케줄러)</b>로 집계해 ③ <code>TB_*_SUMMARY</code>(발생일자별)에 적재 → ④ 통계 화면은 summary를 조회·차트 표시.</span>
+                <div class="gd-step" th:utext="#{i1.30}">참고: 접속통계(sts/cst)는 라이브 쿼리 방식이라 <b>이미 카탈로그에서 동작</b>합니다. 나머지는 위 집계 잡 작성·스케줄 등록이 선행되어야 합니다.</div></div>
+        </div>
+    </section>
+
+    <!-- 구현 가이드: 다중 엔티티/베이스 -->
+    <section class="gd-section">
+        <h2><i class="bi bi-diagram-3"></i> <span th:text="#{i1.31}">다중 엔티티 연관이 큰 모듈</span> <span class="gd-badge base" th:text="#{i1.32}">연관베이스</span></h2>
+        <div class="gd-card">
+            <div class="t"><i class="bi bi-journal-bookmark"></i> <span th:text="#{i1.33}">주소록(cop/adb) · 커뮤니티(cop/cmy) · 스크랩(cop/scp)</span></div>
+            <div class="why" th:text="#{i1.34}">회원·조직·명함·게시판 등 다수 테이블과 매핑관계가 함께 얽혀 있는 다중 패널 화면입니다.</div>
+            <div class="how" th:text="#{i1.35}">① 연관 테이블(회원·조직·명함·게시판 매핑)을 함께 표준화·이식 → ② 다중 패널(검색조건·목록·선택영역) UI 구성 → ③ 매핑 CRUD 연동. 단일 목록보다 범위가 크므로 연관 베이스부터 단계적으로 이식합니다.</div>
+        </div>
+    </section>
+
+    <div class="text-center my-4">
+        <a th:href="@{/examples}" class="krds-btn secondary medium"><i class="bi bi-grid-3x3-gap"></i> <span th:text="#{i1.36}">예제 카탈로그로 돌아가기</span></a>
+    </div>
+
+</div>
+</main>
+</body>
+</html>

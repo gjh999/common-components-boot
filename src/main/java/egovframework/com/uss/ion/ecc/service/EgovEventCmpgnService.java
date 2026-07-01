@@ -1,0 +1,33 @@
+package egovframework.com.uss.ion.ecc.service;
+
+import java.util.List;
+
+import org.egovframe.rte.fdl.cmmn.exception.FdlException;
+
+public interface EgovEventCmpgnService {
+
+	List<EventCmpgnVO> selectEventCmpgnList(EventCmpgnVO eventCmpgnVO);
+
+	int selectEventCmpgnListCnt(EventCmpgnVO eventCmpgnVO);
+
+	void insertEventCmpgn(EventCmpgnVO eventCmpgnVO) throws FdlException;
+
+	EventCmpgnVO selectEventCmpgnDetail(EventCmpgnVO eventCmpgnVO) throws Exception;
+
+	void updateEventCmpgn(EventCmpgnVO eventCmpgnVO);
+
+	void deleteEventCmpgn(EventCmpgnVO eventCmpgnVO);
+
+	List<TnextrlHrVO> selectTnextrlHrList(TnextrlHrVO tnextrlHrVO);
+
+	int selectTnextrlHrListCnt(TnextrlHrVO tnextrlHrVO);
+
+	void insertTnextrlHr(TnextrlHrVO tnextrlHrVO) throws FdlException;
+
+	TnextrlHrVO selectTnextrlHrDetail(TnextrlHrVO tnextrlHrVO) throws Exception;
+
+	void updateTnextrlHr(TnextrlHrVO tnextrlHrVO);
+
+	void deleteTnextrlHr(TnextrlHrVO tnextrlHrVO);
+
+}

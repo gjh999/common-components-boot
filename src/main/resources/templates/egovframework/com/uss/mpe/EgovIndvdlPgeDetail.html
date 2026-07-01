@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{i3.17}">개인화 페이지 콘텐츠 관리</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:820px;">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/uss/mpe/selectIndvdlPgeList.do}" th:text="#{i3.17}">개인화 페이지 콘텐츠 관리</a></li>
+        <li class="breadcrumb-item active" th:text="${result.cntntsNm}">상세</li>
+    </ol></nav>
+    <h1 class="h4 mb-3"><i class="bi bi-grid-1x2"></i> <span th:text="${result.cntntsNm}">콘텐츠명</span></h1>
+
+    <div class="krds-table-wrap">
+        <table class="tbl col">
+            <tbody>
+            <tr><th scope="row" style="width:160px;" th:text="#{i3.18}">콘텐츠명</th><td th:text="${result.cntntsNm}">콘텐츠명</td></tr>
+            <tr><th scope="row" th:text="#{i3.19}">연계 URL</th><td th:text="${result.cntcUrl}">URL</td></tr>
+            <tr><th scope="row" th:text="#{c3.1}">미리보기 URL</th><td th:text="${result.cntntsLinkUrl}">미리보기 URL</td></tr>
+            <tr><th scope="row" th:text="#{c3.2}">콘텐츠 설명</th><td style="white-space:pre-wrap;" th:text="${result.cntntsDc}">설명</td></tr>
+            <tr><th scope="row" th:text="#{i3.20}">사용여부</th><td th:text="${result.cntntsUseAt == 'Y'} ? #{i3.21} : #{i3.22}">사용</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-actions d-flex justify-content-between align-items-center">
+        <a class="krds-btn tertiary" th:href="@{/uss/mpe/selectIndvdlPgeList.do}" th:text="#{button.list}">목록</a>
+        <div class="d-flex gap-2">
+            <a class="krds-btn primary" th:href="@{/uss/mpe/updateIndvdlPgeView.do(cntntsId=${result.cntntsId})}"><i class="bi bi-pencil"></i> <span th:text="#{button.modify}">수정</span></a>
+        </div>
+    </div>
+</div>
+</main>
+</body>
+</html>

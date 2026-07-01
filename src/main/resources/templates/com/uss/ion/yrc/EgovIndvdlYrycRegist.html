@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{c6.17}">개인 연차 등록</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:820px;" th:with="r=${resultList != null and !#lists.isEmpty(resultList)} ? ${resultList[0]} : null">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/uss/ion/yrc/EgovIndvdlYrycManageList.do}" th:text="#{i1.223}">개인 연차 관리</a></li>
+        <li class="breadcrumb-item active" th:text="#{c6.17}">개인 연차 등록</li>
+    </ol></nav>
+    <h1 class="h4 mb-3"><i class="bi bi-calendar2-check"></i> <span th:text="#{c6.17}">개인 연차 등록</span></h1>
+
+    <form th:action="@{/uss/ion/yrc/EgovIndvdlYrycRegist.do}" method="post" th:object="${indvdlYrycManage}">
+        <input type="hidden" th:field="*{occrrncYear}"/>
+        <fieldset class="krds-form-section">
+            <legend class="krds-form-section-title" th:text="#{c6.17}">개인 연차 등록</legend>
+            <div class="row g-3">
+                <div class="col-md-6"><label class="form-label" th:text="#{i1.225}">발생연도</label>
+                    <input class="krds-input" type="text" th:value="${indvdlYrycManage.occrrncYear}" readonly/></div>
+                <div class="col-md-6"><label class="form-label" th:text="#{i1.55}">대상자</label>
+                    <input class="krds-input" type="text" th:value="${indvdlYrycManage.mberNm}" readonly/></div>
+                <div class="col-md-6"><label class="form-label"><span th:text="#{i1.226}">발생연차</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="number" step="0.5" min="1" name="occrncYrycCo"
+                           th:value="${r != null ? r.occrncYrycCo : ''}" required/></div>
+                <div class="col-md-6"><label class="form-label"><span th:text="#{i1.227}">사용연차</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="number" step="0.5" min="0" name="useYrycCo"
+                           th:value="${r != null ? r.useYrycCo : ''}" required/></div>
+            </div>
+        </fieldset>
+        <p class="text-muted small" th:text="#{c6.18}">* 개인 연차 등록/수정 시 발생연도는 해당 연도로 저장됩니다.</p>
+        <div class="form-actions d-flex justify-content-between align-items-center">
+            <a class="krds-btn tertiary" th:href="@{/uss/ion/yrc/EgovIndvdlYrycManageList.do}" th:text="#{button.list}">목록</a>
+            <button class="krds-btn primary" type="submit"><i class="bi bi-check-lg"></i> <span th:text="#{button.save}">저장</span></button>
+        </div>
+    </form>
+</div>
+</main>
+</body>
+</html>

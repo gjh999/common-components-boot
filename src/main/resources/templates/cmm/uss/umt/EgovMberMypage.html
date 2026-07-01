@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head>
+    <title th:text="#{mypage.title}">마이페이지</title>
+    <th:block layout:fragment="head-css">
+    <style>
+        .mypage-tabs { display:flex; gap:.4rem; border-bottom:2px solid var(--t-line, rgba(255,255,255,.15)); margin-bottom:1.4rem; }
+        .mypage-tabs button {
+            background:transparent; border:0; border-bottom:3px solid transparent;
+            padding:.7rem 1.1rem; font-size:1rem; font-weight:600; color:var(--t-text-muted,#9aa1c8); cursor:pointer;
+            margin-bottom:-2px; }
+        .mypage-tabs button.active { color:var(--t-indigo,#8a9bff); border-bottom-color:var(--t-indigo,#5b6ff5); }
+        .mypage-panel { display:none; }
+        .mypage-panel.active { display:block; }
+        .mypage-demo { font-size:.9rem; }
+    </style>
+    </th:block>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="container" style="max-width:820px;"
+         th:with="infoActive=${activeTab == null or activeTab == 'info'}, pwdActive=${activeTab == 'password'}">
+        <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{common.home}">홈</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/examples}">공통컴포넌트 예제</a></li>
+            <li class="breadcrumb-item active" th:text="#{mypage.title}">마이페이지</li>
+        </ol></nav>
+        <h1 class="h4 mb-2"><i class="bi bi-person-gear"></i> <span th:text="#{mypage.title}">마이페이지</span></h1>
+        <div class="alert alert-info mypage-demo py-2 mb-3"><i class="bi bi-info-circle"></i>
+            <span th:text="#{mypage.demo.notice}">예제 환경에서는 데모 사용자(admin) 정보로 동작합니다.</span></div>
+
+        <!-- 예제용 회원유형 전환: 일반회원(GNR)/업무사용자(USR)/기업회원(ENT) 각각의 마이페이지 조회 -->
+        <div class="mypage-setoggle mb-3" role="group" th:with="cur=${demoSe != null ? demoSe : 'USR'}">
+            <span class="me-2 text-muted small" th:text="#{mypage.demo.type}">회원유형(데모):</span>
+            <a class="krds-btn small" th:classappend="${cur == 'GNR'} ? 'primary' : 'tertiary'"
+               th:href="@{/uss/umt/mypage.do(demoSe='GNR')}" th:text="#{mber.ty.gnr}">일반회원</a>
+            <a class="krds-btn small" th:classappend="${cur == 'USR'} ? 'primary' : 'tertiary'"
+               th:href="@{/uss/umt/mypage.do(demoSe='USR')}" th:text="#{mber.ty.usr}">업무사용자</a>
+            <a class="krds-btn small" th:classappend="${cur == 'ENT'} ? 'primary' : 'tertiary'"
+               th:href="@{/uss/umt/mypage.do(demoSe='ENT')}" th:text="#{mber.ty.ent}">기업회원</a>
+        </div>
+
+        <!-- 결과 메시지 -->
+        <div class="alert alert-success" th:if="${resultMsg == 'mypage.msg.info.success'}" th:text="#{mypage.msg.info.success}">수정되었습니다.</div>
+        <div class="alert alert-success" th:if="${resultMsg == 'mypage.msg.pwd.success'}" th:text="#{mypage.msg.pwd.success}">비밀번호가 변경되었습니다.</div>
+        <div class="alert alert-danger" th:if="${resultMsg == 'mypage.msg.pwd.fail.old'}" th:text="#{mypage.msg.pwd.fail.old}">현재 비밀번호가 일치하지 않습니다.</div>
+        <div class="alert alert-danger" th:if="${resultMsg == 'mypage.msg.pwd.fail.confirm'}" th:text="#{mypage.msg.pwd.fail.confirm}">새 비밀번호와 확인이 일치하지 않습니다.</div>
+
+        <div class="mypage-tabs" role="tablist">
+            <button type="button" id="tabBtnInfo" role="tab" th:classappend="${infoActive}? 'active'"
+                    onclick="fnMypageTab('info')" th:text="#{mypage.tab.info}">회원정보 수정</button>
+            <button type="button" id="tabBtnPwd" role="tab" th:classappend="${pwdActive}? 'active'"
+                    onclick="fnMypageTab('password')" th:text="#{mypage.tab.password}">비밀번호 변경</button>
+        </div>
+
+        <!-- 탭1: 회원정보 수정 -->
+        <section id="panelInfo" class="mypage-panel" th:classappend="${infoActive}? 'active'">
+            <form th:action="@{/uss/umt/mypage/info.do}" method="post">
+                <input type="hidden" name="demoSe" th:value="${demoSe}"/>
+                <fieldset class="krds-form-section">
+                    <legend class="krds-form-section-title" th:text="#{mypage.info.title}">회원정보 수정</legend>
+                    <div class="row g-3">
+                        <div class="col-md-6 form-group"><label class="form-label" th:text="#{mypage.userSe}">회원구분</label>
+                            <input class="krds-input" type="text" readonly
+                                   th:value="${myInfo.userSe == 'GNR'} ? #{mber.ty.gnr} : (${myInfo.userSe == 'USR'} ? #{mber.ty.usr} : (${myInfo.userSe == 'ENT'} ? #{mber.ty.ent} : ${myInfo.userSe}))"/></div>
+                        <div class="col-md-6 form-group"><label class="form-label">
+                            <span th:text="#{mypage.id}">아이디</span>
+                            <i class="bi bi-info-circle text-muted" th:title="#{mypage.id.tip}"></i></label>
+                            <input class="krds-input" type="text" th:value="${myInfo.userId}" readonly/></div>
+                        <div class="col-md-6 form-group"><label class="form-label"><span th:text="#{mypage.name}">이름</span> <span class="text-danger">*</span></label>
+                            <input class="krds-input" type="text" name="userNm" th:value="${myInfo.userNm}" maxlength="60" required/></div>
+                        <div class="col-md-6 form-group"><label class="form-label" th:text="#{mypage.email}">이메일</label>
+                            <input class="krds-input" type="email" name="email" th:value="${myInfo.email}" maxlength="50"/></div>
+                        <div class="col-md-6 form-group"><label class="form-label" th:text="#{mypage.telno}">전화번호</label>
+                            <input class="krds-input" type="text" name="telno" th:value="${myInfo.telno}" maxlength="13"
+                                   inputmode="numeric" placeholder="010-1234-5678"/></div>
+                        <div class="col-md-6 form-group"><label class="form-label" th:text="#{mypage.zip}">우편번호</label>
+                            <input class="krds-input" type="text" name="zip" th:value="${myInfo.zip}" maxlength="6"/></div>
+                        <div class="col-12 form-group"><label class="form-label" th:text="#{mypage.adres}">주소</label>
+                            <input class="krds-input" type="text" name="adres" th:value="${myInfo.adres}" maxlength="100"/></div>
+                        <div class="col-12 form-group"><label class="form-label" th:text="#{mypage.detailAdres}">상세주소</label>
+                            <input class="krds-input" type="text" name="detailAdres" th:value="${myInfo.detailAdres}" maxlength="100"/></div>
+                    </div>
+                </fieldset>
+                <div class="form-actions d-flex justify-content-end">
+                    <button class="krds-btn primary" type="submit"><i class="bi bi-check-lg"></i> <span th:text="#{mypage.btn.save}">저장</span></button>
+                </div>
+            </form>
+        </section>
+
+        <!-- 탭2: 비밀번호 변경 -->
+        <section id="panelPwd" class="mypage-panel" th:classappend="${pwdActive}? 'active'">
+            <form th:action="@{/uss/umt/mypage/password.do}" method="post" id="pwdForm">
+                <input type="hidden" name="demoSe" th:value="${demoSe}"/>
+                <fieldset class="krds-form-section">
+                    <legend class="krds-form-section-title" th:text="#{mypage.password.title}">비밀번호 변경</legend>
+                    <div class="row g-3">
+                        <div class="col-12 form-group"><label class="form-label"><span th:text="#{mypage.password.old}">현재 비밀번호</span> <span class="text-danger">*</span></label>
+                            <input class="krds-input" type="password" name="oldPassword" required/></div>
+                        <div class="col-md-6 form-group"><label class="form-label"><span th:text="#{mypage.password.new}">새 비밀번호</span> <span class="text-danger">*</span></label>
+                            <input class="krds-input" type="password" name="newPassword" id="newPassword" maxlength="20" required/></div>
+                        <div class="col-md-6 form-group"><label class="form-label"><span th:text="#{mypage.password.new2}">새 비밀번호 확인</span> <span class="text-danger">*</span></label>
+                            <input class="krds-input" type="password" name="newPassword2" id="newPassword2" maxlength="20" required/></div>
+                    </div>
+                </fieldset>
+                <div class="form-actions d-flex justify-content-end">
+                    <button class="krds-btn primary" type="submit"><i class="bi bi-key"></i> <span th:text="#{mypage.btn.change}">변경</span></button>
+                </div>
+            </form>
+        </section>
+    </div>
+    <script th:inline="javascript">
+        function fnMypageTab(which) {
+            var info = which === 'info';
+            document.getElementById('tabBtnInfo').classList.toggle('active', info);
+            document.getElementById('tabBtnPwd').classList.toggle('active', !info);
+            document.getElementById('panelInfo').classList.toggle('active', info);
+            document.getElementById('panelPwd').classList.toggle('active', !info);
+        }
+        var PWD_MISMATCH = /*[[#{mypage.msg.pwd.fail.confirm}]]*/ '새 비밀번호와 확인이 일치하지 않습니다.';
+        document.getElementById('pwdForm').addEventListener('submit', function (e) {
+            if (document.getElementById('newPassword').value !== document.getElementById('newPassword2').value) {
+                e.preventDefault();
+                alert(PWD_MISMATCH);
+            }
+        });
+    </script>
+</main>
+</body>
+</html>

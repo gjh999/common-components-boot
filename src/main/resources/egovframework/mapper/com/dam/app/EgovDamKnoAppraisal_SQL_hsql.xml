@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 지식 평가(dam/app) — COMTNDAMKNOIFM(TB_DAM_KNO_IFM) 재사용, 전문가 조인 단순화(HSQL) -->
+<mapper namespace="KnoAppraisalDAO">
+
+    <sql id="apsTyNm">
+        CASE A.KNWLDG_TY_CODE WHEN '01' THEN '업무지식' WHEN '02' THEN '기술지식' WHEN '03' THEN '정책지식' ELSE A.KNWLDG_TY_CODE END
+    </sql>
+    <sql id="apsStatNm">
+        CASE A.KNWLDG_EVL WHEN '1' THEN '평가완료' WHEN '2' THEN '평가중' WHEN '0' THEN '평가대기' ELSE A.KNWLDG_EVL END
+    </sql>
+
+    <sql id="apsCols">
+        A.KNWLDG_ID AS knoId, A.KNWLDG_NM AS knoNm, <include refid="apsTyNm"/> AS knoTypeNm,
+        A.KNWLDG_EVL AS knoAps, <include refid="apsStatNm"/> AS regstNm,
+        A.EVL_DE AS appYmd, A.OTHBC_AT AS othbcAt,
+        (SELECT M.USER_NM FROM VW_USER_MASTER M WHERE M.ESNTL_ID = A.FRST_REGISTER_ID) AS userNm,
+        A.FRST_REGISTER_ID AS frstRegisterId, TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS frstRegisterPnttm
+    </sql>
+
+    <sql id="apsSearch">
+        AND A.OTHBC_AT = 'Y'
+        <if test='searchCondition == "1" and searchKeyword != null and searchKeyword != ""'>AND A.KNWLDG_NM LIKE CONCAT(CONCAT('%', #{searchKeyword}),'%')</if>
+    </sql>
+
+    <select id="selectKnoAppraisalList" parameterType="egovframework.com.dam.app.service.KnoAppraisalVO" resultType="egovframework.com.dam.app.service.KnoAppraisalVO">
+        SELECT <include refid="apsCols"/>
+        FROM TB_DAM_KNO_IFM A WHERE 1=1
+        <include refid="apsSearch"/>
+        ORDER BY A.FRST_REGIST_PNTTM DESC
+        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+    </select>
+
+    <select id="selectKnoAppraisalTotCnt" parameterType="egovframework.com.dam.app.service.KnoAppraisalVO" resultType="int">
+        SELECT COUNT(*) FROM TB_DAM_KNO_IFM A WHERE 1=1
+        <include refid="apsSearch"/>
+    </select>
+
+    <select id="selectKnoAppraisal" parameterType="egovframework.com.dam.app.service.KnoAppraisalVO" resultType="egovframework.com.dam.app.service.KnoAppraisalVO">
+        SELECT <include refid="apsCols"/> FROM TB_DAM_KNO_IFM A WHERE A.KNWLDG_ID = #{knoId}
+    </select>
+
+    <update id="updateKnoAppraisal" parameterType="egovframework.com.dam.app.service.KnoAppraisal">
+        UPDATE TB_DAM_KNO_IFM SET KNWLDG_EVL = #{knoAps}, EVL_DE = #{appYmd}, LAST_UPDUSR_ID = #{lastUpdusrId}, LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
+        WHERE KNWLDG_ID = #{knoId}
+    </update>
+
+</mapper>

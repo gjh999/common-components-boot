@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 게시글 댓글(cop/cmt) — COMTNCOMMENT → TB_COMMENT 표준화(HSQL) -->
+<mapper namespace="ArticleComment">
+
+    <sql id="commentCols">
+        A.ANSWER_NO AS commentNo, A.NTT_ID AS nttId, A.BBS_ID AS bbsId, A.WRTER_ID AS wrterId, A.WRTER_NM AS wrterNm,
+        A.ANSWER AS commentCn, A.USE_AT AS useAt,
+        A.FRST_REGISTER_ID AS frstRegisterId, TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS frstRegisterPnttm,
+        (SELECT M.USER_NM FROM VW_USER_MASTER M WHERE M.ESNTL_ID = A.FRST_REGISTER_ID) AS frstRegisterNm
+    </sql>
+
+    <select id="selectArticleCommentList" parameterType="egovframework.com.cop.cmt.service.CommentVO" resultType="egovframework.com.cop.cmt.service.Comment">
+        SELECT <include refid="commentCols"/>
+        FROM TB_COMMENT A
+        WHERE A.NTT_ID = #{nttId} AND A.BBS_ID = #{bbsId} AND A.USE_AT = 'Y'
+        ORDER BY A.ANSWER_NO
+    </select>
+
+    <select id="selectArticleCommentListCnt" parameterType="egovframework.com.cop.cmt.service.CommentVO" resultType="int">
+        SELECT COUNT(*) FROM TB_COMMENT A WHERE A.NTT_ID = #{nttId} AND A.BBS_ID = #{bbsId} AND A.USE_AT = 'Y'
+    </select>
+
+    <select id="commentList" parameterType="egovframework.com.cop.cmt.service.CommentVO" resultType="egovframework.com.cop.cmt.service.Comment">
+        SELECT <include refid="commentCols"/> FROM TB_COMMENT A
+        WHERE A.NTT_ID = #{nttId} AND A.BBS_ID = #{bbsId} AND A.USE_AT = 'Y' ORDER BY A.ANSWER_NO
+    </select>
+
+    <select id="selectArticleCommentDetail" parameterType="egovframework.com.cop.cmt.service.CommentVO" resultType="egovframework.com.cop.cmt.service.Comment">
+        SELECT <include refid="commentCols"/> FROM TB_COMMENT A
+        WHERE A.ANSWER_NO = #{commentNo} AND A.NTT_ID = #{nttId} AND A.BBS_ID = #{bbsId}
+    </select>
+    <select id="commentDetail" parameterType="egovframework.com.cop.cmt.service.CommentVO" resultType="egovframework.com.cop.cmt.service.Comment">
+        SELECT <include refid="commentCols"/> FROM TB_COMMENT A
+        WHERE A.ANSWER_NO = #{commentNo} AND A.NTT_ID = #{nttId} AND A.BBS_ID = #{bbsId}
+    </select>
+
+    <insert id="insertArticleComment" parameterType="egovframework.com.cop.cmt.service.Comment">
+        INSERT INTO TB_COMMENT (ANSWER_NO, NTT_ID, BBS_ID, WRTER_ID, WRTER_NM, ANSWER, PASSWORD, USE_AT, FRST_REGISTER_ID, FRST_REGIST_PNTTM)
+        VALUES (#{commentNo}, #{nttId}, #{bbsId}, #{wrterId}, #{wrterNm}, #{commentCn}, #{commentPassword}, 'Y', #{frstRegisterId}, CURRENT_TIMESTAMP)
+    </insert>
+
+    <update id="deleteArticleComment" parameterType="egovframework.com.cop.cmt.service.Comment">
+        UPDATE TB_COMMENT SET USE_AT = 'N', LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
+        WHERE ANSWER_NO = #{commentNo} AND NTT_ID = #{nttId} AND BBS_ID = #{bbsId}
+    </update>
+
+    <update id="updateArticleComment" parameterType="egovframework.com.cop.cmt.service.Comment">
+        UPDATE TB_COMMENT SET ANSWER = #{commentCn}, LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
+        WHERE ANSWER_NO = #{commentNo} AND NTT_ID = #{nttId} AND BBS_ID = #{bbsId}
+    </update>
+
+</mapper>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{i4.29}">게시글 댓글</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:920px;">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/examples}" th:text="#{cat.crumb}">공통컴포넌트 예제</a></li>
+        <li class="breadcrumb-item active" th:text="#{i4.29}">게시글 댓글</li></ol></nav>
+    <div class="d-flex justify-content-between align-items-center mb-3"><h1 class="h4 mb-0"><i class="bi bi-chat-square-text"></i> <span th:text="#{i4.29}">게시글 댓글</span></h1></div>
+
+    <p class="text-muted small mb-3"><span th:text="#{i4.30}">게시글에 달린 댓글을 조회·작성·삭제하는 공통 컴포넌트입니다.
+        (예제: 공지사항 게시판 첫 게시글의 댓글) 전체</span>
+        <strong th:text="${resultCnt != null ? resultCnt : (resultList != null ? #lists.size(resultList) : 0)}">0</strong><span th:text="#{list.count.unit}">건</span></p>
+
+    <div class="krds-table-wrap p-0">
+        <ul class="list-group list-group-flush" style="background:transparent;">
+            <li class="list-group-item" style="background:transparent; border-color:rgba(255,255,255,.08);"
+                th:each="item : ${resultList}">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="fw-bold" th:text="${item.wrterNm != null and !item.wrterNm.isEmpty()} ? ${item.wrterNm} : ${item.frstRegisterNm}">작성자</span>
+                        <span class="text-muted small ms-2" th:text="${item.frstRegisterPnttm}">작성일</span>
+                    </div>
+                </div>
+                <div class="mt-1" th:text="${item.commentCn}">댓글 내용</div>
+            </li>
+            <li class="list-group-item text-center text-muted py-4" style="background:transparent;"
+                th:if="${resultList == null or #lists.isEmpty(resultList)}" th:text="#{i4.31}">등록된 댓글이 없습니다.</li>
+        </ul>
+    </div>
+
+    <!-- 댓글 작성 폼(예제) -->
+    <form th:action="@{/cop/cmt/insertArticleComment.do}" method="post" class="krds-table-wrap mt-3 p-3">
+        <input type="hidden" name="bbsId" th:value="${searchVO != null ? searchVO.bbsId : 'BBSMSTR_AAAAAAAAAAAA'}"/>
+        <input type="hidden" name="nttId" th:value="${searchVO != null ? searchVO.nttId : 1}"/>
+        <div class="form-group">
+            <div class="form-tit"><label for="commentCn" th:text="#{i4.32}">댓글 작성</label></div>
+            <div class="form-conts d-flex gap-2">
+                <textarea id="commentCn" name="commentCn" class="krds-input" rows="2" style="flex:1;" th:placeholder="#{i4.33}" placeholder="댓글을 입력하세요"></textarea>
+                <button type="submit" class="krds-btn primary medium" style="white-space:nowrap;"><i class="bi bi-send"></i> <span th:text="#{i4.34}">등록</span></button>
+            </div>
+        </div>
+    </form>
+</div>
+</main>
+</body>
+</html>

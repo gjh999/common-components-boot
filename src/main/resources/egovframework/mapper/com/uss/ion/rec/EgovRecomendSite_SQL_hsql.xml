@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 추천사이트관리(uss/ion/rec) — COMTNRECOMENDSITEINFO → TB_RECOMEND_SITE_INFO 표준화(HSQL) -->
+<mapper namespace="RecomendSite">
+
+    <resultMap id="RecomendSiteManage" type="egovframework.com.uss.ion.rec.service.RecomendSiteVO">
+        <result property="recomendSiteId" column="RECOMEND_SITE_ID"/>
+        <result property="recomendSiteUrl" column="RECOMEND_SITE_URL"/>
+        <result property="recomendSiteNm" column="RECOMEND_SITE_NM"/>
+        <result property="recomendSiteDc" column="RECOMEND_SITE_DC"/>
+        <result property="recomendResnCn" column="RECOMEND_RESN_CN"/>
+        <result property="recomendConfmAt" column="RECOMEND_CONFM_AT"/>
+        <result property="confmDe" column="CONFM_DE"/>
+        <result property="frstRegisterPnttm" column="FRST_REGIST_PNTTM"/>
+        <result property="frstRegisterId" column="FRST_REGISTER_ID"/>
+        <result property="lastUpdusrPnttm" column="LAST_UPDT_PNTTM"/>
+        <result property="lastUpdusrId" column="LAST_UPDUSR_ID"/>
+    </resultMap>
+
+    <sql id="recSearch">
+        <if test="searchKeyword != null and searchKeyword != ''">
+            AND A.RECOMEND_SITE_NM LIKE CONCAT(CONCAT('%', #{searchKeyword}), '%')
+        </if>
+    </sql>
+
+    <select id="selectRecomendSiteList" parameterType="egovframework.com.uss.ion.rec.service.RecomendSiteVO" resultMap="RecomendSiteManage">
+        SELECT A.RECOMEND_SITE_ID, A.RECOMEND_SITE_URL, A.RECOMEND_SITE_NM, A.RECOMEND_SITE_DC,
+               A.RECOMEND_RESN_CN, A.RECOMEND_CONFM_AT, A.CONFM_DE,
+               TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS FRST_REGIST_PNTTM, A.FRST_REGISTER_ID,
+               TO_CHAR(A.LAST_UPDT_PNTTM,'YYYY-MM-DD') AS LAST_UPDT_PNTTM, A.LAST_UPDUSR_ID
+        FROM TB_RECOMEND_SITE_INFO A
+        WHERE 1=1
+        <include refid="recSearch"/>
+        ORDER BY A.RECOMEND_SITE_NM DESC
+        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+    </select>
+
+    <select id="selectRecomendSiteListCnt" parameterType="egovframework.com.uss.ion.rec.service.RecomendSiteVO" resultType="int">
+        SELECT COUNT(*) FROM TB_RECOMEND_SITE_INFO A WHERE 1=1
+        <include refid="recSearch"/>
+    </select>
+
+    <select id="selectRecomendSiteDetail" parameterType="egovframework.com.uss.ion.rec.service.RecomendSiteVO" resultMap="RecomendSiteManage">
+        SELECT A.RECOMEND_SITE_ID, A.RECOMEND_SITE_URL, A.RECOMEND_SITE_NM, A.RECOMEND_SITE_DC,
+               A.RECOMEND_RESN_CN, A.RECOMEND_CONFM_AT, A.CONFM_DE,
+               TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS FRST_REGIST_PNTTM, A.FRST_REGISTER_ID,
+               TO_CHAR(A.LAST_UPDT_PNTTM,'YYYY-MM-DD') AS LAST_UPDT_PNTTM, A.LAST_UPDUSR_ID
+        FROM TB_RECOMEND_SITE_INFO A WHERE A.RECOMEND_SITE_ID = #{recomendSiteId}
+    </select>
+
+    <insert id="insertRecomendSite" parameterType="egovframework.com.uss.ion.rec.service.RecomendSiteVO">
+        INSERT INTO TB_RECOMEND_SITE_INFO (RECOMEND_SITE_ID, RECOMEND_SITE_URL, RECOMEND_SITE_NM, RECOMEND_SITE_DC,
+               RECOMEND_RESN_CN, RECOMEND_CONFM_AT, CONFM_DE, FRST_REGIST_PNTTM, FRST_REGISTER_ID)
+        VALUES (#{recomendSiteId}, #{recomendSiteUrl}, #{recomendSiteNm}, #{recomendSiteDc},
+               #{recomendResnCn}, #{recomendConfmAt}, #{confmDe}, CURRENT_TIMESTAMP, #{frstRegisterId})
+    </insert>
+
+    <update id="updateRecomendSite" parameterType="egovframework.com.uss.ion.rec.service.RecomendSiteVO">
+        UPDATE TB_RECOMEND_SITE_INFO SET RECOMEND_SITE_URL = #{recomendSiteUrl}, RECOMEND_SITE_NM = #{recomendSiteNm},
+               RECOMEND_SITE_DC = #{recomendSiteDc}, RECOMEND_RESN_CN = #{recomendResnCn},
+               RECOMEND_CONFM_AT = #{recomendConfmAt}, CONFM_DE = #{confmDe},
+               LAST_UPDT_PNTTM = CURRENT_TIMESTAMP, LAST_UPDUSR_ID = #{lastUpdusrId}
+        WHERE RECOMEND_SITE_ID = #{recomendSiteId}
+    </update>
+
+    <delete id="deleteRecomendSite" parameterType="egovframework.com.uss.ion.rec.service.RecomendSiteVO">
+        DELETE FROM TB_RECOMEND_SITE_INFO WHERE RECOMEND_SITE_ID = #{recomendSiteId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,151 @@
+package egovframework.com.cmm.service;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.egovframe.rte.fdl.idgnr.EgovIdGnrService;
+import org.egovframe.rte.fdl.property.EgovPropertyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import egovframework.com.cmm.EgovWebUtil;
+import egovframework.com.utl.fcc.service.EgovStringUtil;
+import jakarta.annotation.Resource;
+
+/**
+ * @author 공통 서비스 개발팀 이삼섭
+ * @version 1.0
+ * @Class Name  : EgovFileMngUtil.java
+ * @Description : 메시지 처리 관련 유틸리티
+ * @Modification Information
+ *
+ *     수정일         수정자                   수정내용
+ *     -------          --------        ---------------------------
+ *   2009.02.13       이삼섭                  최초 생성
+ *   2011.08.31  JJY            경량환경 템플릿 커스터마이징버전 생성
+ *   2026.06.17  구재호          Spring Boot + Thymeleaf 전환
+ *
+ * @see
+ * @since 2009. 02. 13
+ */
+@Component("EgovFileMngUtil")
+public class EgovFileMngUtil {
+
+    public static final int BUFF_SIZE = 2048;
+
+    @Resource(name = "propertiesService")
+    protected EgovPropertyService propertyService;
+
+    @Resource(name = "egovFileIdGnrService")
+    private EgovIdGnrService idgenService;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EgovFileMngUtil.class);
+
+    /**
+     * 첨부파일에 대한 목록 정보를 취득한다.
+     *
+     * @param files
+     * @return
+     * @throws Exception
+     */
+    /**
+     * List&lt;MultipartFile&gt; 형태의 첨부(예: multiRequest.getFiles("file_1"))를 처리하는 오버로드.
+     * 일부 공통컴포넌트 컨트롤러(rwd/nws/msi/lsi 등)가 List 형태로 파일을 넘기므로 Map 버전으로 위임한다.
+     */
+    public List<FileVO> parseFileInf(List<MultipartFile> files, String KeyStr, int fileKeyParam, String atchFileId, String storePath) throws Exception {
+    	Map<String, MultipartFile> fileMap = new java.util.LinkedHashMap<String, MultipartFile>();
+    	int idx = 0;
+    	if (files != null) {
+    		for (MultipartFile mf : files) {
+    			fileMap.put("file_" + (idx++), mf);
+    		}
+    	}
+    	return parseFileInf(fileMap, KeyStr, fileKeyParam, atchFileId, storePath);
+    }
+
+    public List<FileVO> parseFileInf(Map<String, MultipartFile> files, String KeyStr, int fileKeyParam, String atchFileId, String storePath) throws Exception {
+    	int fileKey = fileKeyParam;
+
+    	String storePathString = "";
+    	String atchFileIdString = "";
+
+    	if (storePath == null || "".equals(storePath)) {
+    		storePathString = propertyService.getString("Globals.fileStorePath");
+    	} else {
+    		storePathString = propertyService.getString(storePath);
+    	}
+
+    	if (atchFileId == null || "".equals(atchFileId)) {
+    		atchFileIdString = idgenService.getNextStringId();
+    	} else {
+    		atchFileIdString = atchFileId;
+    	}
+
+    	File saveFolder = new File(EgovWebUtil.filePathBlackList(storePathString));
+
+    	// 상대경로(예: ./files) 설정 시 MultipartFile.transferTo 가 서블릿 임시디렉터리 기준으로 해석되어
+    	// 저장에 실패하므로 절대경로로 정규화하여 저장 위치를 명확히 한다.
+    	saveFolder = saveFolder.getAbsoluteFile();
+
+    	if (!saveFolder.exists() || saveFolder.isFile()) {
+    		saveFolder.mkdirs();
+    	}
+
+    	String saveFolderPath = saveFolder.getAbsolutePath();
+
+		Iterator<Entry<String, MultipartFile>> itr = files.entrySet().iterator();
+		MultipartFile file;
+		String filePath = "";
+		List<FileVO> result  = new ArrayList<FileVO>();
+		FileVO fvo;
+
+		while (itr.hasNext()) {
+			Entry<String, MultipartFile> entry = itr.next();
+
+		    file = entry.getValue();
+		    String orginFileName = file.getOriginalFilename();
+
+		    //--------------------------------------
+		    // 원 파일명이 없는 경우 처리
+		    // (첨부가 되지 않은 input file type)
+		    //--------------------------------------
+		    if ("".equals(orginFileName)) {
+		    	continue;
+		    }
+		    ////------------------------------------
+
+		    int index = orginFileName.lastIndexOf(".");
+		    //String fileName = orginFileName.substring(0, index);
+		    String fileExt = orginFileName.substring(index + 1);
+		    String newName = KeyStr + EgovStringUtil.getTimeStamp() + fileKey;
+		    long _size = file.getSize();
+
+		    if (!"".equals(orginFileName)) {
+				filePath = saveFolderPath + File.separator + newName;
+				file.transferTo(new File(EgovWebUtil.filePathBlackList(filePath)));
+		    }
+
+		    fvo = new FileVO();
+		    fvo.setFileExtsn(fileExt);
+		    fvo.setFileStreCours(storePathString);
+		    fvo.setFileMg(Long.toString(_size));
+		    fvo.setOrignlFileNm(orginFileName);
+		    fvo.setStreFileNm(newName);
+		    fvo.setAtchFileId(atchFileIdString);
+		    fvo.setFileSn(String.valueOf(fileKey));
+
+		    result.add(fvo);
+
+		    fileKey++;
+		}
+
+		return result;
+    }
+
+}

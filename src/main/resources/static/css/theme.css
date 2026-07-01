@@ -1,0 +1,822 @@
+/* ============================================================
+   eGovFrame 5.0 — 모던 다크 테마 (랜딩 페이지 톤 통일)
+   모든 포털 페이지에 적용되는 전역 오버라이드.
+   krds.min.css / krds-compat.css / krds.css / common.css 이후에 로드되어 우선 적용된다.
+   (Bootstrap 프레임워크는 제거됨 — Bootstrap Icons 아이콘 폰트만 유지)
+   ============================================================ */
+
+:root {
+    --t-ink: #0a0e27;
+    --t-ink-2: #121737;
+    --t-surface: #161b3d;
+    --t-surface-2: #1b2150;
+    --t-indigo: #4f6bff;
+    --t-indigo-2: #7a5cff;
+    --t-cyan: #19d3da;
+    --t-accent: #ff5d8f;
+    --t-text: #e7ebff;
+    --t-muted: #aab1d6;
+    --t-line: rgba(255, 255, 255, 0.10);
+    --t-line-strong: rgba(255, 255, 255, 0.18);
+    --t-radius: 18px;
+}
+
+/* ---------- 기본 바탕 ---------- */
+html { scroll-behavior: smooth; }
+
+body.egov-body {
+    background: var(--t-ink);
+    background-image:
+        radial-gradient(1100px 700px at 85% -10%, rgba(79, 107, 255, 0.18), transparent 60%),
+        radial-gradient(900px 600px at -10% 10%, rgba(122, 92, 255, 0.16), transparent 55%),
+        radial-gradient(800px 800px at 50% 120%, rgba(25, 211, 218, 0.10), transparent 60%),
+        linear-gradient(180deg, #0a0e27, #0c1130 60%, #0a0e27);
+    background-attachment: fixed;
+    color: var(--t-text);
+    font-family: "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+.egov-content {
+    background: transparent !important;
+    min-height: calc(100vh - 220px);
+}
+
+a { color: #bcd0ff; }
+a:hover { color: #fff; }
+
+/* 스크롤바 */
+* { scrollbar-width: thin; scrollbar-color: rgba(124,150,255,.5) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb { background: linear-gradient(var(--t-indigo), var(--t-indigo-2)); border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
+*::-webkit-scrollbar-track { background: transparent; }
+
+.skip-nav { background: var(--t-indigo); }
+
+/* ---------- 헤더 (포털 정책: 상단 고정 sticky + 스크롤 시 잘림 방지) ----------
+   기존 다크 톤은 유지하되, position/z-index/배경을 보정해 스크롤 시 본문이
+   반투명 헤더를 통과해 헤더가 '잘려 보이는' 현상을 제거한다.
+   헤더+GNB를 함께 sticky 스택으로 두어 항상 상단에 고정·온전히 노출. */
+.egov-header.egov-header {
+    position: sticky;
+    top: 0;
+    z-index: 1040;            /* 본문/페이지타이틀(z<=2)·드롭다운 베이스 위 */
+    background: rgba(10, 14, 39, 0.92) !important;   /* 불투명도 ↑ : 본문 비침 차단 */
+    backdrop-filter: blur(18px) saturate(160%);
+    border-bottom: 1px solid var(--t-line) !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+    transition: background .35s ease, padding .35s ease;
+}
+.egov-header.scrolled { background: rgba(8, 11, 30, 0.9) !important; }
+.egov-header .egov-header-logo img { filter: drop-shadow(0 6px 14px rgba(79,107,255,.45)); }
+.egov-header .egov-header-logo span,
+.egov-header .text-primary { color: #fff !important; }
+.egov-header .egov-header-user .text-muted { color: var(--t-muted) !important; }
+.egov-header .egov-header-user .fw-semibold { color: #fff; }
+
+/* 언어 선택기 */
+.egov-lang { display: inline-flex; align-items: center; gap: 2px; padding: 2px;
+    background: rgba(255,255,255,.06); border: 1px solid var(--t-line); border-radius: 999px; }
+.egov-lang .lang-btn { font-size: 12.5px; font-weight: 600; color: var(--t-muted);
+    text-decoration: none; padding: 4px 11px; border-radius: 999px; transition: background .2s, color .2s; line-height: 1.4; }
+.egov-lang .lang-btn:hover { color: #fff; }
+.egov-lang .lang-btn.active { background: linear-gradient(135deg, var(--t-indigo), var(--t-indigo-2)); color: #fff; }
+
+/* 로그인 페이지 상단 언어 선택기 */
+.login-lang { position: absolute; top: 22px; right: 24px; z-index: 5; }
+
+/* ---------- 네비게이션 ---------- */
+.egov-nav.egov-nav {
+    background: rgba(13, 17, 46, 0.92) !important;   /* 불투명도 ↑ : 스크롤 시 본문 비침 차단 */
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--t-line);
+    position: sticky;
+    top: 56px;                /* 헤더(약 56px) 바로 아래 고정 → 헤더+GNB 동반 sticky */
+    z-index: 1035;            /* 헤더 아래·콘텐츠/드롭다운 베이스 위 */
+}
+.egov-nav .nav-link {
+    color: #e7ebff !important;
+    font-size: 14.5px; font-weight: 700;
+    border-bottom: none !important;
+    border-radius: 999px;
+    margin: 4px 2px; padding: 8px 16px !important;
+    transition: color .2s, background .2s;
+}
+.egov-nav .nav-link:hover,
+.egov-nav .nav-link.active {
+    color: #fff !important;
+    background: linear-gradient(135deg, rgba(79,107,255,.9), rgba(122,92,255,.9));
+    box-shadow: 0 8px 22px rgba(79,107,255,.35);
+}
+.egov-nav .navbar-toggler { border-color: var(--t-line-strong); }
+.egov-nav .dropdown-menu {
+    background: rgba(18, 23, 55, 0.98);
+    backdrop-filter: blur(18px);
+    border: 1px solid var(--t-line);
+    border-radius: 14px;
+    box-shadow: 0 20px 50px rgba(0,0,0,.5);
+    padding: 8px;
+    z-index: 1050;            /* 콘텐츠보다 확실히 위 */
+}
+.egov-nav .dropdown-item { color: var(--t-muted); border-radius: 9px; padding: 9px 14px; font-size: 14px; }
+.egov-nav .dropdown-item:hover { background: rgba(79,107,255,.18); color: #fff; }
+.egov-nav .dropdown-divider { border-color: var(--t-line); }
+
+/* 모바일: 펼쳐진 네비가 콘텐츠와 겹치지 않도록 솔리드 패널 처리 */
+@media (max-width: 991.98px) {
+    .egov-nav .navbar-collapse {
+        background: rgba(11, 16, 48, 0.99);
+        border: 1px solid var(--t-line);
+        border-radius: 14px;
+        padding: 10px 12px;
+        margin-top: 10px;
+        box-shadow: 0 22px 55px rgba(0,0,0,.55);
+    }
+    .egov-nav .navbar-nav { gap: 2px; }
+    .egov-nav .dropdown-menu {
+        background: rgba(255,255,255,.05);
+        border: 0; box-shadow: none; margin: 4px 0 4px 14px; padding: 4px;
+    }
+}
+
+/* ---------- 페이지 타이틀(히어로 밴드) ---------- */
+.page-title-bar {
+    position: relative;
+    background: linear-gradient(120deg, #161b3d, #1b2150 55%, #241a55) !important;
+    border: 1px solid var(--t-line) !important;
+    border-radius: 22px;
+    margin: 22px 16px 30px;
+    padding: 40px 8px 34px !important;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,.4);
+}
+.page-title-bar::before {
+    content: ""; position: absolute; width: 360px; height: 360px; right: -80px; top: -160px;
+    background: radial-gradient(circle, rgba(79,107,255,.55), transparent 70%); filter: blur(40px);
+}
+.page-title-bar::after {
+    content: ""; position: absolute; width: 280px; height: 280px; left: -60px; bottom: -150px;
+    background: radial-gradient(circle, rgba(25,211,218,.35), transparent 70%); filter: blur(40px);
+}
+.page-title-bar > .container-fluid { position: relative; z-index: 2; }
+.page-title-bar h1, .page-title-bar h2 {
+    color: #fff !important; font-size: 34px !important; font-weight: 800; letter-spacing: -.02em;
+}
+.page-title-bar .breadcrumb { margin-bottom: 12px; }
+.page-title-bar .breadcrumb-item,
+.page-title-bar .breadcrumb-item.active { color: var(--t-muted); font-size: 13px; }
+.page-title-bar .breadcrumb-item a { color: #c4cbf0; text-decoration: none; }
+.page-title-bar .breadcrumb-item a:hover { color: #fff; }
+.page-title-bar .breadcrumb-item + .breadcrumb-item::before { color: rgba(255,255,255,.3); }
+
+/* ---------- 카드 ---------- */
+.card, .egov-card {
+    background: linear-gradient(160deg, rgba(255,255,255,.055), rgba(255,255,255,.02)) !important;
+    border: 1px solid var(--t-line) !important;
+    border-radius: var(--t-radius) !important;
+    color: var(--t-text) !important;
+    box-shadow: 0 18px 44px rgba(0,0,0,.32);
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+    position: relative;
+    transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease;
+}
+.card:hover {
+    transform: translateY(-5px);
+    border-color: var(--t-line-strong) !important;
+    box-shadow: 0 28px 60px rgba(20,30,80,.5);
+}
+.card::after {
+    content: ""; position: absolute; left: 0; top: 0; height: 3px; width: 0;
+    background: linear-gradient(90deg, var(--t-indigo), var(--t-cyan)); transition: width .45s ease;
+}
+.card:hover::after { width: 100%; }
+.card-header {
+    background: rgba(255,255,255,.04) !important;
+    border-bottom: 1px solid var(--t-line) !important;
+    color: #fff !important; font-weight: 700; font-size: 15.5px;
+    padding: 16px 20px !important;
+}
+.card-body { color: var(--t-text); }
+.card .text-dark { color: var(--t-text) !important; }
+.card a.text-dark:hover { color: #fff !important; }
+.text-muted { color: var(--t-muted) !important; }
+
+/* 환영 배너(메인) 등 인라인 그라데이션 카드 보정 */
+.card[style*="gradient"] { border: 0 !important; }
+
+/* ---------- 테이블 ---------- */
+.egov-table { color: var(--t-text); }
+.egov-table thead th {
+    background: linear-gradient(135deg, rgba(79,107,255,.28), rgba(122,92,255,.22)) !important;
+    border: 1px solid var(--t-line) !important;
+    color: #eef1ff !important;
+    text-transform: none; letter-spacing: .01em;
+}
+.egov-table tbody td {
+    border: 1px solid var(--t-line) !important;
+    color: var(--t-text) !important;
+    background: transparent;
+}
+.egov-table tbody tr { transition: background .2s; }
+.egov-table tbody tr:hover { background: rgba(79,107,255,.12) !important; }
+.egov-table tbody td a, .egov-table tbody td a.text-dark { color: #d7ddff !important; text-decoration: none; }
+.egov-table tbody td a:hover { color: #fff !important; }
+.egov-table .text-muted { color: var(--t-muted) !important; }
+
+/* Bootstrap table 보정 */
+.table { color: var(--t-text); }
+.table > :not(caption) > * > * { background: transparent; color: var(--t-text); border-color: var(--t-line); }
+.table-bordered > :not(caption) > * > * { border-color: var(--t-line); }
+
+/* ---------- 검색 바 ---------- */
+.search-bar {
+    background: linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.02)) !important;
+    border: 1px solid var(--t-line) !important;
+    border-radius: var(--t-radius) !important;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 12px 30px rgba(0,0,0,.25);
+}
+.search-bar .form-label, .form-label { color: var(--t-muted); }
+
+/* ---------- 폼 ---------- */
+.form-control, .form-select {
+    background: rgba(255,255,255,.05) !important;
+    border: 1px solid var(--t-line-strong) !important;
+    color: var(--t-text) !important;
+    border-radius: 11px !important;
+}
+.form-control::placeholder { color: #7e87b5; }
+.form-control:focus, .form-select:focus {
+    background: rgba(255,255,255,.08) !important;
+    border-color: var(--t-indigo) !important;
+    box-shadow: 0 0 0 3px rgba(79,107,255,.28) !important;
+    color: #fff !important;
+}
+.form-select option { background: #161b3d; color: var(--t-text); }
+.input-group-text {
+    background: rgba(255,255,255,.06) !important;
+    border: 1px solid var(--t-line-strong) !important;
+    color: var(--t-muted) !important;
+}
+.input-group-text.bg-white { background: rgba(255,255,255,.06) !important; }
+.input-group-text .text-primary { color: var(--t-cyan) !important; }
+
+/* ---------- 버튼 ---------- */
+.btn { border-radius: 999px !important; font-weight: 600; transition: transform .2s ease, box-shadow .2s ease, filter .2s; }
+.btn:hover { transform: translateY(-2px); }
+.btn-primary, .btn-egov {
+    background: linear-gradient(135deg, var(--t-indigo), var(--t-indigo-2)) !important;
+    border: 0 !important; color: #fff !important;
+    box-shadow: 0 10px 26px rgba(79,107,255,.4);
+}
+.btn-primary:hover, .btn-egov:hover { box-shadow: 0 16px 38px rgba(79,107,255,.55); filter: brightness(1.05); }
+.btn-success { background: linear-gradient(135deg, #28c76f, #1ba94c) !important; border: 0 !important; box-shadow: 0 10px 26px rgba(40,199,111,.35); }
+.btn-info { background: linear-gradient(135deg, #19d3da, #1597d6) !important; border: 0 !important; color: #04263b !important; box-shadow: 0 10px 26px rgba(25,211,218,.32); }
+.btn-warning { background: linear-gradient(135deg, #ffb347, #ff8a3d) !important; border: 0 !important; color: #3a2400 !important; }
+.btn-danger { background: linear-gradient(135deg, #ff5d8f, #f0356b) !important; border: 0 !important; }
+.btn-secondary { background: rgba(255,255,255,.10) !important; border: 1px solid var(--t-line-strong) !important; color: #fff !important; }
+
+.btn-outline-primary, .btn-outline-success, .btn-outline-info, .btn-outline-warning, .btn-outline-secondary, .btn-outline-danger, .btn-outline-dark {
+    background: rgba(255,255,255,.04) !important;
+    border: 1px solid var(--t-line-strong) !important;
+    color: var(--t-text) !important;
+}
+.btn-outline-primary:hover { background: linear-gradient(135deg, var(--t-indigo), var(--t-indigo-2)) !important; border-color: transparent !important; color: #fff !important; box-shadow: 0 10px 26px rgba(79,107,255,.4); }
+.btn-outline-success:hover { background: linear-gradient(135deg, #28c76f, #1ba94c) !important; border-color: transparent !important; color: #fff !important; }
+.btn-outline-info:hover { background: linear-gradient(135deg, #19d3da, #1597d6) !important; border-color: transparent !important; color: #04263b !important; }
+.btn-outline-warning:hover { background: linear-gradient(135deg, #ffb347, #ff8a3d) !important; border-color: transparent !important; color: #3a2400 !important; }
+.btn-outline-secondary:hover { background: rgba(255,255,255,.14) !important; color: #fff !important; }
+
+.text-primary { color: #8aa0ff !important; }
+.text-success { color: #4fe39a !important; }
+.text-info { color: #54e0e6 !important; }
+.text-warning { color: #ffc878 !important; }
+.text-danger { color: #ff85a9 !important; }
+
+/* ---------- 페이지네이션 ---------- */
+.pagination { gap: 6px; }
+.pagination .page-link {
+    background: rgba(255,255,255,.05);
+    border: 1px solid var(--t-line-strong);
+    color: var(--t-text);
+    border-radius: 11px !important;
+    min-width: 40px; text-align: center; font-weight: 600;
+    transition: background .2s, transform .2s, box-shadow .2s;
+}
+.pagination .page-link:hover {
+    background: rgba(79,107,255,.22);
+    color: #fff; transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(79,107,255,.3);
+}
+.pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, var(--t-indigo), var(--t-indigo-2));
+    border-color: transparent; color: #fff;
+    box-shadow: 0 10px 24px rgba(79,107,255,.45);
+}
+.pagination .page-item.disabled .page-link {
+    background: rgba(255,255,255,.03); color: #5b6390; border-color: var(--t-line);
+}
+nav[aria-label="페이지 네비게이션"] .text-muted { color: var(--t-muted) !important; }
+
+/* ---------- 알림 ---------- */
+.alert { border-radius: 14px; border: 1px solid var(--t-line-strong); backdrop-filter: blur(8px); color: var(--t-text); }
+.alert-success { background: rgba(40,199,111,.16); border-color: rgba(40,199,111,.4); color: #b6f4d2; }
+.alert-danger  { background: rgba(255,93,143,.16); border-color: rgba(255,93,143,.42); color: #ffc6d6; }
+.alert-warning { background: rgba(255,179,71,.16); border-color: rgba(255,179,71,.42); color: #ffe0b0; }
+.alert-info    { background: rgba(25,211,218,.14); border-color: rgba(25,211,218,.4); color: #bff2f4; }
+.btn-close { filter: invert(1) grayscale(1) brightness(1.6); }
+
+/* ---------- 배지 ---------- */
+.badge.bg-primary, .badge.bg-secondary { background: linear-gradient(135deg, var(--t-indigo), var(--t-indigo-2)) !important; }
+.badge.bg-success { background: linear-gradient(135deg, #28c76f, #1ba94c) !important; }
+.badge-new { background: linear-gradient(135deg, var(--t-accent), #f0356b); }
+
+/* ---------- 게시판 본문 ---------- */
+.bbs-content {
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--t-line);
+    color: var(--t-text);
+    border-radius: 14px;
+}
+
+/* ---------- 푸터 (포털식 pub-foot 구조 + 비즈 다크 톤) ---------- */
+.egov-footer.egov-footer {
+    background: #060916 !important;
+    border-top: 1px solid var(--t-line);
+    margin-top: 60px !important;
+}
+.egov-footer .text-muted { color: #7e87b5 !important; }
+.egov-footer h6 { color: #fff; }
+
+/* 포털식 pub-foot 3컬럼 + 공식 배너 + 소셜 + 카피라이트 (비즈 다크 톤 유지) */
+.pub-foot{ background:#060916; border-top:1px solid var(--t-line); padding:52px 0 32px; margin-top:60px; color:#fff; }
+.pub-foot > .container{ max-width:1180px; padding-left:24px; padding-right:24px; }
+.pub-foot-top{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:30px; margin-top:1.25rem; }
+.pub-foot .pub-brand{ display:flex; align-items:center; gap:12px; font-weight:800; font-size:20px; letter-spacing:-.02em; color:#fff; text-decoration:none; margin-bottom:12px; }
+.pub-foot .pub-brand .mark{ width:38px; height:38px; border-radius:11px; }
+.pub-foot .desc{ color:#9aa1c8; font-size:14.5px; max-width:46ch; margin:0; line-height:1.6; }
+.pub-foot-cols{ display:flex; gap:64px; flex-wrap:wrap; }
+.pub-foot-col h4{ font-size:14px; color:#fff; margin:0 0 14px; letter-spacing:.04em; }
+.pub-foot-col a{ display:block; color:#9aa1c8; font-size:14px; margin-bottom:10px; text-decoration:none; white-space:nowrap; }
+.pub-foot-col a:hover{ color:#fff; }
+.pub-foot-bottom{ margin-top:40px; padding-top:24px; border-top:1px solid var(--t-line); display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; color:#7e87b5; font-size:13px; align-items:center; }
+.pub-foot-bottom .soc{ display:flex; gap:14px; font-size:18px; }
+.pub-foot-bottom .soc a{ color:#9aa1c8; }
+.pub-foot-bottom .soc a:hover{ color:#fff; }
+@media (max-width:768px){ .pub-foot-cols{ gap:32px; } .pub-foot{ padding:36px 0 28px; } }
+
+/* 전자정부표준프레임워크 공식 홈페이지 배너 (포털 정책) */
+.egov-official-banner{
+    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    padding:18px 22px; border-radius:16px; text-decoration:none; color:#fff;
+    background:linear-gradient(135deg, var(--t-indigo), var(--t-indigo-2));
+    box-shadow:0 12px 30px rgba(79,107,255,.32); transition:transform .2s, box-shadow .2s; }
+.egov-official-banner:hover{ transform:translateY(-2px); box-shadow:0 16px 38px rgba(79,107,255,.45); color:#fff; }
+.egov-official-banner:focus-visible{ outline:3px solid #fff; outline-offset:2px; }
+.egov-official-banner .ban-txt{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+.egov-official-banner .ban-txt strong{ font-size:1.05rem; font-weight:800; display:flex; align-items:center; gap:.45rem; }
+.egov-official-banner .ban-txt small{ font-size:.85rem; opacity:.92; }
+.egov-official-banner .ban-go{ display:inline-flex; align-items:center; gap:.4rem; font-weight:700; white-space:nowrap;
+    background:rgba(255,255,255,.16); padding:.5rem 1rem; border-radius:999px; }
+.egov-official-banner:hover .ban-go{ background:rgba(255,255,255,.28); }
+@media (max-width:600px){ .egov-official-banner{ padding:14px 16px; } .egov-official-banner .ban-txt strong{ font-size:.98rem; } }
+
+/* ── 맨 위로(스크롤 톱) 버튼 (포털 정책 동일) ── */
+.scroll-top-btn{ position:fixed; right:24px; bottom:24px; z-index:1060; width:48px; height:48px; border-radius:50%;
+    border:none; background:linear-gradient(135deg, var(--t-indigo), var(--t-indigo-2)); color:#fff; font-size:1.35rem;
+    box-shadow:0 10px 26px rgba(79,107,255,.5); cursor:pointer; opacity:0; visibility:hidden;
+    transition:opacity .25s, visibility .25s, transform .2s; display:flex; align-items:center; justify-content:center; }
+.scroll-top-btn.show{ opacity:1; visibility:visible; }
+.scroll-top-btn:hover{ transform:translateY(-3px); box-shadow:0 14px 32px rgba(79,107,255,.6); }
+.scroll-top-btn:focus-visible{ outline:3px solid #93b4ff; outline-offset:2px; }
+
+/* 인쇄: 헤더/네비/푸터/맨위로 숨김 */
+@media print {
+    .egov-header, .egov-nav, .pub-foot, .egov-footer, .scroll-top-btn { display:none !important; }
+}
+
+/* 일반 텍스트 색 보정 (다크 배경) */
+.egov-content .text-dark { color: var(--t-text) !important; }
+hr { border-color: var(--t-line); opacity: 1; }
+
+/* ============================================================
+   로그인 페이지 (다크 히어로 + 글래스 카드)
+   ============================================================ */
+body.egov-login-body {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    background: var(--t-ink) !important;
+    background-image:
+        radial-gradient(700px 500px at 80% 10%, rgba(79,107,255,.30), transparent 60%),
+        radial-gradient(600px 500px at 15% 90%, rgba(122,92,255,.26), transparent 60%),
+        linear-gradient(180deg, #0a0e27, #0c1130) !important;
+}
+body.egov-login-body::before,
+body.egov-login-body::after {
+    content: ""; position: absolute; border-radius: 50%; filter: blur(80px); z-index: 0;
+}
+body.egov-login-body::before { width: 520px; height: 520px; background: radial-gradient(circle, rgba(79,107,255,.45), transparent 70%); top: -160px; right: -120px; animation: tFloat 16s ease-in-out infinite; }
+body.egov-login-body::after  { width: 460px; height: 460px; background: radial-gradient(circle, rgba(25,211,218,.30), transparent 70%); bottom: -160px; left: -120px; animation: tFloat 20s ease-in-out infinite reverse; }
+@keyframes tFloat { 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,-36px)} }
+
+body.egov-login-body .container { position: relative; z-index: 2; }
+
+.login-card {
+    max-width: 440px; width: 100%; margin: 0 auto; padding: 44px 40px;
+    background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.03)) !important;
+    border: 1px solid var(--t-line-strong);
+    border-radius: 24px !important;
+    box-shadow: 0 40px 90px rgba(0,0,0,.55) !important;
+    backdrop-filter: blur(20px) saturate(150%);
+    color: var(--t-text);
+    animation: cardIn .8s cubic-bezier(.2,.7,.2,1) both;
+}
+@keyframes cardIn { from{opacity:0; transform:translateY(40px) scale(.97)} to{opacity:1; transform:none} }
+.login-card .login-logo h1 { color: #fff !important; font-weight: 800; letter-spacing: -.02em; font-size: 23px; }
+.login-card .login-logo .text-muted { color: var(--t-muted) !important; }
+.login-card .form-label { color: #cfd6ff; }
+.login-card hr { border-color: var(--t-line); }
+.login-card .login-back { color: var(--t-muted); font-size: 13px; text-decoration: none; }
+.login-card .login-back:hover { color: #fff; }
+.login-logo .logo-badge {
+    width: 64px; height: 64px; margin: 0 auto; display: block;
+    filter: drop-shadow(0 12px 30px rgba(79,107,255,.6));
+    animation: tBob 4s ease-in-out infinite;
+}
+@keyframes tBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+/* 회원가입 안내 링크 */
+.login-signup-hint { color: var(--t-muted); font-size: 14px; }
+.login-signup-link { color: #9db2ff; font-weight: 700; text-decoration: none; margin-left: 4px; }
+.login-signup-link:hover { color: #fff; text-decoration: underline; }
+
+/* 구분선 (또는 SNS) */
+.login-divider { display: flex; align-items: center; gap: 12px; margin: 22px 0 18px; color: #8089b5; font-size: 12.5px; }
+.login-divider::before, .login-divider::after { content: ""; flex: 1; height: 1px; background: var(--t-line); }
+
+/* SNS 로그인 버튼 */
+.sns-login { display: flex; flex-direction: column; gap: 10px; }
+.sns-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 11px 14px; border-radius: 12px;
+    font-weight: 700; font-size: 14.5px; text-decoration: none;
+    transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+}
+.sns-btn:hover { transform: translateY(-2px); filter: brightness(1.03); }
+.sns-btn .sns-mark { font-weight: 900; }
+.sns-naver { background: #03c75a; color: #fff !important; box-shadow: 0 8px 20px rgba(3,199,90,.32); }
+.sns-naver:hover { box-shadow: 0 14px 30px rgba(3,199,90,.45); }
+.sns-kakao { background: #fee500; color: #191600 !important; box-shadow: 0 8px 20px rgba(254,229,0,.28); }
+.sns-kakao:hover { box-shadow: 0 14px 30px rgba(254,229,0,.42); }
+
+/* ============================================================
+   스크롤 리빌 애니메이션 (common.js 의 IntersectionObserver 가 토글)
+   ============================================================ */
+.reveal { opacity: 0; transform: translateY(34px); transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
+.reveal.in-view { opacity: 1; transform: translateY(0); }
+.reveal.r-d1 { transition-delay: .07s; }
+.reveal.r-d2 { transition-delay: .14s; }
+.reveal.r-d3 { transition-delay: .21s; }
+.reveal.r-d4 { transition-delay: .28s; }
+.reveal.r-d5 { transition-delay: .35s; }
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { opacity: 1 !important; transform: none !important; transition: none; }
+    .card:hover, .btn:hover, .pagination .page-link:hover { transform: none; }
+}
+
+/* ---------- 반응형 ---------- */
+@media (max-width: 768px) {
+    .page-title-bar { margin: 14px 8px 22px; padding: 30px 6px 26px !important; }
+    .page-title-bar h1, .page-title-bar h2 { font-size: 26px !important; }
+}
+
+/* ============================================================
+   KRDS 네이티브 컴포넌트 다크 테마 오버라이드 (Phase B1: uss 전환)
+   uss 모듈을 Bootstrap → KRDS 네이티브로 전환함에 따라, 기존 다크 테마가
+   krds-* 클래스를 인지하지 못해 라이트로 깨지는 문제를 보정한다.
+   위 Bootstrap 컴포넌트 다크 스타일과 동일 톤으로 KRDS 네이티브에 매핑.
+   ============================================================ */
+
+/* ── KRDS 패널(.krds-panel = .card 다크 대응) ── */
+.krds-panel {
+    background: linear-gradient(160deg, rgba(255,255,255,.055), rgba(255,255,255,.02)) !important;
+    border: 1px solid var(--t-line) !important;
+    border-radius: var(--t-radius) !important;
+    color: var(--t-text) !important;
+    box-shadow: 0 18px 44px rgba(0,0,0,.32);
+    overflow: hidden;
+}
+.krds-panel-head {
+    background: rgba(255,255,255,.04) !important;
+    border-bottom: 1px solid var(--t-line) !important;
+    color: #fff !important; font-weight: 700;
+}
+.krds-panel-body { color: var(--t-text); }
+
+/* ── KRDS 표(table.tbl = .egov-table 다크 대응) ── */
+.krds-table-wrap table.tbl { color: var(--t-text); background: transparent !important; }
+.krds-table-wrap table.tbl thead th {
+    background: linear-gradient(135deg, rgba(79,107,255,.28), rgba(122,92,255,.22)) !important;
+    border: 1px solid var(--t-line) !important;
+    color: #eef1ff !important;
+}
+.krds-table-wrap table.tbl tbody td,
+.krds-table-wrap table.tbl tbody th {
+    border: 1px solid var(--t-line) !important;
+    color: var(--t-text) !important;
+    background: transparent;
+}
+.krds-table-wrap table.tbl tbody tr { transition: background .2s; }
+.krds-table-wrap table.tbl tbody tr:hover { background: rgba(79,107,255,.12) !important; }
+.krds-table-wrap table.tbl td a { color: #d7ddff !important; text-decoration: none; }
+.krds-table-wrap table.tbl td a:hover { color: #fff !important; }
+/* 라벨-값 정의표(.tbl.col): 라벨 칸 강조 배경 */
+.krds-table-wrap table.tbl.col th[scope="row"] {
+    background: rgba(79,107,255,.14) !important; color: #eef1ff !important;
+}
+
+/* ── KRDS 폼 입력/셀렉트(.krds-input/.krds-form-select = .form-control/.form-select 다크 대응) ── */
+.krds-input, select.krds-form-select, textarea.krds-input {
+    background: rgba(255,255,255,.05) !important;
+    border: 1px solid var(--t-line-strong) !important;
+    color: var(--t-text) !important;
+    border-radius: 11px !important;
+}
+.krds-input::placeholder { color: #7e87b5; }
+.krds-input:focus, select.krds-form-select:focus, textarea.krds-input:focus {
+    background: rgba(255,255,255,.08) !important;
+    border-color: var(--t-indigo) !important;
+    box-shadow: 0 0 0 3px rgba(79,107,255,.28) !important;
+    color: #fff !important;
+}
+select.krds-form-select option { background: #161b3d; color: var(--t-text); }
+/* 셰브론 아이콘 밝게(다크 배경 대비) */
+select.krds-form-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23aab1d6' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round' d='M4 6l4 4 4-4'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important; background-position: right .65rem center !important; background-size: 1.05em !important;
+}
+.form-group .form-tit, .form-group .form-tit > label { color: var(--t-muted); }
+.form-hint { color: var(--t-muted) !important; }
+.krds-form-section { border: 1px solid var(--t-line) !important; border-radius: var(--t-radius) !important;
+    background: linear-gradient(160deg, rgba(255,255,255,.04), rgba(255,255,255,.015)) !important; }
+.krds-form-section > .krds-form-section-title { color: #fff !important; }
+
+/* ── KRDS 버튼(.krds-btn 변형 = .btn-* 다크 대응) ── */
+/* 짧은 텍스트/아이콘 버튼이 원형으로 보이던 문제(999px) → 표준 라운드 사각형으로 통일 */
+.krds-btn { border-radius: 8px !important; font-weight: 600; transition: transform .2s ease, box-shadow .2s ease, filter .2s; }
+.krds-btn:hover { transform: translateY(-2px); }
+.krds-btn.primary {
+    background: linear-gradient(135deg, var(--t-indigo), var(--t-indigo-2)) !important;
+    border: 0 !important; color: #fff !important;
+    box-shadow: 0 10px 26px rgba(79,107,255,.4);
+}
+.krds-btn.primary:hover { box-shadow: 0 16px 38px rgba(79,107,255,.55); filter: brightness(1.05); }
+.krds-btn.secondary {
+    background: rgba(255,255,255,.04) !important;
+    border: 1px solid var(--t-line-strong) !important;
+    color: var(--t-text) !important;
+}
+.krds-btn.secondary:hover { background: linear-gradient(135deg, var(--t-indigo), var(--t-indigo-2)) !important; border-color: transparent !important; color: #fff !important; box-shadow: 0 10px 26px rgba(79,107,255,.4); }
+.krds-btn.tertiary {
+    background: rgba(255,255,255,.10) !important;
+    border: 1px solid var(--t-line-strong) !important;
+    color: #fff !important;
+}
+.krds-btn.tertiary:hover { background: rgba(255,255,255,.16) !important; color: #fff !important; }
+.krds-btn.danger {
+    background: linear-gradient(135deg, #ff5d8f, #f0356b) !important;
+    border: 0 !important; color: #fff !important;
+}
+.krds-btn.danger:hover { box-shadow: 0 10px 26px rgba(240,53,107,.4); filter: brightness(1.05); }
+
+/* ── KRDS 페이지네이션(.krds-pagination = .pagination 다크 대응) ── */
+.krds-pagination { display: flex; gap: 6px; justify-content: center; align-items: center; flex-wrap: wrap; padding: 0; list-style: none; }
+.krds-pagination .page-link, .krds-pagination .page-navi {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,.05);
+    border: 1px solid var(--t-line-strong);
+    color: var(--t-text);
+    border-radius: 11px !important;
+    text-decoration: none; font-weight: 600;
+    transition: background .2s, transform .2s, box-shadow .2s;
+}
+.krds-pagination .page-link:hover, .krds-pagination .page-navi:hover {
+    background: rgba(79,107,255,.22); color: #fff; transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(79,107,255,.3);
+}
+.krds-pagination .page-link.active {
+    background: linear-gradient(135deg, var(--t-indigo), var(--t-indigo-2));
+    border-color: transparent; color: #fff;
+    box-shadow: 0 10px 24px rgba(79,107,255,.45);
+}
+
+/* ── KRDS 배지(.krds-badge = .badge 다크 대응) ── */
+.krds-badge.bg-primary, .krds-badge.bg-gray, .krds-badge.bg-secondary { background: linear-gradient(135deg, var(--t-indigo), var(--t-indigo-2)) !important; color: #fff !important; }
+.krds-badge.bg-success { background: linear-gradient(135deg, #28c76f, #1ba94c) !important; color: #fff !important; }
+.krds-badge.bg-danger { background: linear-gradient(135deg, #ff5d8f, #f0356b) !important; color: #fff !important; }
+.krds-badge.bg-warning { background: linear-gradient(135deg, #ffb347, #ff8a3d) !important; color: #3a2400 !important; }
+.krds-badge.bg-info { background: linear-gradient(135deg, #19d3da, #1597d6) !important; color: #04263b !important; }
+
+/* ── KRDS 아코디언(.krds-accordion / .btn-accordion 다크 대응) — Q&A·FAQ 색상 밸런스 ── */
+.krds-accordion .accordion-item { background: rgba(255,255,255,.04); border: 1px solid var(--t-line); border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
+.krds-accordion .btn-accordion { background: transparent !important; color: var(--t-text) !important; width: 100%; text-align: left; border: 0; display: flex; align-items: center; font-weight: 600; }
+.krds-accordion .btn-accordion:hover { background: rgba(79,107,255,.12) !important; }
+.krds-accordion .accordion-item.active .btn-accordion,
+.krds-accordion .accordion-item .btn-accordion[aria-expanded="true"] { background: rgba(79,107,255,.10) !important; }
+/* 답변 영역: KRDS 라이트 토큰(--krds-accordion--color-action[-open])이 펼친 패널을 밝게 칠해
+   다크 테마에서 본문이 안 보이던 문제 → 토큰을 다크로 재정의 + 배경/글자색 강제 */
+.krds-accordion { --krds-accordion--color-action: transparent; --krds-accordion--color-action-open: rgba(255,255,255,.05); }
+.krds-accordion .accordion-body { background: rgba(255,255,255,.05) !important; color: var(--t-text) !important; border-top: 1px solid var(--t-line); }
+.krds-accordion .accordion-body p { color: var(--t-text) !important; }
+.krds-accordion .accordion-body span { color: var(--t-text); }
+/* 질문 본문(부가설명)만 약하게, 답변은 또렷하게 */
+.krds-accordion .accordion-body p.text-muted { color: var(--t-muted) !important; }
+
+/* ── 헤더 브랜드 타이틀 확대(요청) ── */
+.egov-header .egov-brand-title { font-size: 1.4rem !important; letter-spacing: -.01em; }
+@media (max-width: 768px){ .egov-header .egov-brand-title { font-size: 1.15rem !important; } }
+
+/* ── KRDS 검색바(.krds-search = .search-bar 다크 대응) ── */
+.krds-search {
+    background: linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.02)) !important;
+    border: 1px solid var(--t-line) !important;
+    border-radius: var(--t-radius) !important;
+    box-shadow: 0 12px 30px rgba(0,0,0,.25);
+}
+
+/* ============================================================
+   글자크기 밸런스 정규화 (항목2) — 헤더/GNB 대비 본문/표/폼/버튼 균형
+   biz body는 14px라 본문이 GNB(14.5px) 대비 과소해 보임.
+   포털 토큰 정규화 기준으로 본문 기준선을 15px로 올려 헤더·GNB와 균형.
+   theme.css가 최종 권위로 로드되므로 여기서 통일 보정.
+   ============================================================ */
+body.egov-body { font-size: 15px; line-height: 1.6; }
+/* 본문 콘텐츠 기준 타이포 */
+.egov-content { font-size: 15px; }
+.egov-content p,
+.egov-content li,
+.egov-content dd,
+.egov-content dt { font-size: 15px; }
+/* 표/폼/버튼: 본문과 균형(과대 컴포넌트 정규화) */
+.egov-content .krds-table-wrap table.tbl,
+.egov-content .krds-table-wrap table.tbl th,
+.egov-content .krds-table-wrap table.tbl td { font-size: 14.5px !important; }
+.egov-content .krds-input,
+.egov-content .krds-form-select,
+.egov-content .form-control,
+.egov-content .form-select { font-size: 14.5px !important; }
+.egov-content .krds-btn { font-size: 14.5px; }
+.egov-content .krds-btn.small,
+.egov-content .krds-btn.xsmall { font-size: 13.5px; }
+.egov-content .krds-btn.large,
+.egov-content .krds-btn.xlarge { font-size: 15.5px; }
+/* 브레드크럼/페이지 타이틀 — GNB와 위계 균형(타이틀은 본문보다 크게 유지) */
+.egov-content .breadcrumb,
+.egov-content .breadcrumb-item { font-size: 13px; }
+/* 헤더 사용자/버튼 영역도 GNB와 동일 위계로 정렬 */
+.egov-header .krds-btn.small { font-size: 13.5px; }
+
+/* ── KRDS 페이지네이션(.krds-pagination) 다크 테마 — 전 목록 페이징 통일(요청 ⑦) ── */
+.krds-pagination{ display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:wrap; margin:18px 0 6px; }
+.krds-pagination .page-links{ display:flex; gap:6px; flex-wrap:wrap; }
+.krds-pagination .page-link, .krds-pagination .page-navi{
+  display:inline-flex; align-items:center; justify-content:center;
+  background: rgba(255,255,255,.05); border:1px solid var(--t-line-strong, rgba(255,255,255,.18));
+  color: var(--t-text); border-radius:11px; text-decoration:none; font-weight:600; transition:all .15s ease; }
+.krds-pagination .page-navi{ padding:0 .85rem; gap:4px; }
+.krds-pagination .page-link:hover, .krds-pagination .page-navi:not(.disabled):hover{
+  background: rgba(79,107,255,.22); color:#fff; transform:translateY(-1px); }
+.krds-pagination .page-link.active{
+  background: linear-gradient(135deg, var(--t-indigo,#4f6bff), var(--t-indigo-2,#7a5cff));
+  border-color:transparent; color:#fff; box-shadow:0 8px 20px rgba(79,107,255,.40); }
+.krds-pagination .page-navi.disabled{ opacity:.4; pointer-events:none; }
+
+/* ============================================================
+   데모 UI 밸런스 — 전역 타이포·여백·정렬·버튼 통일 (2026-07)
+   ============================================================ */
+
+/* ---- 타이포: 전체 살짝 확대 + 한글 친화 글꼴 ---- */
+html { font-size: 16.5px; }
+body.egov-body {
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", system-ui, -apple-system, sans-serif !important;
+    font-size: 1rem;
+    line-height: 1.65;
+    letter-spacing: -0.01em;
+}
+.tbl, .tbl th, .tbl td { font-size: .94rem !important; }
+.form-tit label, .form-label, label { font-size: .94rem; }
+.krds-input, .krds-form-select, .form-conts input, .form-conts select, .form-conts textarea,
+input.krds-input, select { font-size: .94rem; }
+.breadcrumb { font-size: .9rem; }
+.cat-card .d, .gd-card .how, .text-muted.small, .small { font-size: .88rem; }
+
+/* ---- 세로 여백: 딱 붙는 느낌 해소, 리듬 부여 ---- */
+main .container, .container.cat-wrap, .container.gd-wrap { padding-top: 1.4rem; padding-bottom: 2.8rem; }
+.breadcrumb { margin-bottom: 1.1rem !important; padding: .7rem 1.1rem; }
+h1.h4, .page-title-bar { margin-bottom: 1.2rem !important; }
+.krds-table-wrap { margin-bottom: 1.1rem; }
+.tbl th, .tbl td { padding: .72rem .85rem !important; }
+.search-bar, .krds-search { padding: 1.15rem 1.25rem !important; margin-bottom: 1.5rem !important; border-radius: 14px; }
+.form-group { margin-bottom: 1rem; }
+.form-tit { margin-bottom: .4rem; }
+.cat-section { margin: 2rem 0 !important; }
+.cat-grid { gap: 16px !important; }
+.cat-card { padding: 1.2rem 1.3rem !important; }
+
+/* ---- 검색영역 수평정렬 통일 ---- */
+.krds-search .row, .search-bar .row { align-items: flex-end !important; }
+.krds-search .form-group, .search-bar .form-group { margin-bottom: 0 !important; }
+.krds-input, .krds-form-select { height: 46px; }
+.krds-search .krds-btn, .search-bar .krds-btn, .search-bar button[type=submit] { height: 46px; }
+
+/* ---- 폼 액션 버튼 통일: 우측 정렬, 일정 간격 ---- */
+.form-actions, .btn-area, .button-area, .btns, .egov-btn-area, .btn-wrap, .btn-group-area {
+    display: flex !important; justify-content: flex-end; gap: .5rem;
+    margin-top: 1.5rem; padding-top: 1.1rem; border-top: 1px solid var(--t-line);
+    flex-wrap: wrap;
+}
+.krds-btn { min-height: 42px; display: inline-flex; align-items: center; gap: .3rem; }
+
+/* ---- 폼 그리드 내 셀렉트는 입력칸처럼 전체폭(라벨 위) ----
+   krds.css의 select.krds-form-select{width:auto}가 짧은 옵션(성별 '선택하세요')일 때
+   좁게·인라인처럼 렌더돼 정렬이 깨지던 문제. 검색폼(krds-search/search-bar)은 제외. */
+form:not(.krds-search):not(.search-bar) .row [class*="col-"] > select.krds-form-select,
+form:not(.krds-search):not(.search-bar) .row [class*="col-"] .input-group > select.krds-form-select,
+form:not(.krds-search):not(.search-bar) .form-group > select.krds-form-select {
+    display: block !important; width: 100% !important; min-width: 0 !important; max-width: 100%;
+}
+/* 폼 라벨은 항상 입력칸 위(블록) */
+form:not(.krds-search):not(.search-bar) .row [class*="col-"] > .form-label { display: block; }
+
+/* ---- 달력 칸 균일(휴일/일정 달력) ---- */
+table.cal-table td, table.calendar td, .calendar td, .cal-cell, td.cal-day {
+    height: 96px !important; vertical-align: top !important; padding: .4rem !important;
+}
+
+/* ---- 달력 셀 공통 + 전역 인쇄 ---- */
+.cal-table { table-layout: fixed; width: 100%; }
+.cal-table td.cal-day {
+    height: 96px !important; vertical-align: top !important; text-align: left;
+    padding: .45rem .5rem !important; border: 1px solid var(--t-line, rgba(255,255,255,.1));
+}
+.cal-day .krds-badge { display:block; margin-top:.3rem; font-size:.72rem; }
+@media print {
+    header, footer, nav.breadcrumb, .breadcrumb, .no-print, .egov-topbtn, .btn-top { display: none !important; }
+    body, body.egov-body { background: #fff !important; color: #000 !important; }
+    .container { max-width: 100% !important; }
+    .cal-table td.cal-day { border: 1px solid #999 !important; }
+    .krds-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+/* ---- 폼 하단 액션 버튼 영역 통일: 우측정렬 + 상단 구분선 ---- */
+form > .d-flex.gap-2:last-child,
+form > .text-end:last-child,
+form > .text-center:last-child,
+.egov-content form .d-flex.gap-2:last-child {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center;
+    gap: .5rem;
+    margin-top: 1.6rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--t-line, rgba(255,255,255,.1));
+    flex-wrap: wrap;
+}
+/* 상세/수정 화면의 목록·저장·삭제 버튼도 동일 리듬 */
+.egov-content .btns, .egov-content .btn-area, .egov-content .button-area { 
+    display:flex !important; justify-content:flex-end; gap:.5rem; margin-top:1.6rem; padding-top:1.1rem; border-top:1px solid var(--t-line);
+}
+
+/* ---- 체크박스/라디오 다크 테마 가시성 (약관 동의 등) ---- */
+/* KRDS min.css가 input[type=checkbox|radio]를 1px로 clip(sr-only)해 완전히 숨김 →
+   네이티브 체크박스/라디오를 !important로 강제 복원(약관 동의 등 실제 체크박스용).
+   KRDS 전용 .krds-form-check(label::before로 그리는 커스텀)는 이 규칙과 무관. */
+input.form-check-input[type="checkbox"], input.form-check-input[type="radio"],
+input[type="checkbox"], input[type="radio"] {
+    position: static !important;
+    width: 1.2em !important; height: 1.2em !important;
+    padding: 0 !important; margin: .15em .1rem 0 0 !important;
+    overflow: visible !important; clip: auto !important;
+    white-space: normal !important;
+    -webkit-appearance: auto !important; -moz-appearance: auto !important; appearance: auto !important;
+    background-color: rgba(255,255,255,.08);
+    border: 1.5px solid var(--t-line-strong, rgba(255,255,255,.4)) !important;
+    accent-color: #4f6bff;
+    cursor: pointer;
+    vertical-align: middle;
+    opacity: 1 !important;
+}
+.form-check-input:checked {
+    background-color: #4f6bff !important;
+    border-color: #4f6bff !important;
+}
+.form-check-input:focus {
+    outline: 2px solid rgba(79,107,255,.5);
+    outline-offset: 1px;
+    box-shadow: none;
+}
+.form-check { display: flex; align-items: center; gap: .5rem; padding: .6rem .2rem; }
+.form-check-label { color: var(--t-text, #e7ebff); cursor: pointer; font-size: .95rem; margin: 0; }

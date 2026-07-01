@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 메모/할일(cop/smt/mtm) — COMTNMEMOTODO → TB_MEMO_TODO 표준화(HSQL, 작성자 조인 단순화) -->
+<mapper namespace="MemoTodoDAO">
+
+    <sql id="todoCols">
+        A.TODO_ID AS todoId, A.TODO_SJ AS todoNm, A.TODO_CN AS todoCn,
+        A.TODO_BEGIN_TIME AS todoBeginTime, A.TODO_END_TIME AS todoEndTime, A.WRTER_ID AS wrterId,
+        (SELECT M.USER_NM FROM VW_USER_MASTER M WHERE M.ESNTL_ID = A.WRTER_ID) AS wrterNm,
+        A.FRST_REGISTER_ID AS frstRegisterId, TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS frstRegisterPnttm
+    </sql>
+
+    <sql id="todoSearch">
+        <if test="searchId != null and searchId != ''">AND A.WRTER_ID = #{searchId}</if>
+        <if test="searchWrd != null and searchWrd != ''">AND A.TODO_SJ LIKE CONCAT(CONCAT('%', #{searchWrd}),'%')</if>
+    </sql>
+
+    <select id="selectMemoTodoList" parameterType="egovframework.com.cop.smt.mtm.service.MemoTodoVO" resultType="egovframework.com.cop.smt.mtm.service.MemoTodoVO">
+        SELECT <include refid="todoCols"/>
+        FROM TB_MEMO_TODO A WHERE 1=1
+        <include refid="todoSearch"/>
+        ORDER BY A.TODO_BEGIN_TIME DESC
+        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+    </select>
+
+    <select id="selectMemoTodoListCnt" parameterType="egovframework.com.cop.smt.mtm.service.MemoTodoVO" resultType="int">
+        SELECT COUNT(*) FROM TB_MEMO_TODO A WHERE 1=1
+        <include refid="todoSearch"/>
+    </select>
+
+    <select id="selectMemoTodo" parameterType="egovframework.com.cop.smt.mtm.service.MemoTodoVO" resultType="egovframework.com.cop.smt.mtm.service.MemoTodoVO">
+        SELECT <include refid="todoCols"/> FROM TB_MEMO_TODO A WHERE A.TODO_ID = #{todoId}
+    </select>
+
+    <insert id="insertMemoTodo" parameterType="egovframework.com.cop.smt.mtm.service.MemoTodo">
+        INSERT INTO TB_MEMO_TODO (TODO_ID, TODO_SJ, TODO_CN, TODO_BEGIN_TIME, TODO_END_TIME, WRTER_ID, FRST_REGISTER_ID, FRST_REGIST_PNTTM)
+        VALUES (#{todoId}, #{todoNm}, #{todoCn}, #{todoBeginTime}, #{todoEndTime}, #{wrterId}, #{frstRegisterId}, CURRENT_TIMESTAMP)
+    </insert>
+
+    <update id="updateMemoTodo" parameterType="egovframework.com.cop.smt.mtm.service.MemoTodo">
+        UPDATE TB_MEMO_TODO SET TODO_SJ = #{todoNm}, TODO_CN = #{todoCn}, TODO_BEGIN_TIME = #{todoBeginTime}, TODO_END_TIME = #{todoEndTime},
+               LAST_UPDUSR_ID = #{lastUpdusrId}, LAST_UPDT_PNTTM = CURRENT_TIMESTAMP WHERE TODO_ID = #{todoId}
+    </update>
+
+    <delete id="deleteMemoTodo" parameterType="egovframework.com.cop.smt.mtm.service.MemoTodo">
+        DELETE FROM TB_MEMO_TODO WHERE TODO_ID = #{todoId}
+    </delete>
+
+</mapper>

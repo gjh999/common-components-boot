@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="#{zip.search.title}">우편번호 검색</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap-icons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/krds/resources/cdn/krds.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/common.css}"/>
+    <link rel="stylesheet" th:href="@{/css/krds-compat.css}"/>
+    <link rel="stylesheet" th:href="@{/css/krds.css}"/>
+    <style>
+        /* 팝업 공통 UI(포털/비즈 스타일 통일) — 라이트 테마, 가로 스크롤 방지 */
+        html, body { background: #f4f6fb; }
+        .popup-wrap { max-width: 100%; padding: 1.15rem 1.25rem 1.35rem; box-sizing: border-box; }
+        .popup-head { display:flex; align-items:center; gap:.5rem; margin:0 0 1rem;
+            padding-bottom:.75rem; border-bottom:2px solid #1d4ed8; }
+        .popup-head h1 { font-size:1.15rem; font-weight:700; margin:0; color:#1f2937; }
+        .popup-head .bi { color:#1d4ed8; font-size:1.25rem; }
+        .zip-search { display:flex; flex-wrap:wrap; gap:.5rem; align-items:center;
+            background:#fff; border:1px solid #e2e6ef; border-radius:10px; padding:.75rem; margin-bottom:.9rem; }
+        .zip-search .krds-form-select { min-width:120px; }
+        .zip-search .krds-input { flex:1 1 160px; min-width:140px; }
+        .zip-search .krds-btn { flex:0 0 auto; }
+        /* 표: 팝업 폭에 맞춰 가로 스크롤 없이 */
+        .zip-table-wrap { background:#fff; border:1px solid #e2e6ef; border-radius:10px; overflow:hidden; }
+        .zip-table-wrap table.tbl { width:100%!important; table-layout:fixed; border-collapse:collapse; margin:0; }
+        .zip-table-wrap table.tbl th, .zip-table-wrap table.tbl td {
+            padding:.6rem .55rem; font-size:.9rem; vertical-align:middle; word-break:keep-all; }
+        .zip-table-wrap table.tbl thead th { background:#f0f3fa; color:#334155; border-bottom:1px solid #dbe0ec; }
+        .zip-table-wrap table.tbl td.addr { text-align:left; }
+        .zip-foot { display:flex; justify-content:flex-end; margin-top:.9rem; }
+        .krds-btn { border-radius:6px; }
+    </style>
+</head>
+<body>
+  <div class="popup-wrap">
+    <div class="popup-head">
+        <i class="bi bi-geo-alt"></i>
+        <h1 th:text="#{zip.search.title}">우편번호 검색</h1>
+    </div>
+
+    <form class="zip-search" th:action="@{/cmm/sym/zip/EgovCcmZipSearchPopup.do}" method="get">
+        <select class="krds-form-select" name="searchCondition" th:title="#{zip.search.condition}" title="검색조건">
+            <option value="4" th:selected="${searchVO.searchCondition == '4'}" th:text="#{zip.field.emdNm}">읍면동명</option>
+            <option value="2" th:selected="${searchVO.searchCondition == '2'}" th:text="#{zip.field.ctprvnNm}">시도명</option>
+            <option value="3" th:selected="${searchVO.searchCondition == '3'}" th:text="#{zip.field.signguNm}">시군구명</option>
+            <option value="1" th:selected="${searchVO.searchCondition == '1'}" th:text="#{zip.field.zip}">우편번호</option>
+        </select>
+        <input class="krds-input" name="searchKeyword" th:value="${searchVO.searchKeyword}"
+               maxlength="20" th:placeholder="#{common.search.ph}" placeholder="검색어(예: 강남동, 서울)" th:title="#{zip.search.keyword}" title="검색어" autofocus/>
+        <button class="krds-btn primary small" type="submit"><i class="bi bi-search"></i> <span th:text="#{button.search}">검색</span></button>
+    </form>
+
+    <div class="zip-table-wrap">
+    <table class="tbl">
+        <caption class="visually-hidden" th:text="#{zip.search.caption}">우편번호 검색 결과 목록</caption>
+        <colgroup><col style="width:80px;"/><col/><col style="width:64px;"/></colgroup>
+        <thead>
+        <tr><th scope="col" th:text="#{zip.field.zip}">우편번호</th><th scope="col" th:text="#{zip.col.addr}">주소</th><th scope="col" th:text="#{zip.col.select}">선택</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${resultList}"
+            th:with="addr=${item.ctprvnNm + ' ' + item.signguNm + ' ' + item.emdNm
+                          + (item.liBuldNm != null and item.liBuldNm != '' ? ' ' + item.liBuldNm : '')
+                          + (item.lnbrDongHo != null and item.lnbrDongHo != '' ? ' ' + item.lnbrDongHo : '')}">
+            <td class="text-center" th:text="${item.zip}">우편번호</td>
+            <td class="addr" th:text="${addr}">주소</td>
+            <td class="text-center">
+                <button type="button" class="krds-btn secondary small"
+                        th:attr="data-zip=${item.zip},data-addr=${addr}"
+                        onclick="fnSelectZip(this);" th:text="#{zip.col.select}">선택</button>
+            </td>
+        </tr>
+        <tr th:if="${resultList == null or #lists.isEmpty(resultList)}">
+            <td colspan="3" class="text-center text-muted py-4">
+                <span th:if="${searchVO.searchKeyword == null or searchVO.searchKeyword == ''}" th:text="#{zip.search.enterkeyword}">검색어를 입력하세요.</span>
+                <span th:unless="${searchVO.searchKeyword == null or searchVO.searchKeyword == ''}" th:text="#{zip.search.noresult}">검색 결과가 없습니다.</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+
+    <!-- 페이징 -->
+    <div th:replace="~{fragments/pagination :: paginationSearch(paginationInfo=${paginationInfo}, baseUrl='/cmm/sym/zip/EgovCcmZipSearchPopup.do', searchCondition=${searchVO.searchCondition}, searchKeyword=${searchVO.searchKeyword})}"></div>
+
+    <div class="zip-foot">
+        <button class="krds-btn tertiary small" type="button" onclick="window.close();" th:text="#{button.close}">닫기</button>
+    </div>
+  </div>
+
+    <script>
+        /* 선택한 우편번호/주소를 부모창에 전달한다.
+         * 1) JSP 원본과 동일한 fn_egov_returnValue({sZip, vZip, sAddr}) 콜백 우선
+         * 2) fnZipReturn(zip, addr) 콜백
+         * 3) 콜백이 없으면 zip / adres 입력 필드를 직접 채운다. */
+        function fnSelectZip(btn) {
+            var zip = btn.getAttribute('data-zip');
+            var addr = btn.getAttribute('data-addr');
+            var retVal = {
+                sZip: zip,
+                vZip: (zip && zip.length === 6) ? zip.substring(0, 3) + '-' + zip.substring(3, 6) : zip,
+                sAddr: addr
+            };
+            try {
+                if (window.opener && !window.opener.closed) {
+                    if (typeof window.opener.fn_egov_returnValue === 'function') {
+                        window.opener.fn_egov_returnValue(retVal);
+                    } else if (typeof window.opener.fnZipReturn === 'function') {
+                        window.opener.fnZipReturn(zip, addr);
+                    } else {
+                        var doc = window.opener.document;
+                        var zipEl = doc.getElementById('zip') || doc.getElementsByName('zip')[0];
+                        var addrEl = doc.getElementById('adres') || doc.getElementsByName('adres')[0];
+                        if (zipEl) { zipEl.value = zip; }
+                        if (addrEl) { addrEl.value = addr; }
+                    }
+                }
+            } catch (e) { /* opener 접근 불가 시 무시 */ }
+            window.close();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head>
+    <title>개인화 페이지 콘텐츠 관리</title>
+</head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:1000px;">
+
+    <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/examples}" th:text="#{cat.crumb}">공통컴포넌트 예제</a></li>
+            <li class="breadcrumb-item active" th:text="#{i3.16}">개인화 페이지 콘텐츠</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0"><i class="bi bi-grid-1x2"></i> <span th:text="#{i3.17}">개인화 페이지 콘텐츠 관리</span></h1>
+        <a class="krds-btn primary" th:href="@{/uss/mpe/insertIndvdlPgeView.do}"><i class="bi bi-plus-lg"></i> <span th:text="#{button.regist}">등록</span></a>
+    </div>
+
+    <form th:action="@{/uss/mpe/selectIndvdlPgeList.do}" method="get" class="search-bar krds-search mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-9">
+                <div class="form-group">
+                    <div class="form-tit"><label for="searchKeyword" th:text="#{search.keyword}">검색어</label></div>
+                    <div class="form-conts"><input type="text" id="searchKeyword" name="searchKeyword" class="krds-input"
+                           th:value="${searchKeyword}" th:placeholder="#{search.keyword.placeholder}" placeholder="콘텐츠명 검색" maxlength="100"/></div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="krds-btn primary medium w-100"><i class="bi bi-search"></i> <span th:text="#{button.search}">검색</span></button>
+            </div>
+        </div>
+    </form>
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="text-muted small"><span th:text="#{list.total}">전체</span>
+            <strong th:text="${paginationInfo != null ? paginationInfo.totalRecordCount : 0}">0</strong>
+            <span th:text="#{list.count.unit}">건</span></span>
+    </div>
+
+    <div class="krds-table-wrap">
+        <table class="tbl">
+            <thead>
+            <tr>
+                <th scope="col" style="width:70px;" th:text="#{list.seq}">순번</th>
+                <th scope="col" th:text="#{i3.18}">콘텐츠명</th>
+                <th scope="col" th:text="#{i3.19}">연계 URL</th>
+                <th scope="col" style="width:90px;" th:text="#{i3.20}">사용여부</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item,stat : ${resultList}">
+                <td class="text-center" th:text="${stat.count}">1</td>
+                <td><a th:href="@{/uss/mpe/selectIndvdlPgeDetail.do(cntntsId=${item.cntntsId})}" th:text="${item.cntntsNm}">콘텐츠명</a></td>
+                <td class="small text-muted" th:text="${item.cntcUrl}">URL</td>
+                <td class="text-center">
+                    <span class="krds-badge" th:classappend="${item.cntntsUseAt == 'Y'} ? 'bg-success' : 'bg-gray'"
+                          th:text="${item.cntntsUseAt == 'Y'} ? #{i3.21} : #{i3.22}">사용</span>
+                </td>
+            </tr>
+            <tr th:if="${resultList == null or #lists.isEmpty(resultList)}">
+                <td colspan="4" class="text-center text-muted py-4" th:text="#{i3.23}">등록된 콘텐츠가 없습니다.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${paginationInfo != null}"
+         th:replace="~{fragments/pagination :: paginationSearch(paginationInfo=${paginationInfo}, baseUrl='/uss/mpe/selectIndvdlPgeList.do', searchCondition='', searchKeyword=${searchKeyword})}"></div>
+
+</div>
+</main>
+</body>
+</html>

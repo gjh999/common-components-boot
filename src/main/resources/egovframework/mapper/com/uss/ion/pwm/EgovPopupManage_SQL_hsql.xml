@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 팝업창관리(uss/ion/pwm) — COMTNPOPUPMANAGE → TB_POPUP_MANAGE 표준화(HSQL) -->
+<mapper namespace="PopupManage">
+
+    <sql id="pwmCols">
+        A.POPUP_ID AS popupId, A.POPUP_SJ_NM AS popupTitleNm, A.FILE_URL AS fileUrl,
+        A.POPUP_VRTICL_LC AS popupHlc, A.POPUP_WIDTH_LC AS popupWlc,
+        A.POPUP_VRTICL_SIZE AS popupHSize, A.POPUP_WIDTH_SIZE AS popupWSize,
+        A.NTCE_BGNDE AS ntceBgnde, A.NTCE_ENDDE AS ntceEndde, A.STOPVEW_SETUP_AT AS stopVewAt, A.NTCE_AT AS ntceAt,
+        A.FRST_REGISTER_ID AS frstRegisterId, TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS frstRegisterPnttm
+    </sql>
+
+    <sql id="pwmSearch">
+        <if test="searchKeyword != null and searchKeyword != ''">
+            AND A.POPUP_SJ_NM LIKE CONCAT(CONCAT('%', #{searchKeyword}),'%')
+        </if>
+    </sql>
+
+    <select id="selectPopupManage" parameterType="egovframework.com.uss.ion.pwm.service.PopupManageVO" resultType="egovframework.com.uss.ion.pwm.service.PopupManageVO">
+        SELECT <include refid="pwmCols"/>
+        FROM TB_POPUP_MANAGE A WHERE 1=1
+        <include refid="pwmSearch"/>
+        ORDER BY A.FRST_REGIST_PNTTM DESC
+        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+    </select>
+
+    <select id="selectPopupManageMain" parameterType="egovframework.com.uss.ion.pwm.service.PopupManageVO" resultType="egovframework.com.uss.ion.pwm.service.PopupManageVO">
+        SELECT <include refid="pwmCols"/>
+        FROM TB_POPUP_MANAGE A
+        WHERE A.NTCE_AT = 'Y' ORDER BY A.FRST_REGIST_PNTTM DESC
+    </select>
+
+    <select id="selectPopupWhiteList" resultType="egovframework.com.uss.ion.pwm.service.PopupManageVO">
+        SELECT <include refid="pwmCols"/> FROM TB_POPUP_MANAGE A WHERE A.NTCE_AT = 'Y'
+    </select>
+
+    <select id="selectPopupManageCnt" parameterType="egovframework.com.uss.ion.pwm.service.PopupManageVO" resultType="int">
+        SELECT COUNT(*) FROM TB_POPUP_MANAGE A WHERE 1=1
+        <include refid="pwmSearch"/>
+    </select>
+
+    <select id="selectPopupManageDetail" parameterType="egovframework.com.uss.ion.pwm.service.PopupManageVO" resultType="egovframework.com.uss.ion.pwm.service.PopupManageVO">
+        SELECT <include refid="pwmCols"/> FROM TB_POPUP_MANAGE A WHERE A.POPUP_ID = #{popupId}
+    </select>
+
+    <insert id="insertPopupManage" parameterType="egovframework.com.uss.ion.pwm.service.PopupManageVO">
+        INSERT INTO TB_POPUP_MANAGE (POPUP_ID, POPUP_SJ_NM, FILE_URL, POPUP_VRTICL_LC, POPUP_WIDTH_LC, POPUP_VRTICL_SIZE, POPUP_WIDTH_SIZE,
+               NTCE_BGNDE, NTCE_ENDDE, STOPVEW_SETUP_AT, NTCE_AT, FRST_REGIST_PNTTM, FRST_REGISTER_ID)
+        VALUES (#{popupId}, #{popupTitleNm}, #{fileUrl}, #{popupHlc}, #{popupWlc}, #{popupHSize}, #{popupWSize},
+               #{ntceBgnde}, #{ntceEndde}, #{stopVewAt}, #{ntceAt}, CURRENT_TIMESTAMP, #{frstRegisterId})
+    </insert>
+
+    <update id="updatePopupManage" parameterType="egovframework.com.uss.ion.pwm.service.PopupManageVO">
+        UPDATE TB_POPUP_MANAGE SET POPUP_SJ_NM = #{popupTitleNm}, FILE_URL = #{fileUrl},
+               POPUP_VRTICL_LC = #{popupHlc}, POPUP_WIDTH_LC = #{popupWlc}, POPUP_VRTICL_SIZE = #{popupHSize}, POPUP_WIDTH_SIZE = #{popupWSize},
+               NTCE_BGNDE = #{ntceBgnde}, NTCE_ENDDE = #{ntceEndde}, STOPVEW_SETUP_AT = #{stopVewAt}, NTCE_AT = #{ntceAt},
+               LAST_UPDT_PNTTM = CURRENT_TIMESTAMP, LAST_UPDUSR_ID = #{lastUpdusrId}
+        WHERE POPUP_ID = #{popupId}
+    </update>
+
+    <delete id="deletePopupManage" parameterType="egovframework.com.uss.ion.pwm.service.PopupManageVO">
+        DELETE FROM TB_POPUP_MANAGE WHERE POPUP_ID = #{popupId}
+    </delete>
+
+</mapper>

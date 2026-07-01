@@ -1,0 +1,35 @@
+/* 공통 컴포넌트 팝업 공통 스타일 (포털/비즈 통일, 라이트 테마, 가로 스크롤 방지)
+   2026.07.01 신규 — zip/ecc/mgt/ncm/adb/bat 등 팝업 공용 */
+html, body { background: #f4f6fb; margin: 0; }
+.popup-wrap { max-width: 100%; padding: 1.15rem 1.25rem 1.35rem; box-sizing: border-box; }
+.popup-head { display: flex; align-items: center; gap: .5rem; margin: 0 0 1rem;
+    padding-bottom: .75rem; border-bottom: 2px solid #1d4ed8; }
+.popup-head h1 { font-size: 1.15rem; font-weight: 700; margin: 0; color: #1f2937; }
+.popup-head .bi { color: #1d4ed8; font-size: 1.25rem; }
+.popup-search { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center;
+    background: #fff; border: 1px solid #e2e6ef; border-radius: 10px; padding: .75rem; margin-bottom: .9rem; }
+.popup-search .krds-form-select { min-width: 120px; }
+.popup-search .krds-input { flex: 1 1 160px; min-width: 140px; }
+.popup-search .krds-btn { flex: 0 0 auto; }
+/* KRDS 컨트롤 높이 정규화 — 입력/셀렉트/버튼 44px 동일 높이·수직정렬(밸런스) */
+.popup-search .krds-input, .popup-search .krds-form-select, .popup-search .krds-btn {
+    height: 44px !important; min-height: 44px; box-sizing: border-box;
+    display: inline-flex; align-items: center; font-size: .95rem; line-height: 1.2; }
+.popup-search .krds-input { padding: 0 .8rem !important; }
+.popup-search .krds-btn { padding: 0 1.1rem !important; white-space: nowrap; }
+.popup-search .krds-form-select { padding: 0 2.1rem 0 .8rem !important; }
+.popup-table-wrap { background: #fff; border: 1px solid #e2e6ef; border-radius: 10px; overflow: hidden; }
+.popup-table-wrap table.tbl { width: 100% !important; table-layout: fixed; border-collapse: collapse; margin: 0; }
+.popup-table-wrap table.tbl th, .popup-table-wrap table.tbl td {
+    padding: .6rem .55rem; font-size: .9rem; vertical-align: middle; word-break: keep-all;
+    border-bottom: 1px solid #eef1f7; }
+.popup-table-wrap table.tbl thead th { background: #f0f3fa; color: #334155; border-bottom: 1px solid #dbe0ec; text-align: center; }
+.popup-table-wrap table.tbl td.left { text-align: left; }
+.popup-info-table { background: #fff; border: 1px solid #e2e6ef; border-radius: 10px; overflow: hidden; }
+.popup-info-table table.tbl { width: 100% !important; border-collapse: collapse; margin: 0; }
+.popup-info-table th { background: #f0f3fa; color: #334155; text-align: left; width: 130px;
+    padding: .6rem .7rem; font-weight: 600; border-bottom: 1px solid #eef1f7; }
+.popup-info-table td { padding: .6rem .7rem; font-size: .92rem; border-bottom: 1px solid #eef1f7; }
+.popup-foot { display: flex; justify-content: flex-end; gap: .4rem; margin-top: .9rem; }
+.popup-frame { width: 100%; border: 1px solid #e2e6ef; border-radius: 10px; background: #fff; }
+.krds-btn { border-radius: 6px; }

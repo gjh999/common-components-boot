@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" lang="ko">
+<head><title th:text="#{i3.35}">최근 검색어 관리</title></head>
+<body>
+<main layout:fragment="content">
+<div class="container" style="max-width:820px;">
+    <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{menu.home}">홈</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/uss/ion/rsm/listRecentSrchwrd.do}" th:text="#{i3.35}">최근 검색어 관리</a></li>
+        <li class="breadcrumb-item active" th:text="#{button.regist}">등록</li>
+    </ol></nav>
+    <h1 class="h4 mb-3"><i class="bi bi-search-heart"></i> <span th:text="#{i3.35}">최근 검색어 관리</span> - <span th:text="#{button.regist}">등록</span></h1>
+
+    <form th:action="@{/uss/ion/rsm/registRecentSrchwrd.do}" method="post" th:object="${recentSrchwrd}">
+        <fieldset class="krds-form-section">
+            <legend class="krds-form-section-title" th:text="#{i3.36}">검색어 관리명</legend>
+            <div class="row g-3">
+                <div class="col-12"><label class="form-label"><span th:text="#{i3.36}">검색어 관리명</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="text" th:field="*{srchwrdManageNm}" maxlength="255" required/></div>
+                <div class="col-12"><label class="form-label"><span th:text="#{i3.37}">연계 URL</span> <span class="frm-rq">*</span></label>
+                    <input class="krds-input" type="text" th:field="*{srchwrdManageUrl}" maxlength="255" required/></div>
+                <div class="col-md-6"><label class="form-label"><span th:text="#{i3.38}">사용자검색</span> <span class="frm-rq">*</span></label>
+                    <select class="krds-input" th:field="*{srchwrdManageUseYn}" required>
+                        <option value="Y" th:text="#{i3.39}">허용</option>
+                        <option value="N" th:text="#{i3.40}">미허용</option>
+                    </select></div>
+            </div>
+        </fieldset>
+        <div class="form-actions d-flex justify-content-between align-items-center">
+            <a class="krds-btn tertiary" th:href="@{/uss/ion/rsm/listRecentSrchwrd.do}" th:text="#{button.cancel}">취소</a>
+            <button class="krds-btn primary" type="submit"><i class="bi bi-check-lg"></i> <span th:text="#{button.regist}">등록</span></button>
+        </div>
+    </form>
+</div>
+</main>
+</body>
+</html>

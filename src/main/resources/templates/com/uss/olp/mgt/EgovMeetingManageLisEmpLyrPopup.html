@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>사용자 선택</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap-icons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/krds/resources/cdn/krds.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/common.css}"/>
+    <link rel="stylesheet" th:href="@{/css/krds-compat.css}"/>
+    <link rel="stylesheet" th:href="@{/css/krds.css}"/>
+    <link rel="stylesheet" th:href="@{/css/popup.css}"/>
+</head>
+<body>
+  <div class="popup-wrap">
+    <div class="popup-head"><i class="bi bi-person-lines-fill"></i><h1 th:text="#{i2.77}">사용자 선택</h1></div>
+
+    <form class="popup-search" th:action="@{/uss/olp/mgt/EgovMeetingManageLisEmpLyrPopup.do}" method="post">
+        <input class="krds-input" name="searchKeyword" th:value="${searchVO != null ? searchVO.searchKeyword : ''}" maxlength="100" th:placeholder="#{i2.78}" placeholder="이름 검색" th:title="#{i2.79}" title="이름"/>
+        <button class="krds-btn primary small" type="submit"><i class="bi bi-search"></i> <span th:text="#{button.search}">검색</span></button>
+    </form>
+
+    <div class="popup-table-wrap">
+    <table class="tbl">
+        <caption class="visually-hidden" th:text="#{i2.80}">사용자 목록</caption>
+        <colgroup><col style="width:50px;"/><col style="width:110px;"/><col style="width:90px;"/><col style="width:120px;"/><col/><col style="width:60px;"/></colgroup>
+        <thead>
+        <tr><th scope="col" th:text="#{i2.20}">번호</th><th scope="col" th:text="#{i2.81}">아이디</th><th scope="col" th:text="#{i2.82}">이름</th><th scope="col" th:text="#{i2.83}">전화번호</th><th scope="col" th:text="#{i2.84}">주소</th><th scope="col" th:text="#{i2.22}">선택</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="item,stat : ${resultList}">
+            <td class="text-center" th:text="${stat.count}">1</td>
+            <td class="left" th:text="${item.emplyrId}">아이디</td>
+            <td class="text-center" th:text="${item.userNm}">이름</td>
+            <td class="text-center" th:text="${item.offmTelno}">전화</td>
+            <td class="left" th:text="${item.detailAdres}">주소</td>
+            <td class="text-center">
+                <button type="button" class="krds-btn secondary small"
+                        th:attr="data-id=${item.esntlId},data-nm=${item.userNm}"
+                        onclick="fnSelect(this);" th:text="#{i2.22}">선택</button></td>
+        </tr>
+        <tr th:if="${resultList == null or #lists.isEmpty(resultList)}">
+            <td colspan="6" class="text-center text-muted py-4" th:text="#{i2.85}">조회된 사용자가 없습니다.</td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+
+    <div class="popup-foot">
+        <button class="krds-btn tertiary small" type="button" onclick="window.close();" th:text="#{i2.24}">닫기</button>
+    </div>
+  </div>
+  <script>
+    function fnSelect(btn) {
+        var id = btn.getAttribute('data-id'), nm = btn.getAttribute('data-nm');
+        try {
+            if (window.opener && !window.opener.closed) {
+                var d = window.opener.document;
+                var idFields = ['mnaerId', 'schdulChargerId', 'chargerId', 'esntlId'];
+                var nmFields = ['mnaerNm', 'schdulChargerName', 'chargerNm', 'userNm'];
+                idFields.forEach(function (f) { if (d.getElementById(f)) d.getElementById(f).value = id; });
+                nmFields.forEach(function (f) { if (d.getElementById(f)) d.getElementById(f).value = nm; });
+            }
+        } catch (e) {}
+        window.close();
+    }
+  </script>
+</body>
+</html>

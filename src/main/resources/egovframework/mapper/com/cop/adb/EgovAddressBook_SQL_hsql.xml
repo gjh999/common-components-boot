@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 주소록(cop/adb) — COMTNADBKMANAGE → TB_ADBK_MANAGE 표준화(HSQL, 공개범위 조건 단순화) -->
+<mapper namespace="AdressBookDAO">
+
+    <sql id="adbkCols">
+        A.ADBK_ID AS adbkId, A.ADBK_NM AS adbkNm, A.OTHBC_SCOPE AS othbcScope, A.USE_AT AS useAt,
+        A.WRTER_ID AS wrterId, A.TRGET_ORGNZT_ID AS trgetOrgnztId,
+        (SELECT M.USER_NM FROM VW_USER_MASTER M WHERE M.ESNTL_ID = A.WRTER_ID) AS frstRegisterNm,
+        A.FRST_REGISTER_ID AS frstRegisterId, TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS frstRegisterPnttm
+    </sql>
+
+    <sql id="adbkSearch">
+        AND A.USE_AT = 'Y'
+        <if test="searchCnd == 0 and searchWrd != null and searchWrd != ''">AND A.ADBK_NM LIKE CONCAT(CONCAT('%', #{searchWrd}),'%')</if>
+        <if test="searchCnd == 2 and searchWrd != null and searchWrd != ''">AND A.WRTER_ID LIKE CONCAT(CONCAT('%', #{searchWrd}),'%')</if>
+    </sql>
+
+    <select id="selectAdressBookList" parameterType="egovframework.com.cop.adb.service.AddressBookVO" resultType="egovframework.com.cop.adb.service.AddressBookVO">
+        SELECT <include refid="adbkCols"/>
+        FROM TB_ADBK_MANAGE A WHERE 1=1
+        <include refid="adbkSearch"/>
+        ORDER BY A.ADBK_NM
+        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+    </select>
+
+    <select id="selectAdressBookListCnt" parameterType="egovframework.com.cop.adb.service.AddressBookVO" resultType="int">
+        SELECT COUNT(*) FROM TB_ADBK_MANAGE A WHERE 1=1
+        <include refid="adbkSearch"/>
+    </select>
+
+    <select id="selectAdressBook" parameterType="egovframework.com.cop.adb.service.AddressBookVO" resultType="egovframework.com.cop.adb.service.AddressBookVO">
+        SELECT <include refid="adbkCols"/> FROM TB_ADBK_MANAGE A WHERE A.ADBK_ID = #{adbkId}
+    </select>
+
+    <insert id="insertAdressBook" parameterType="egovframework.com.cop.adb.service.AddressBook">
+        INSERT INTO TB_ADBK_MANAGE (ADBK_ID, ADBK_NM, OTHBC_SCOPE, USE_AT, WRTER_ID, TRGET_ORGNZT_ID, FRST_REGISTER_ID, FRST_REGIST_PNTTM)
+        VALUES (#{adbkId}, #{adbkNm}, #{othbcScope}, 'Y', #{wrterId}, #{trgetOrgnztId}, #{frstRegisterId}, CURRENT_TIMESTAMP)
+    </insert>
+
+    <update id="updateAdressBook" parameterType="egovframework.com.cop.adb.service.AddressBook">
+        UPDATE TB_ADBK_MANAGE SET ADBK_NM = #{adbkNm}, OTHBC_SCOPE = #{othbcScope}, LAST_UPDUSR_ID = #{lastUpdusrId}, LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
+        WHERE ADBK_ID = #{adbkId}
+    </update>
+
+    <update id="deleteAdressBook" parameterType="egovframework.com.cop.adb.service.AddressBook">
+        UPDATE TB_ADBK_MANAGE SET USE_AT = 'N' WHERE ADBK_ID = #{adbkId}
+    </update>
+
+    <!-- 명함/구성원/사용자 패널 — 데모 단순화: 명함(TB_NCRD) 재사용/빈 스텁 -->
+    <select id="selectCardList" parameterType="egovframework.com.cop.adb.service.AddressBookVO" resultType="egovframework.com.cop.adb.service.AddressBookVO">
+        SELECT NCRD_ID AS ncrdId, NM AS adbkNm FROM TB_NCRD WHERE 1=0
+    </select>
+    <select id="selectManList" parameterType="egovframework.com.cop.adb.service.AddressBookVO" resultType="egovframework.com.cop.adb.service.AddressBookVO">
+        SELECT <include refid="adbkCols"/> FROM TB_ADBK_MANAGE A WHERE 1=0
+    </select>
+    <select id="selectUserList" parameterType="egovframework.com.cop.adb.service.AddressBookVO" resultType="egovframework.com.cop.adb.service.AddressBookVO">
+        SELECT <include refid="adbkCols"/> FROM TB_ADBK_MANAGE A WHERE 1=0
+    </select>
+
+</mapper>
