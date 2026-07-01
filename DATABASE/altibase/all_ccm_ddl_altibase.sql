@@ -47,6 +47,325 @@ CREATE TABLE TB_CMMN_DETAIL_CODE (
   CONSTRAINT TB_CMMN_DETAIL_CODE_ibfk_1 FOREIGN KEY (CODE_ID) REFERENCES TB_CMMN_CODE (CODE_ID)
 ) ;
 
+-- === foundation 테이블 보강(정합: portal/biz 이식) ===
+CREATE TABLE TB_ORGNZT_INFO (
+  ORGNZT_ID char(20) DEFAULT '' NOT NULL,  -- 조직ID
+  ORGNZT_NM varchar2(20) NOT NULL,  -- 조직명
+  ORGNZT_DC varchar2(100),  -- 조직 설명
+  CONSTRAINT TB_ORGNZT_INFO_PK PRIMARY KEY (ORGNZT_ID)
+) ;
+CREATE TABLE TB_AUTHOR_INFO (
+  AUTHOR_CODE varchar2(30) DEFAULT '' NOT NULL,  -- 권한코드
+  AUTHOR_NM varchar2(60) NOT NULL,  -- 권한명
+  AUTHOR_DC varchar2(200),  -- 권한 설명
+  AUTHOR_CREAT_DE char(20) NOT NULL,  -- 생성일자
+  CONSTRAINT TB_AUTHOR_INFO_PK PRIMARY KEY (AUTHOR_CODE)
+) ;
+CREATE TABLE TB_AUTHOR_GROUP_INFO (
+  GROUP_ID char(20) DEFAULT '' NOT NULL,  -- 그룹ID
+  GROUP_NM varchar2(60) NOT NULL,  -- 그룹명
+  GROUP_CREAT_DE char(20) NOT NULL,  -- 생성일자
+  GROUP_DC varchar2(100),  -- 그룹 설명
+  CONSTRAINT TB_AUTHOR_GROUP_INFO_PK PRIMARY KEY (GROUP_ID)
+) ;
+CREATE TABLE TB_EMPLYR_INFO (
+  EMPLYR_ID varchar2(20) NOT NULL,  -- 사용자ID
+  ORGNZT_ID char(20),  -- 조직ID
+  USER_NM varchar2(60) NOT NULL,  -- 사용자명
+  PASSWORD varchar2(200) NOT NULL,  -- 비밀번호(해시)
+  EMPL_NO varchar2(20),  -- 사번
+  IHIDNUM varchar2(200),  -- 주민등록번호
+  SEXDSTN_CODE char(1),  -- 성별코드
+  BRTHDY char(20),  -- 생년월일
+  FXNUM varchar2(20),  -- 팩스
+  HOUSE_ADRES varchar2(100),  -- 자택주소
+  PASSWORD_HINT varchar2(100) NOT NULL,  -- 비밀번호 힌트
+  PASSWORD_CNSR varchar2(100) NOT NULL,  -- 비밀번호 정답
+  HOUSE_END_TELNO varchar2(4),  -- 자택전화 끝번호
+  AREA_NO varchar2(4),  -- 지역번호
+  DETAIL_ADRES varchar2(100),  -- 상세주소
+  ZIP varchar2(6),  -- 우편번호
+  OFFM_TELNO varchar2(20),  -- 사무실전화
+  MBTLNUM varchar2(20),  -- 휴대전화
+  EMAIL_ADRES varchar2(50),  -- 이메일
+  OFCPS_NM varchar2(60),  -- 직책명
+  HOUSE_MIDDLE_TELNO varchar2(4),  -- 자택전화 중간번호
+  GROUP_ID char(20),  -- 그룹ID
+  PSTINST_CODE char(8),  -- 소속기관코드
+  EMPLYR_STTUS_CODE varchar2(15) NOT NULL,  -- 사용자상태코드
+  ESNTL_ID char(20) NOT NULL,  -- 고유ID
+  CRTFC_DN_VALUE varchar2(20),  -- 인증DN
+  SBSCRB_DE DATE,  -- 가입일시
+  CONSTRAINT TB_EMPLYR_INFO_PK PRIMARY KEY (EMPLYR_ID),
+  CONSTRAINT TB_EMPLYR_INFO_ibfk_2 FOREIGN KEY (GROUP_ID) REFERENCES TB_AUTHOR_GROUP_INFO (GROUP_ID) ON DELETE CASCADE,
+  CONSTRAINT TB_EMPLYR_INFO_ibfk_1 FOREIGN KEY (ORGNZT_ID) REFERENCES TB_ORGNZT_INFO (ORGNZT_ID) ON DELETE CASCADE
+) ;
+CREATE TABLE TB_GNRL_MBER (
+  MBER_ID varchar2(20) DEFAULT '' NOT NULL,  -- 회원ID
+  PASSWORD varchar2(200) NOT NULL,  -- 비밀번호(해시)
+  PASSWORD_HINT varchar2(100) NOT NULL,  -- 비밀번호 힌트
+  PASSWORD_CNSR varchar2(100) NOT NULL,  -- 비밀번호 정답
+  IHIDNUM varchar2(200),  -- 주민등록번호
+  MBER_NM varchar2(50) NOT NULL,  -- 회원명
+  ZIP varchar2(6),  -- 우편번호
+  ADRES varchar2(100),  -- 주소
+  AREA_NO varchar2(4),  -- 지역번호
+  MBER_STTUS varchar2(15),  -- 회원상태코드
+  DETAIL_ADRES varchar2(100),  -- 상세주소
+  END_TELNO varchar2(4),  -- 전화 끝번호
+  MBTLNUM varchar2(20),  -- 휴대전화
+  GROUP_ID char(20),  -- 그룹ID
+  MBER_FXNUM varchar2(20),  -- 팩스번호
+  MBER_EMAIL_ADRES varchar2(50),  -- 이메일주소
+  MIDDLE_TELNO varchar2(4),  -- 전화 중간번호
+  SBSCRB_DE DATE,  -- 가입일시
+  SEXDSTN_CODE char(1),  -- 성별코드
+  ESNTL_ID char(20) NOT NULL,  -- 고유ID
+  CONSTRAINT TB_GNRL_MBER_PK PRIMARY KEY (MBER_ID),
+  CONSTRAINT TB_GNRL_MBER_ibfk_1 FOREIGN KEY (GROUP_ID) REFERENCES TB_AUTHOR_GROUP_INFO (GROUP_ID) ON DELETE CASCADE
+) ;
+CREATE TABLE TB_ENTRPRS_MBER (
+  ENTRPRS_MBER_ID varchar2(20) DEFAULT '' NOT NULL,  -- 기업회원ID
+  ENTRPRS_SE_CODE char(15),  -- 기업구분코드
+  BIZRNO varchar2(10),  -- 사업자등록번호
+  JURIRNO varchar2(13),  -- 법인등록번호
+  CMPNY_NM varchar2(60) NOT NULL,  -- 회사명
+  CXFC varchar2(50),  -- 대표자명
+  ZIP varchar2(6),  -- 우편번호
+  ADRES varchar2(100),  -- 주소
+  ENTRPRS_MIDDLE_TELNO varchar2(4),  -- 전화 중간번호
+  FXNUM varchar2(20),  -- 팩스
+  INDUTY_CODE char(15),  -- 업종코드
+  APPLCNT_NM varchar2(50),  -- 신청자명
+  APPLCNT_IHIDNUM varchar2(200),  -- 신청자 주민등록번호
+  SBSCRB_DE DATE,  -- 가입일시
+  ENTRPRS_MBER_STTUS varchar2(15),  -- 회원상태코드
+  ENTRPRS_MBER_PASSWORD varchar2(200) NOT NULL,  -- 비밀번호(해시)
+  ENTRPRS_MBER_PASSWORD_HINT varchar2(100) NOT NULL,  -- 비밀번호 힌트
+  ENTRPRS_MBER_PASSWORD_CNSR varchar2(100) NOT NULL,  -- 비밀번호 정답
+  GROUP_ID char(20),  -- 그룹ID
+  DETAIL_ADRES varchar2(100),  -- 상세주소
+  ENTRPRS_END_TELNO varchar2(4),  -- 전화 끝번호
+  AREA_NO varchar2(4),  -- 지역번호
+  APPLCNT_EMAIL_ADRES varchar2(50),  -- 신청자 이메일
+  ESNTL_ID char(20) NOT NULL,  -- 고유ID
+  CONSTRAINT TB_ENTRPRS_MBER_PK PRIMARY KEY (ENTRPRS_MBER_ID),
+  CONSTRAINT TB_ENTRPRS_MBER_ibfk_1 FOREIGN KEY (GROUP_ID) REFERENCES TB_AUTHOR_GROUP_INFO (GROUP_ID) ON DELETE CASCADE
+) ;
+CREATE TABLE TB_BBS_MASTER (
+  BBS_ID char(20) NOT NULL,  -- 게시판ID
+  BBS_NM varchar2(255) NOT NULL,  -- 게시판명
+  BBS_INTRCN varchar2(2400),  -- 게시판 소개
+  BBS_TY_CODE char(6) NOT NULL,  -- 게시판 유형코드
+  BBS_ATTRB_CODE char(6) NOT NULL,  -- 게시판 속성코드
+  REPLY_POSBL_AT char(1),  -- 답글 가능(Y/N)
+  FILE_ATCH_POSBL_AT char(1) NOT NULL,  -- 파일첨부 가능(Y/N)
+  ATCH_POSBL_FILE_NUMBER number(2,0) NOT NULL,  -- 첨부가능 파일 수
+  ATCH_POSBL_FILE_SIZE number(8,0),  -- 첨부가능 총 용량(단위: 시스템 정의)
+  USE_AT char(1) NOT NULL,  -- 사용여부(Y/N)
+  TMPLAT_ID char(20),  -- 템플릿ID
+  FRST_REGISTER_ID varchar2(20) NOT NULL,  -- 최초등록자ID
+  FRST_REGIST_PNTTM DATE NOT NULL,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar2(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM DATE,  -- 최종수정시각
+  CONSTRAINT TB_BBS_MASTER_PK PRIMARY KEY (BBS_ID)
+) ;
+CREATE TABLE TB_BBS_USE (
+  BBS_ID char(20) NOT NULL,  -- 게시판ID
+  TRGET_ID char(20) DEFAULT '' NOT NULL,  -- 사용대상ID
+  USE_AT char(1) NOT NULL,  -- 사용여부(Y/N)
+  REGIST_SE_CODE char(6),  -- 등록구분코드
+  FRST_REGIST_PNTTM DATE,  -- 최초등록시각
+  FRST_REGISTER_ID varchar2(20) NOT NULL,  -- 최초등록자ID
+  LAST_UPDT_PNTTM DATE,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar2(20),  -- 최종수정자ID
+  CONSTRAINT TB_BBS_USE_PK PRIMARY KEY (BBS_ID,TRGET_ID),
+  CONSTRAINT TB_BBS_USE_ibfk_1 FOREIGN KEY (BBS_ID) REFERENCES TB_BBS_MASTER (BBS_ID)
+) ;
+CREATE TABLE TB_BBS (
+  NTT_ID number(20,0) NOT NULL,  -- 게시물ID
+  BBS_ID char(20) NOT NULL,  -- 게시판ID
+  NTT_NO number(20,0),  -- 게시물 번호(정렬/표시용)
+  NTT_SJ varchar2(2000),  -- 제목
+  NTT_CN CLOB,  -- 내용
+  ANSWER_AT char(1),  -- 답변글 여부(Y/N)
+  PARNTSCTT_NO number(10,0),  -- 부모글 번호
+  ANSWER_LC number(8),  -- 답변 계층(레벨)
+  SORT_ORDR number(8,0),  -- 정렬순서
+  RDCNT number(10,0),  -- 조회수
+  USE_AT char(1) NOT NULL,  -- 사용여부(Y/N)
+  NTCE_BGNDE char(20),  -- 공지 시작일시
+  NTCE_ENDDE char(20),  -- 공지 종료일시
+  NTCR_ID varchar2(20),  -- 게시자ID
+  NTCR_NM varchar2(20),  -- 게시자명
+  PASSWORD varchar2(200),  -- 비밀번호(해시)
+  ATCH_FILE_ID char(20),  -- 첨부파일 묶음ID
+  FRST_REGIST_PNTTM DATE NOT NULL,  -- 최초등록시각
+  FRST_REGISTER_ID varchar2(20) NOT NULL,  -- 최초등록자ID
+  LAST_UPDT_PNTTM DATE,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar2(20),  -- 최종수정자ID
+  CONSTRAINT TB_BBS_PK PRIMARY KEY (NTT_ID,BBS_ID),
+  CONSTRAINT TB_BBS_ibfk_1 FOREIGN KEY (BBS_ID) REFERENCES TB_BBS_MASTER (BBS_ID)
+) ;
+CREATE TABLE TB_TMPLAT_INFO (
+  TMPLAT_ID char(20) DEFAULT '' NOT NULL,  -- 템플릿ID
+  TMPLAT_NM varchar2(255),  -- 템플릿명
+  TMPLAT_COURS varchar2(2000),  -- 템플릿COURS
+  USE_AT char(1),  -- 사용여부(Y/N)
+  TMPLAT_SE_CODE char(6),  -- 템플릿구분상세코드
+  FRST_REGISTER_ID varchar2(20),  -- 최초등록자ID
+  FRST_REGIST_PNTTM DATE,  -- 최초등록시각
+  LAST_UPDUSR_ID varchar2(20),  -- 최종수정자ID
+  LAST_UPDT_PNTTM DATE,  -- 최종수정시각
+  CONSTRAINT TB_TMPLAT_INFO_PK PRIMARY KEY (TMPLAT_ID)
+) ;
+CREATE TABLE TB_FAQ_INFO (
+  FAQ_ID char(20) NOT NULL,  -- FAQID
+  QESTN_SJ varchar2(255),  -- 질문제목
+  QESTN_CN varchar2(2500),  -- 질문내용
+  ANSWER_CN varchar2(2500),  -- 답변내용
+  RDCNT number(10,0),  -- 조회수
+  FRST_REGIST_PNTTM DATE NOT NULL,  -- 최초등록시각
+  FRST_REGISTER_ID varchar2(20) NOT NULL,  -- 최초등록자ID
+  LAST_UPDT_PNTTM DATE NOT NULL,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar2(20) NOT NULL,  -- 최종수정자ID
+  ATCH_FILE_ID char(20),  -- 첨부파일 묶음ID
+  QNA_PROCESS_STTUS_CODE char(1),  -- 질의응답처리상태상세코드
+  CONSTRAINT TB_FAQ_INFO_PK PRIMARY KEY (FAQ_ID),
+  CONSTRAINT TB_FAQ_INFO_ibfk_1 FOREIGN KEY (ATCH_FILE_ID) REFERENCES TB_FILE (ATCH_FILE_ID)
+) ;
+CREATE TABLE TB_QA_INFO (
+  QA_ID char(20) NOT NULL,  -- 질의응답ID
+  QESTN_SJ varchar2(255),  -- 질문제목
+  QESTN_CN varchar2(2500),  -- 질문내용
+  WRITNG_DE char(20),  -- 작성일자
+  RDCNT number(10,0),  -- 조회수
+  EMAIL_ADRES varchar2(50),  -- 이메일
+  FRST_REGIST_PNTTM DATE,  -- 최초등록시각
+  FRST_REGISTER_ID varchar2(20),  -- 최초등록자ID
+  LAST_UPDT_PNTTM DATE,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar2(20),  -- 최종수정자ID
+  QNA_PROCESS_STTUS_CODE char(1),  -- 질의응답처리상태상세코드
+  WRTER_NM varchar2(20),  -- WRTER명
+  ANSWER_CN varchar2(2500),  -- 답변내용
+  WRITNG_PASSWORD varchar2(20),  -- 작성비밀번호(해시)
+  ANSWER_DE char(20),  -- 답변일자
+  EMAIL_ANSWER_AT char(1),  -- 이메일답변여부
+  AREA_NO varchar2(4),  -- 지역번호
+  MIDDLE_TELNO varchar2(4),  -- 전화 중간번호
+  END_TELNO varchar2(4),  -- 전화 끝번호
+  CONSTRAINT TB_QA_INFO_PK PRIMARY KEY (QA_ID)
+) ;
+CREATE TABLE TB_RESTDE (
+  RESTDE_NO number(20,0) NOT NULL,  -- 휴일번호
+  RESTDE_DE char(8) NOT NULL,  -- 휴일일자
+  RESTDE_NM varchar2(100) NOT NULL,  -- 휴일명
+  RESTDE_DC varchar2(200),  -- 휴일설명
+  RESTDE_SE_CODE char(6),  -- 휴일구분상세코드
+  FRST_REGIST_PNTTM DATE,  -- 최초등록시각
+  FRST_REGISTER_ID varchar2(20),  -- 최초등록자ID
+  LAST_UPDT_PNTTM DATE,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar2(20),  -- 최종수정자ID
+  CONSTRAINT TB_RESTDE_PK PRIMARY KEY (RESTDE_NO)
+) ;
+CREATE TABLE TB_SCHDUL_INFO (
+  SCHDUL_ID char(20) NOT NULL,  -- 일정ID
+  SCHDUL_SE char(1),  -- 일정구분코드
+  SCHDUL_DEPT_ID varchar2(20),  -- 부서ID
+  SCHDUL_KND_CODE varchar2(20),  -- 일정종류코드
+  SCHDUL_BEGINDE DATE,  -- 시작일시
+  SCHDUL_ENDDE DATE,  -- 종료일시
+  SCHDUL_NM varchar2(255),  -- 일정명
+  SCHDUL_CN varchar2(2500),  -- 일정 내용
+  SCHDUL_PLACE varchar2(255),  -- 장소
+  SCHDUL_IPCR_CODE char(1),  -- 중요도코드
+  SCHDUL_CHARGER_ID varchar2(20),  -- 담당자ID
+  ATCH_FILE_ID char(20),  -- 첨부파일 묶음ID
+  REPTIT_SE_CODE char(3),  -- 반복구분코드
+  FRST_REGIST_PNTTM DATE,  -- 최초등록시각
+  FRST_REGISTER_ID varchar2(20),  -- 최초등록자ID
+  LAST_UPDT_PNTTM DATE,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar2(20),  -- 최종수정자ID
+  CONSTRAINT TB_SCHDUL_INFO_PK PRIMARY KEY (SCHDUL_ID)
+) ;
+CREATE TABLE TB_LOGIN_LOG  (
+  LOG_ID char(20) NOT NULL,  -- 로그ID
+  CONECT_MTHD char(1),  -- 접속방식
+  CONECT_ID varchar2(20),  -- 접속ID
+  CONECT_IP varchar2(23),  -- 접속IP
+  ERROR_OCCRRNC_AT char(1),  -- 오류발생여부
+  ERROR_CODE varchar2(3),  -- 오류상세코드
+  CREAT_DT DATE,  -- 생성시각
+  FRST_REGIST_PNTTM DATE,  -- 최초등록시각
+  FRST_REGISTER_ID varchar2(20),  -- 최초등록자ID
+  LAST_UPDT_PNTTM DATE,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar2(20),  -- 최종수정자ID
+  CONSTRAINT TB_LOGIN_LOG_PK PRIMARY KEY (LOG_ID)
+) ;
+CREATE TABLE TB_SYS_LOG  (
+  REQUST_ID char(20) NOT NULL,  -- 요청ID
+  OCCRRNC_DE char(20),  -- 발생일자
+  SVC_NM varchar2(200),  -- 봉사명
+  METHOD_NM varchar2(60),  -- METHOD명
+  PROCESS_SE_CODE varchar2(15),  -- 처리구분상세코드
+  PROCESS_TIME varchar2(14),  -- 처리시간
+  RQESTER_ID varchar2(20),  -- RQESTERID
+  RQESTER_IP varchar2(23),  -- RQESTERIP
+  FRST_REGIST_PNTTM DATE,  -- 최초등록시각
+  FRST_REGISTER_ID varchar2(20),  -- 최초등록자ID
+  LAST_UPDT_PNTTM DATE,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar2(20),  -- 최종수정자ID
+  CONSTRAINT TB_SYS_LOG_PK PRIMARY KEY (REQUST_ID)
+) ;
+CREATE TABLE TB_CONECT_LOG  (
+  LOG_ID number(20,0) DEFAULT 0 NOT NULL,  -- 로그ID
+  SRVC_NM varchar2(60),  -- 서비스명
+  METHOD_NM varchar2(60),  -- METHOD명
+  OCCRRNC_DE char(8),  -- 발생일자
+  CREAT_CO number(10,0) DEFAULT 0,  -- 생성수
+  UPDT_CO number(10,0) DEFAULT 0,  -- 갱신수
+  RDCNT number(10,0) DEFAULT 0,  -- 조회수
+  DELETE_CO number(10,0) DEFAULT 0,  -- 삭제수
+  OUTPT_CO number(10,0) DEFAULT 0,  -- OUTPT수
+  ERROR_CO number(10,0) DEFAULT 0,  -- 오류수
+  CONECT_ID varchar2(20),  -- 접속ID
+  CONECT_IP varchar2(23),  -- 접속IP
+  CONECT_MTHD char(1),  -- 접속방식
+  ERROR_OCCRRNC_AT char(1),  -- 오류발생여부
+  ERROR_CODE varchar2(3),  -- 오류상세코드
+  CREAT_DT DATE,  -- 생성시각
+  FRST_REGIST_PNTTM DATE,  -- 최초등록시각
+  FRST_REGISTER_ID varchar2(20),  -- 최초등록자ID
+  LAST_UPDT_PNTTM DATE,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar2(20),  -- 최종수정자ID
+  CONSTRAINT TB_CONECT_LOG_PK PRIMARY KEY (LOG_ID)
+) ;
+CREATE TABLE TB_LOGIN_POLICY  (
+  EMPLYR_ID varchar2(20) NOT NULL,  -- 사용자ID
+  IP_INFO varchar2(23),  -- IP정보
+  DPLCT_PERM_AT char(1) DEFAULT 'Y',  -- DPLCTPERM여부
+  LMTT_AT char(1) DEFAULT 'N',  -- LMTT여부
+  FRST_REGIST_PNTTM DATE,  -- 최초등록시각
+  FRST_REGISTER_ID varchar2(20),  -- 최초등록자ID
+  LAST_UPDT_PNTTM DATE,  -- 최종수정시각
+  LAST_UPDUSR_ID varchar2(20),  -- 최종수정자ID
+  CONSTRAINT TB_LOGIN_POLICY_PK PRIMARY KEY (EMPLYR_ID)
+) ;
+CREATE TABLE TB_PROGRM_CHANGE_DTLS (
+  PROGRM_FILE_NM     VARCHAR2(180) NOT NULL,  -- 프로그램파일명
+  REQUST_NO          NUMBER(10)    DEFAULT 0 NOT NULL,  -- 요청번호
+  PROGRM_KOREAN_NM   VARCHAR2(60),  -- 프로그램KOREAN명
+  RQESTER_ID         VARCHAR2(20),  -- RQESTERID
+  CHANGE_REQUST_CN   VARCHAR2(2500),  -- 변경요청내용
+  REQUST_PROCESS_CN  VARCHAR2(2500),  -- 요청처리내용
+  OPETR_ID           VARCHAR2(20),  -- OPETRID
+  PROCESS_STTUS_CODE VARCHAR2(15),  -- 처리상태상세코드
+  PROCESS_DE         VARCHAR2(20),  -- 처리일자
+  REQUST_DE          VARCHAR2(20),  -- 요청일자
+  REQUST_SJ          VARCHAR2(100),  -- 요청제목
+  CONSTRAINT TB_PROGRM_CHANGE_DTLS_PK PRIMARY KEY (PROGRM_FILE_NM, REQUST_NO)
+) ;
+
 -- 개정이력: 2026.06.30  구재호  전 DBMS TB_ 표준 명명 현행화(공통컴포넌트)
 -- ============================================================
 -- common-components-boot Altibase DDL (shtdb.sql HSQL 정본에서 생성)
