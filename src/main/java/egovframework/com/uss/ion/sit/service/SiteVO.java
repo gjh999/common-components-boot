@@ -25,6 +25,7 @@ import lombok.Setter;
  *  -------    --------    ---------------------------
  *   2009.04.01  박정규          최초 생성
  *   2025.05.20  기여자          Lombok @Getter/@Setter 적용으로 보일러플레이트 제거
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  *
  * </pre>
  */

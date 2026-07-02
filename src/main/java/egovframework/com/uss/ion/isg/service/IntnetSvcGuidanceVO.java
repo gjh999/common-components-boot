@@ -16,6 +16,7 @@ import lombok.Setter;
  *
  * 상세내용
  * - 인터넷서비스안내의 일련번호, 인터넷서비스명, 인터넷서비스설명, 반영여부 항목을 관리한다.
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  * </pre>
  *
  * @author 공통컴포넌트 개발팀 홍길동

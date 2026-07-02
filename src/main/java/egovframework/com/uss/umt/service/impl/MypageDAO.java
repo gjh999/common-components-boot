@@ -14,6 +14,7 @@ import egovframework.com.uss.umt.service.MypageVO;
  *   수정일      수정자           수정내용
  *  -------    --------    ---------------------------
  *  2026.07.01  Claude        마이페이지(본인) 기능 신규 — 포털에서 이식
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  * </pre>
  */
 @Repository("mypageDAO")

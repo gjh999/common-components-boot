@@ -33,6 +33,7 @@ import jakarta.annotation.Resource;
  *   수정일       수정자           수정내용
  *  -------       --------    ---------------------------
  *  2011.8.11     정진오      Dependency 최소화를 위한 불필요 변수 선언 주석처리
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  *
  * </pre>
  */

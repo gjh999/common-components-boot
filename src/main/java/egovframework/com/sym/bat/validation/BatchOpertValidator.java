@@ -24,6 +24,7 @@ import egovframework.com.sym.bat.service.BatchOpert;
  *  -------			--------    ---------------------------
  *  2010.08.20		김진만		최초 생성
  *  2023.06.09		김수용		NSR 보안조치 (사용자 접근 폴더 제한 기능 추가)
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  * </pre>
  */
 @Component("batchOpertValidator")

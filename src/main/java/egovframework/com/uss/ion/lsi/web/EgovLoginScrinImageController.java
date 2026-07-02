@@ -15,6 +15,7 @@
  *  -------    --------    ---------------------------
  *  2010.8.3	lee.m.j          최초 생성
  *  2011.8.26	정진오			IncludedInfo annotation 추가
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  *
  *  </pre>
  */

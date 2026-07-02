@@ -21,6 +21,7 @@ import egovframework.com.uss.olp.opp.service.OnlinePollPartcptn;
  *  -------    --------    ---------------------------
  *   2009.07.03  장동한          최초 생성
  *   2011.10.27  서준식          온라인 POLL 중복 투표 방지 기능 추가
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  *
  * </pre>
  */

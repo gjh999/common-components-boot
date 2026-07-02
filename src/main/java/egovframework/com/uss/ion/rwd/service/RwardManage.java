@@ -22,6 +22,7 @@ import jakarta.validation.constraints.Size;
  *  ----------   --------   ---------------------------
  *   2010.06.15  이용			최초 생성
  *   2024.10.29  권태성			포상자 소속을 처리할 변수와 getter, setter 추가
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  *  
  * </pre>
  */

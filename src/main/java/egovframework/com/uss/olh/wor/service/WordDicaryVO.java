@@ -24,6 +24,7 @@ import jakarta.validation.constraints.Size;
  *  -------    --------    ---------------------------
  *   2009.04.01  박정규          최초 생성
  *   2025.05.25  장동한          Lombok @Getter/@Setter 적용
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  *
  * </pre>
  */

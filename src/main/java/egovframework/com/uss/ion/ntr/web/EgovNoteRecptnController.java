@@ -39,6 +39,7 @@ import jakarta.servlet.http.HttpServletResponse;
  *  -------    --------    ---------------------------
  *   2010.06.16  장동한          최초 생성
  *   2011.8.26	정진오			IncludedInfo annotation 추가
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  *
  * </pre>
  */

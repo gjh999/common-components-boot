@@ -21,6 +21,7 @@ import egovframework.com.uss.cmt.service.CmtManageVO;
  *  수정일          수정자         수정내용
  *  ----------    ----------    ---------------------------
  *  2014.11.10     개발팀         최초 생성
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  *
  * </pre>
  */

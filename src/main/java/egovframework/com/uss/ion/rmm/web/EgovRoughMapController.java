@@ -28,6 +28,7 @@ import jakarta.validation.Valid;
  *
  * 상세내용
  * -  약도에 대한 등록, 수정, 삭제, 조회, 상세조회 요청 사항을 Service와 매핑 처리한다.
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  * </pre>
  *
  * @author 옥찬우

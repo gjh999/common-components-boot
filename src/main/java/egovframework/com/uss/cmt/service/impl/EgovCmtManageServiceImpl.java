@@ -32,6 +32,7 @@ import jakarta.annotation.Resource;
  *   2009.04.10  개발팀          최초 생성
  *   2025.08.01  이백행          2025년 컨트리뷰션 PMD로 소프트웨어 보안약점 진단하고 제거하기-SimpleDateFormatNeedsLocale(SimpleDateFormat 인스턴스를 생성할때 Locale 을 지정하는 것이 바람직함)
  *   2025.08.01  이백행          2025년 컨트리뷰션 PMD로 소프트웨어 보안약점 진단하고 제거하기-AvoidReassigningParameters(넘겨받는 메소드 parameter 값을 직접 변경하는 코드 탐지)
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  *
  *      </pre>
  */

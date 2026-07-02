@@ -16,6 +16,7 @@ import jakarta.validation.constraints.Size;
  * 상세내용
  * - 로그인화면이미지의 목록 항목을 관리한다.
  * - 로그인화면이미지의 일련번호, 이미지명, 링크URL, 이미지설명, 반영여부 항목을 관리한다.
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  * </pre>
  *
  * @author 이문준

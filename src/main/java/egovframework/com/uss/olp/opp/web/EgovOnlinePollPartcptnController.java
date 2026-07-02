@@ -50,6 +50,7 @@ import jakarta.servlet.http.HttpServletRequest;
  *   2011.10.27  서준식          온라인 POLL 중복 투표 방지 기능 추가
  *   2024.10.29  권태성          화면에서 사용할 현재일자 정보 model에 추가(egovOnlinePollPartcptnList())
  *   2025.08.23  이백행          2025년 컨트리뷰션 PMD로 소프트웨어 보안약점 진단하고 제거하기-LocalVariableNamingConventions(final이 아닌 변수는 밑줄을 포함할 수 없음)
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  *
  *      </pre>
  */

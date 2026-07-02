@@ -22,6 +22,7 @@ import jakarta.servlet.http.HttpServletRequest;
  *  -------      -------------  ----------------------
  *   2016.10.17  장동한           최초 생성
  *   2017.03.03     조성원 	  시큐어코딩(ES)-오류 메시지를 통한 정보노출[CWE-209]
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  * </pre>
  */
 

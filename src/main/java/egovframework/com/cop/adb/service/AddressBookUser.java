@@ -15,6 +15,7 @@ import java.io.Serializable;
  *   수정일      수정자           수정내용
  *  -------    --------    ---------------------------
  *	2016.12.13 최두영          클래스명 변경
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  * </pre>
  */
 @SuppressWarnings("serial")

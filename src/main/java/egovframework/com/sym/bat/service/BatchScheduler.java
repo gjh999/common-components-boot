@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
  *  -------     --------    ---------------------------
  *  2010.08.30   김진만     최초 생성
  *  2024.10.29	LeeBaekHaeng	불필요 @SuppressWarnings("unchecked") 및 형변환 제거
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  * </pre>
  */
 

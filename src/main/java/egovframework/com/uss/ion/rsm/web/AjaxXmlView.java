@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 *   수정일      수정자           수정내용
 *  ------- 	   --------    ---------------------------
 *   2011.10.10  이기하		보안점검 조치(널포인트 역참조 방지)
+*   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
 * </pre>
 */
 

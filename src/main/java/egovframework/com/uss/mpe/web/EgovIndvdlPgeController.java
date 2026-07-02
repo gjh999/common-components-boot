@@ -41,6 +41,7 @@ import jakarta.validation.Valid;
  *  2016.8.31	김연호			표준프레임워크 3.6 개선
  *
  * Copyright (C) 2009 by MOPAS  All right reserved.
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  * </pre>
  */
 @Controller

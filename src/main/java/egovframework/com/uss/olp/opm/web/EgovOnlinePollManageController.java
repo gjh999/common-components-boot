@@ -48,6 +48,7 @@ import jakarta.validation.Valid;
  *   2011.08.26  정진오          IncludedInfo annotation 추가
  *   2024.10.29  권태성          등록 화면과 데이터를 처리하는 method 분리
  *   2025.08.23  이백행          2025년 컨트리뷰션 PMD로 소프트웨어 보안약점 진단하고 제거하기-UselessParentheses(불필요한 괄호사용)
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  *
  *      </pre>
  */

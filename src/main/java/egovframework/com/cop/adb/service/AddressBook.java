@@ -18,6 +18,7 @@ import jakarta.validation.constraints.Size;
  *  -------    --------    ---------------------------
  *   2009.9.25  윤성록          최초 생성
  *   2016.12.13 최두영          클래스명 변경
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  *
  * </pre>
  */

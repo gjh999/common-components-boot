@@ -16,6 +16,7 @@ import java.util.List;
  *   수정일       수정자           수정내용
  *  -------     --------    ---------------------------
  *  2010.06.17   김진만     최초 생성
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  * </pre>
  */
 public interface EgovBatchSchdulService {

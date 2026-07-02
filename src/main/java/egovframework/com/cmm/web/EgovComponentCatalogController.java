@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  *   수정일      수정자       수정내용
  *  -------    --------    ---------------------------
  *  2026.06.29  Claude       공통컴포넌트 예제 카탈로그 신규
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  * </pre>
  */
 @Controller

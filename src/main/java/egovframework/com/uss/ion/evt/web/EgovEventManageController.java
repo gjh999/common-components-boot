@@ -35,6 +35,7 @@ import jakarta.validation.Valid;
  * 상세내용
  * - 행사관리에 대한 등록, 수정, 삭제, 조회 기능을 제공한다.
  * - 행사관리의 조회기능은 목록조회, 상세조회로 구분된다.
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  * </pre>
  * 
  * @author 이용

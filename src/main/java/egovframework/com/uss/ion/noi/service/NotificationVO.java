@@ -23,6 +23,7 @@ import jakarta.validation.constraints.Size;
  *  -------    --------    ---------------------------
  *   2009.6.8  한성곤          최초 생성
  *   2011.10.07 이기하         보안취약점 수정(private 배열 처리)
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  *
  * </pre>
  */

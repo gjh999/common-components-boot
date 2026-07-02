@@ -35,6 +35,7 @@ import jakarta.annotation.Resource;
  *   2022.11.11  김혜준          시큐어코딩 처리
  *   2025.07.03  이백행          컨트리뷰션 PMD로 소프트웨어 보안약점 진단하고 제거하기-UnusedFormalParameter(메소드 선언 내에사용되지 않는 파라미터를 탐지)
  *   2025.12.11  박성완          배치 실행파일 경로를 전체경로로 수정(properties의 SHELL.batchShellFolder 값을 추가한 경로로 변경)
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  *
  *      </pre>
  */

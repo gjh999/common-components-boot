@@ -22,6 +22,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  *   수정일          수정자        수정내용
  *  ----------     --------    ---------------------------
  *  2024.07.09     신용호        Map 타입에서 noteId 복호화 적용을 위한 ArgumentResolver 추가
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  *
  *      </pre>
  */

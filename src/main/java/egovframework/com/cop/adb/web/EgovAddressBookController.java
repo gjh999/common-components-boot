@@ -39,6 +39,7 @@ import jakarta.validation.Valid;
  *   2011.8.26	 정진오		 IncludedInfo annotation 추가
  *   2016.12.13  최두영      클래스명 변경
  *   2022.11.11  김혜준      시큐어코딩 처리
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  * </pre>
  */
 

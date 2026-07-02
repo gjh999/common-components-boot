@@ -20,6 +20,7 @@ import egovframework.com.uss.ion.ntr.service.NoteRecptn;
  *  -------    --------    ---------------------------
  *   2009.07.03  장동한          최초 생성
  *   2017.09.14	 장동한		   표준프레임워크 3.7 개선
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  *
  * </pre>
  */

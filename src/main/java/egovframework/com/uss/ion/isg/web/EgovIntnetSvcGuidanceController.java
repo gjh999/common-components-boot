@@ -17,6 +17,7 @@
  *  2010.08.03	lee.m.j		최초 생성
  *  2011.08.26	정진오		IncludedInfo annotation 추가
  *  2023.06.09	김수용		NSR 보안조치 (특수문자 복원 기능 제거)
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  *
  *  </pre>
  */

@@ -37,6 +37,7 @@ import jakarta.validation.Valid;
  *   2011.08.26  정진오          IncludedInfo annotation 추가
  *   2016.08.22  김연호          표준프레임워크 3.6 개선
  *   2025.08.12  이백행          2025년 컨트리뷰션 PMD로 소프트웨어 보안약점 진단하고 제거하기-LocalVariableNamingConventions(final이 아닌 변수는 밑줄을 포함할 수 없음)
+ *   2026.07.02  구재호        Spring Boot + Thymeleaf + KRDS + 다국어(i18n) 전환
  *
  *      </pre>
  */
