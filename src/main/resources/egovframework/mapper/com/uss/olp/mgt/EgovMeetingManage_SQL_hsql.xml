@@ -4,10 +4,20 @@
 <mapper namespace="MeetingManage">
 
     <sql id="mgtCols">
-        A.MTG_ID AS mtgId, A.MTG_NM AS mtgNm, A.MTG_MTR_CN AS mtgMtrCn, A.MTG_SN AS mtgSn, A.MTG_CO AS mtgCo,
-        A.MTG_DE AS mtgDe, A.MTG_PLACE AS mtgPlace, A.MTG_BEGIN_TM AS mtgBeginTime, A.MTG_END_TM AS mtgEndTime,
-        A.MTG_RESULT_CN AS mtgResultCn, A.ATDRN_CO AS atdrnCo, A.NONATDRN_CO AS nonatdrnCo,
-        A.FRST_REGISTER_ID AS frstRegisterId, TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS frstRegisterPnttm
+                A.MTG_ID           AS mtgId
+              , A.MTG_NM           AS mtgNm
+              , A.MTG_MTR_CN       AS mtgMtrCn
+              , A.MTG_SN           AS mtgSn
+              , A.MTG_CO           AS mtgCo
+              , A.MTG_DE           AS mtgDe
+              , A.MTG_PLACE        AS mtgPlace
+              , A.MTG_BEGIN_TM     AS mtgBeginTime
+              , A.MTG_END_TM       AS mtgEndTime
+              , A.MTG_RESULT_CN    AS mtgResultCn
+              , A.ATDRN_CO         AS atdrnCo
+              , A.NONATDRN_CO      AS nonatdrnCo
+              , A.FRST_REGISTER_ID AS frstRegisterId
+              , TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS frstRegisterPnttm
     </sql>
 
     <sql id="mgtSearch">
@@ -15,57 +25,102 @@
     </sql>
 
     <select id="selectMeetingManage" parameterType="egovframework.com.uss.olp.mgt.service.MeetingManageVO" resultType="egovframework.com.uss.olp.mgt.service.MeetingManageVO">
-        SELECT <include refid="mgtCols"/>
-        FROM TB_MTG_INFO A WHERE 1=1
+        SELECT  <include refid="mgtCols"/>
+          FROM  TB_MTG_INFO  A
+         WHERE  1 = 1
         <include refid="mgtSearch"/>
-        ORDER BY A.MTG_DE DESC
-        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+         ORDER  BY A.MTG_DE DESC
+         LIMIT  #{recordCountPerPage} OFFSET #{firstIndex}
     </select>
 
     <select id="selectMeetingManageCnt" parameterType="egovframework.com.uss.olp.mgt.service.MeetingManageVO" resultType="int">
-        SELECT COUNT(*) FROM TB_MTG_INFO A WHERE 1=1
+        SELECT  COUNT(*)
+          FROM  TB_MTG_INFO  A
+         WHERE  1 = 1
         <include refid="mgtSearch"/>
     </select>
 
     <select id="selectMeetingManageDetail" parameterType="egovframework.com.uss.olp.mgt.service.MeetingManageVO" resultType="egovframework.com.uss.olp.mgt.service.MeetingManageVO">
-        SELECT <include refid="mgtCols"/> FROM TB_MTG_INFO A WHERE A.MTG_ID = #{mtgId}
+        SELECT  <include refid="mgtCols"/>
+          FROM  TB_MTG_INFO  A
+         WHERE  A.MTG_ID = #{mtgId}
     </select>
 
     <!-- 부서(조직) 선택 팝업 : 실제 조직정보 조회(egovMap) -->
     <select id="EgovMeetingManageLisAuthorGroupPopup" resultType="egovMap">
-        SELECT ORGNZT_ID, ORGNZT_NM, ORGNZT_DC
-          FROM TB_ORGNZT_INFO
+        SELECT  ORGNZT_ID
+              , ORGNZT_NM
+              , ORGNZT_DC
+          FROM  TB_ORGNZT_INFO
         <if test='searchKeyword != null and searchKeyword != ""'>
-          WHERE ORGNZT_NM LIKE '%' || #{searchKeyword} || '%'
+         WHERE  ORGNZT_NM LIKE '%' || #{searchKeyword} || '%'
         </if>
-          ORDER BY ORGNZT_NM
+         ORDER  BY ORGNZT_NM
     </select>
 
     <!-- 사용자(업무담당자) 선택 팝업 : 승인된 업무사용자 조회(egovMap) -->
     <select id="EgovMeetingManageLisEmpLyrPopup" resultType="egovMap">
-        SELECT EMPLYR_ID, USER_NM, OFFM_TELNO, DETAIL_ADRES, ESNTL_ID
-          FROM TB_EMPLYR_INFO
-         WHERE EMPLYR_STTUS_CODE = 'P'
+        SELECT  EMPLYR_ID
+              , USER_NM
+              , OFFM_TELNO
+              , DETAIL_ADRES
+              , ESNTL_ID
+          FROM  TB_EMPLYR_INFO
+         WHERE  EMPLYR_STTUS_CODE = 'P'
         <if test='searchKeyword != null and searchKeyword != ""'>
-          AND USER_NM LIKE '%' || #{searchKeyword} || '%'
+           AND  USER_NM LIKE '%' || #{searchKeyword} || '%'
         </if>
-          ORDER BY USER_NM
+         ORDER  BY USER_NM
     </select>
 
     <insert id="insertMeetingManage" parameterType="egovframework.com.uss.olp.mgt.service.MeetingManageVO">
-        INSERT INTO TB_MTG_INFO (MTG_ID, MTG_NM, MTG_MTR_CN, MTG_SN, MTG_CO, MTG_DE, MTG_PLACE, MTG_BEGIN_TM, MTG_END_TM, ATDRN_CO, NONATDRN_CO, FRST_REGISTER_ID, FRST_REGIST_PNTTM)
-        VALUES (#{mtgId}, #{mtgNm}, #{mtgMtrCn}, #{mtgSn}, #{mtgCo}, #{mtgDe}, #{mtgPlace}, #{mtgBeginTime}, #{mtgEndTime}, #{atdrnCo}, #{nonatdrnCo}, #{frstRegisterId}, CURRENT_TIMESTAMP)
+        INSERT  INTO TB_MTG_INFO
+              ( MTG_ID
+              , MTG_NM
+              , MTG_MTR_CN
+              , MTG_SN
+              , MTG_CO
+              , MTG_DE
+              , MTG_PLACE
+              , MTG_BEGIN_TM
+              , MTG_END_TM
+              , ATDRN_CO
+              , NONATDRN_CO
+              , FRST_REGISTER_ID
+              , FRST_REGIST_PNTTM )
+        VALUES  ( #{mtgId}
+                , #{mtgNm}
+                , #{mtgMtrCn}
+                , #{mtgSn}
+                , #{mtgCo}
+                , #{mtgDe}
+                , #{mtgPlace}
+                , #{mtgBeginTime}
+                , #{mtgEndTime}
+                , #{atdrnCo}
+                , #{nonatdrnCo}
+                , #{frstRegisterId}
+                , CURRENT_TIMESTAMP )
     </insert>
 
     <update id="updateMeetingManage" parameterType="egovframework.com.uss.olp.mgt.service.MeetingManageVO">
-        UPDATE TB_MTG_INFO SET MTG_NM = #{mtgNm}, MTG_MTR_CN = #{mtgMtrCn}, MTG_DE = #{mtgDe}, MTG_PLACE = #{mtgPlace},
-               MTG_BEGIN_TM = #{mtgBeginTime}, MTG_END_TM = #{mtgEndTime}, MTG_RESULT_CN = #{mtgResultCn},
-               LAST_UPDUSR_ID = #{lastUpdusrId}, LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
-        WHERE MTG_ID = #{mtgId}
+        UPDATE  TB_MTG_INFO
+           SET  MTG_NM          = #{mtgNm}
+              , MTG_MTR_CN      = #{mtgMtrCn}
+              , MTG_DE          = #{mtgDe}
+              , MTG_PLACE       = #{mtgPlace}
+              , MTG_BEGIN_TM    = #{mtgBeginTime}
+              , MTG_END_TM      = #{mtgEndTime}
+              , MTG_RESULT_CN   = #{mtgResultCn}
+              , LAST_UPDUSR_ID  = #{lastUpdusrId}
+              , LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
+         WHERE  MTG_ID = #{mtgId}
     </update>
 
     <delete id="deleteMeetingManage" parameterType="egovframework.com.uss.olp.mgt.service.MeetingManageVO">
-        DELETE FROM TB_MTG_INFO WHERE MTG_ID = #{mtgId}
+        DELETE
+          FROM  TB_MTG_INFO
+         WHERE  MTG_ID = #{mtgId}
     </delete>
 
 </mapper>

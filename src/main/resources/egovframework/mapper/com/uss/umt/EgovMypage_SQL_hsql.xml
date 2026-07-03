@@ -8,44 +8,83 @@
     <select id="selectMyInfo" parameterType="egovframework.com.uss.umt.service.MypageVO"
             resultType="egovframework.com.uss.umt.service.MypageVO">
         <if test='userSe == "GNR"'>
-            SELECT ESNTL_ID uniqId, 'GNR' userSe, MBER_ID userId, MBER_NM userNm,
-                   MBER_EMAIL_ADRES email, MBTLNUM telno, ZIP zip, ADRES adres, DETAIL_ADRES detailAdres
-              FROM TB_GNRL_MBER WHERE ESNTL_ID = #{uniqId}
+            SELECT  ESNTL_ID         AS uniqId
+                  , 'GNR'            AS userSe
+                  , MBER_ID          AS userId
+                  , MBER_NM          AS userNm
+                  , MBER_EMAIL_ADRES AS email
+                  , MBTLNUM          AS telno
+                  , ZIP              AS zip
+                  , ADRES            AS adres
+                  , DETAIL_ADRES     AS detailAdres
+              FROM  TB_GNRL_MBER
+             WHERE  ESNTL_ID = #{uniqId}
         </if>
         <if test='userSe == "USR"'>
-            SELECT ESNTL_ID uniqId, 'USR' userSe, EMPLYR_ID userId, USER_NM userNm,
-                   EMAIL_ADRES email, MBTLNUM telno, ZIP zip, HOUSE_ADRES adres, DETAIL_ADRES detailAdres
-              FROM TB_EMPLYR_INFO WHERE ESNTL_ID = #{uniqId}
+            SELECT  ESNTL_ID     AS uniqId
+                  , 'USR'        AS userSe
+                  , EMPLYR_ID    AS userId
+                  , USER_NM      AS userNm
+                  , EMAIL_ADRES  AS email
+                  , MBTLNUM      AS telno
+                  , ZIP          AS zip
+                  , HOUSE_ADRES  AS adres
+                  , DETAIL_ADRES AS detailAdres
+              FROM  TB_EMPLYR_INFO
+             WHERE  ESNTL_ID = #{uniqId}
         </if>
         <if test='userSe == "ENT"'>
-            SELECT ESNTL_ID uniqId, 'ENT' userSe, ENTRPRS_MBER_ID userId, CMPNY_NM userNm,
-                   APPLCNT_EMAIL_ADRES email, TELNO telno, ZIP zip, ADRES adres, DETAIL_ADRES detailAdres
-              FROM TB_ENTRPRS_MBER WHERE ESNTL_ID = #{uniqId}
+            SELECT  ESNTL_ID            AS uniqId
+                  , 'ENT'               AS userSe
+                  , ENTRPRS_MBER_ID     AS userId
+                  , CMPNY_NM            AS userNm
+                  , APPLCNT_EMAIL_ADRES AS email
+                  , TELNO               AS telno
+                  , ZIP                 AS zip
+                  , ADRES               AS adres
+                  , DETAIL_ADRES        AS detailAdres
+              FROM  TB_ENTRPRS_MBER
+             WHERE  ESNTL_ID = #{uniqId}
         </if>
     </select>
 
     <!-- 본인 회원정보 수정 (userSe 분기) -->
     <update id="updateMyInfo" parameterType="egovframework.com.uss.umt.service.MypageVO">
         <if test='userSe == "GNR"'>
-            UPDATE TB_GNRL_MBER
-               SET MBER_NM = #{userNm}, MBER_EMAIL_ADRES = #{email}, MBTLNUM = #{telno},
-                   ZIP = #{zip}, ADRES = #{adres}, DETAIL_ADRES = #{detailAdres},
-                   LAST_UPDT_PNTTM = sysdate(), LAST_UPDUSR_ID = #{userId}
-             WHERE ESNTL_ID = #{uniqId}
+            UPDATE  TB_GNRL_MBER
+               SET  MBER_NM          = #{userNm}
+                  , MBER_EMAIL_ADRES = #{email}
+                  , MBTLNUM          = #{telno}
+                  , ZIP              = #{zip}
+                  , ADRES            = #{adres}
+                  , DETAIL_ADRES     = #{detailAdres}
+                  , LAST_UPDT_PNTTM  = sysdate()
+                  , LAST_UPDUSR_ID   = #{userId}
+             WHERE  ESNTL_ID = #{uniqId}
         </if>
         <if test='userSe == "USR"'>
-            UPDATE TB_EMPLYR_INFO
-               SET USER_NM = #{userNm}, EMAIL_ADRES = #{email}, MBTLNUM = #{telno},
-                   ZIP = #{zip}, HOUSE_ADRES = #{adres}, DETAIL_ADRES = #{detailAdres},
-                   LAST_UPDT_PNTTM = sysdate(), LAST_UPDUSR_ID = #{userId}
-             WHERE ESNTL_ID = #{uniqId}
+            UPDATE  TB_EMPLYR_INFO
+               SET  USER_NM         = #{userNm}
+                  , EMAIL_ADRES     = #{email}
+                  , MBTLNUM         = #{telno}
+                  , ZIP             = #{zip}
+                  , HOUSE_ADRES     = #{adres}
+                  , DETAIL_ADRES    = #{detailAdres}
+                  , LAST_UPDT_PNTTM = sysdate()
+                  , LAST_UPDUSR_ID  = #{userId}
+             WHERE  ESNTL_ID = #{uniqId}
         </if>
         <if test='userSe == "ENT"'>
-            UPDATE TB_ENTRPRS_MBER
-               SET CMPNY_NM = #{userNm}, APPLCNT_EMAIL_ADRES = #{email}, TELNO = #{telno},
-                   ZIP = #{zip}, ADRES = #{adres}, DETAIL_ADRES = #{detailAdres},
-                   LAST_UPDT_PNTTM = sysdate(), LAST_UPDUSR_ID = #{userId}
-             WHERE ESNTL_ID = #{uniqId}
+            UPDATE  TB_ENTRPRS_MBER
+               SET  CMPNY_NM            = #{userNm}
+                  , APPLCNT_EMAIL_ADRES = #{email}
+                  , TELNO               = #{telno}
+                  , ZIP                 = #{zip}
+                  , ADRES               = #{adres}
+                  , DETAIL_ADRES        = #{detailAdres}
+                  , LAST_UPDT_PNTTM     = sysdate()
+                  , LAST_UPDUSR_ID      = #{userId}
+             WHERE  ESNTL_ID = #{uniqId}
         </if>
     </update>
 
@@ -53,26 +92,38 @@
     <select id="selectMyPassword" parameterType="egovframework.com.uss.umt.service.MypageVO"
             resultType="egovframework.com.uss.umt.service.MypageVO">
         <if test='userSe == "GNR"'>
-            SELECT PASSWORD password FROM TB_GNRL_MBER WHERE ESNTL_ID = #{uniqId}
+            SELECT  PASSWORD AS password
+              FROM  TB_GNRL_MBER
+             WHERE  ESNTL_ID = #{uniqId}
         </if>
         <if test='userSe == "USR"'>
-            SELECT PASSWORD password FROM TB_EMPLYR_INFO WHERE ESNTL_ID = #{uniqId}
+            SELECT  PASSWORD AS password
+              FROM  TB_EMPLYR_INFO
+             WHERE  ESNTL_ID = #{uniqId}
         </if>
         <if test='userSe == "ENT"'>
-            SELECT ENTRPRS_MBER_PASSWORD password FROM TB_ENTRPRS_MBER WHERE ESNTL_ID = #{uniqId}
+            SELECT  ENTRPRS_MBER_PASSWORD AS password
+              FROM  TB_ENTRPRS_MBER
+             WHERE  ESNTL_ID = #{uniqId}
         </if>
     </select>
 
     <!-- 본인 비밀번호 변경 (userSe 분기) -->
     <update id="updateMyPassword" parameterType="egovframework.com.uss.umt.service.MypageVO">
         <if test='userSe == "GNR"'>
-            UPDATE TB_GNRL_MBER SET PASSWORD = #{password} WHERE ESNTL_ID = #{uniqId}
+            UPDATE  TB_GNRL_MBER
+               SET  PASSWORD = #{password}
+             WHERE  ESNTL_ID = #{uniqId}
         </if>
         <if test='userSe == "USR"'>
-            UPDATE TB_EMPLYR_INFO SET PASSWORD = #{password} WHERE ESNTL_ID = #{uniqId}
+            UPDATE  TB_EMPLYR_INFO
+               SET  PASSWORD = #{password}
+             WHERE  ESNTL_ID = #{uniqId}
         </if>
         <if test='userSe == "ENT"'>
-            UPDATE TB_ENTRPRS_MBER SET ENTRPRS_MBER_PASSWORD = #{password} WHERE ESNTL_ID = #{uniqId}
+            UPDATE  TB_ENTRPRS_MBER
+               SET  ENTRPRS_MBER_PASSWORD = #{password}
+             WHERE  ESNTL_ID = #{uniqId}
         </if>
     </update>
 </mapper>

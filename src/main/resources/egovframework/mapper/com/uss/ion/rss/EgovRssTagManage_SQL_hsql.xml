@@ -4,37 +4,63 @@
 <mapper namespace="RssTagManage">
 
     <sql id="rssColumns">
-        A.RSS_ID AS rssId, A.TRGET_SVC_NM AS trgetSvcNm, A.TRGET_SVC_TABLE AS trgetSvcTable,
-        A.HDER_TITLE AS hderTitle, A.HDER_LINK AS hderLink, A.FRST_REGISTER_ID AS frstRegisterId,
-        TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS frstRegisterPnttm
+          A.RSS_ID           AS rssId
+        , A.TRGET_SVC_NM     AS trgetSvcNm
+        , A.TRGET_SVC_TABLE  AS trgetSvcTable
+        , A.HDER_TITLE       AS hderTitle
+        , A.HDER_LINK        AS hderLink
+        , A.FRST_REGISTER_ID AS frstRegisterId
+        , TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS frstRegisterPnttm
     </sql>
 
     <select id="selectRssTagManage" parameterType="egovframework.com.uss.ion.rss.service.RssManage" resultType="egovframework.com.uss.ion.rss.service.RssManage">
-        SELECT <include refid="rssColumns"/>
-        FROM TB_RSS A
-        ORDER BY A.FRST_REGIST_PNTTM DESC
-        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+        SELECT  <include refid="rssColumns"/>
+          FROM  TB_RSS A
+         ORDER  BY A.FRST_REGIST_PNTTM DESC
+         LIMIT  #{recordCountPerPage} OFFSET #{firstIndex}
     </select>
 
     <select id="selectRssTagManageCnt" parameterType="egovframework.com.uss.ion.rss.service.RssManage" resultType="int">
-        SELECT COUNT(*) FROM TB_RSS A
+        SELECT  COUNT(*)
+          FROM  TB_RSS A
     </select>
 
     <select id="selectRssTagManageDetail" parameterType="egovframework.com.uss.ion.rss.service.RssManage" resultType="egovframework.com.uss.ion.rss.service.RssManage">
-        SELECT <include refid="rssColumns"/> FROM TB_RSS A WHERE A.RSS_ID = #{rssId}
+        SELECT  <include refid="rssColumns"/>
+          FROM  TB_RSS A
+         WHERE  A.RSS_ID = #{rssId}
     </select>
 
     <insert id="insertRssTagManage" parameterType="egovframework.com.uss.ion.rss.service.RssManage">
-        INSERT INTO TB_RSS (RSS_ID, TRGET_SVC_NM, TRGET_SVC_TABLE, HDER_TITLE, HDER_LINK, FRST_REGIST_PNTTM, FRST_REGISTER_ID)
-        VALUES (#{rssId}, #{trgetSvcNm}, #{trgetSvcTable}, #{hderTitle}, #{hderLink}, CURRENT_TIMESTAMP, #{frstRegisterId})
+        INSERT  INTO TB_RSS
+              ( RSS_ID
+              , TRGET_SVC_NM
+              , TRGET_SVC_TABLE
+              , HDER_TITLE
+              , HDER_LINK
+              , FRST_REGIST_PNTTM
+              , FRST_REGISTER_ID )
+        VALUES  ( #{rssId}
+                , #{trgetSvcNm}
+                , #{trgetSvcTable}
+                , #{hderTitle}
+                , #{hderLink}
+                , CURRENT_TIMESTAMP
+                , #{frstRegisterId} )
     </insert>
 
     <update id="updateRssTagManage" parameterType="egovframework.com.uss.ion.rss.service.RssManage">
-        UPDATE TB_RSS SET TRGET_SVC_NM = #{trgetSvcNm}, HDER_TITLE = #{hderTitle}, LAST_UPDT_PNTTM = CURRENT_TIMESTAMP WHERE RSS_ID = #{rssId}
+        UPDATE  TB_RSS
+           SET  TRGET_SVC_NM    = #{trgetSvcNm}
+              , HDER_TITLE      = #{hderTitle}
+              , LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
+         WHERE  RSS_ID = #{rssId}
     </update>
 
     <delete id="deleteRssTagManage" parameterType="egovframework.com.uss.ion.rss.service.RssManage">
-        DELETE FROM TB_RSS WHERE RSS_ID = #{rssId}
+        DELETE
+          FROM  TB_RSS
+         WHERE  RSS_ID = #{rssId}
     </delete>
 
 </mapper>

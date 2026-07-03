@@ -4,8 +4,12 @@
 <mapper namespace="IndvdlPge">
 
     <sql id="mpeCols">
-        A.CNTNTS_ID AS cntntsId, A.CNTNTS_NM AS cntntsNm, A.CNTC_URL AS cntcUrl,
-        A.CNTNTS_USE_AT AS cntntsUseAt, A.CNTNTS_LINK_URL AS cntntsLinkUrl, A.CNTNTS_DC AS cntntsDc
+        A.CNTNTS_ID       AS cntntsId
+      , A.CNTNTS_NM       AS cntntsNm
+      , A.CNTC_URL        AS cntcUrl
+      , A.CNTNTS_USE_AT   AS cntntsUseAt
+      , A.CNTNTS_LINK_URL AS cntntsLinkUrl
+      , A.CNTNTS_DC       AS cntntsDc
     </sql>
 
     <sql id="mpeSearch">
@@ -14,34 +18,61 @@
 
     <select id="selectIndvdlPgeList" parameterType="egovframework.com.uss.mpe.service.IndvdlPgeVO" resultType="egovframework.com.uss.mpe.service.IndvdlPgeVO">
         SELECT <include refid="mpeCols"/>
-        FROM TB_INDVDL_PGE_CNTNTS A WHERE 1=1
+          FROM  TB_INDVDL_PGE_CNTNTS A
+         WHERE  1=1
         <include refid="mpeSearch"/>
-        ORDER BY A.CNTNTS_ID DESC
-        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+         ORDER  BY A.CNTNTS_ID DESC
+         LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
     </select>
 
     <select id="selectIndvdlPgeListCnt" parameterType="egovframework.com.uss.mpe.service.IndvdlPgeVO" resultType="int">
-        SELECT COUNT(*) FROM TB_INDVDL_PGE_CNTNTS A WHERE 1=1
+        SELECT  COUNT(*)
+          FROM  TB_INDVDL_PGE_CNTNTS A
+         WHERE  1=1
         <include refid="mpeSearch"/>
     </select>
 
     <select id="selectIndvdlPgeDetail" parameterType="egovframework.com.uss.mpe.service.IndvdlPgeVO" resultType="egovframework.com.uss.mpe.service.IndvdlPgeVO">
-        SELECT <include refid="mpeCols"/> FROM TB_INDVDL_PGE_CNTNTS A WHERE A.CNTNTS_ID = #{cntntsId}
+        SELECT <include refid="mpeCols"/>
+          FROM  TB_INDVDL_PGE_CNTNTS A
+         WHERE  A.CNTNTS_ID = #{cntntsId}
     </select>
 
     <insert id="insertIndvdlPge" parameterType="egovframework.com.uss.mpe.service.IndvdlPgeVO">
-        INSERT INTO TB_INDVDL_PGE_CNTNTS (CNTNTS_ID, CNTNTS_NM, CNTC_URL, CNTNTS_USE_AT, CNTNTS_LINK_URL, CNTNTS_DC, FRST_REGIST_PNTTM, FRST_REGISTER_ID)
-        VALUES (#{cntntsId}, #{cntntsNm}, #{cntcUrl}, #{cntntsUseAt}, #{cntntsLinkUrl}, #{cntntsDc}, CURRENT_TIMESTAMP, #{frstRegisterId})
+        INSERT  INTO TB_INDVDL_PGE_CNTNTS
+              ( CNTNTS_ID
+              , CNTNTS_NM
+              , CNTC_URL
+              , CNTNTS_USE_AT
+              , CNTNTS_LINK_URL
+              , CNTNTS_DC
+              , FRST_REGIST_PNTTM
+              , FRST_REGISTER_ID )
+        VALUES  ( #{cntntsId}
+                , #{cntntsNm}
+                , #{cntcUrl}
+                , #{cntntsUseAt}
+                , #{cntntsLinkUrl}
+                , #{cntntsDc}
+                , CURRENT_TIMESTAMP
+                , #{frstRegisterId} )
     </insert>
 
     <update id="updateIndvdlPge" parameterType="egovframework.com.uss.mpe.service.IndvdlPgeVO">
-        UPDATE TB_INDVDL_PGE_CNTNTS SET CNTNTS_NM = #{cntntsNm}, CNTC_URL = #{cntcUrl}, CNTNTS_USE_AT = #{cntntsUseAt},
-               CNTNTS_LINK_URL = #{cntntsLinkUrl}, CNTNTS_DC = #{cntntsDc}, LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
-        WHERE CNTNTS_ID = #{cntntsId}
+        UPDATE  TB_INDVDL_PGE_CNTNTS
+           SET  CNTNTS_NM       = #{cntntsNm}
+              , CNTC_URL        = #{cntcUrl}
+              , CNTNTS_USE_AT   = #{cntntsUseAt}
+              , CNTNTS_LINK_URL = #{cntntsLinkUrl}
+              , CNTNTS_DC       = #{cntntsDc}
+              , LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
+         WHERE  CNTNTS_ID = #{cntntsId}
     </update>
 
     <delete id="deleteIndvdlPge" parameterType="egovframework.com.uss.mpe.service.IndvdlPgeVO">
-        DELETE FROM TB_INDVDL_PGE_CNTNTS WHERE CNTNTS_ID = #{cntntsId}
+        DELETE
+          FROM  TB_INDVDL_PGE_CNTNTS
+         WHERE  CNTNTS_ID = #{cntntsId}
     </delete>
 
 </mapper>

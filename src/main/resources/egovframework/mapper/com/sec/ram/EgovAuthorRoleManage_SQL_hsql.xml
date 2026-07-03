@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="authorRoleManageDAO">
     <!-- 개정이력: 2026.06.17  구재호   레거시 테이블명(LETT*/COMT*/COMVN*) → TB_/VW_ 표준 명명 현행화 (Spring Boot + Thymeleaf 전환) -->
@@ -18,51 +18,53 @@
     </resultMap>
 
     <select id="selectAuthorRoleList" parameterType="egovframework.com.sec.ram.service.AuthorRoleManageVO" resultMap="authorRole">
-        
-            SELECT A.ROLE_CODE,
-                   A.ROLE_NM,
-                   A.ROLE_PTTRN,
-                   A.ROLE_DC,
-                   A.ROLE_TY,
-                   A.ROLE_SORT,
-                   B.AUTHOR_CODE,
-                   TO_CHAR(B.CREAT_DT,'YYYY-MM-DD') as CREAT_DT,
-                   (CASE WHEN B.ROLE_CODE IS NULL THEN 'N'
-                         ELSE 'Y' 
-                     END) AS REG_YN
-              FROM TB_ROLE_INFO A 
-                   LEFT OUTER JOIN (SELECT AUTHOR_CODE , ROLE_CODE, CREAT_DT FROM TB_AUTHOR_ROLE_RELATE WHERE AUTHOR_CODE = #{searchKeyword}) B
-                ON A.ROLE_CODE = B.ROLE_CODE	
-             LIMIT #{recordCountPerPage} OFFSET #{firstIndex}	         
-        
+
+            SELECT  A.ROLE_CODE
+                  , A.ROLE_NM
+                  , A.ROLE_PTTRN
+                  , A.ROLE_DC
+                  , A.ROLE_TY
+                  , A.ROLE_SORT
+                  , B.AUTHOR_CODE
+                  , TO_CHAR(B.CREAT_DT,'YYYY-MM-DD') AS CREAT_DT
+                  , (CASE WHEN B.ROLE_CODE IS NULL THEN 'N'
+                          ELSE 'Y'
+                      END) AS REG_YN
+              FROM  TB_ROLE_INFO  A
+                    LEFT OUTER JOIN (SELECT AUTHOR_CODE, ROLE_CODE, CREAT_DT FROM TB_AUTHOR_ROLE_RELATE WHERE AUTHOR_CODE = #{searchKeyword}) B
+                ON  A.ROLE_CODE = B.ROLE_CODE
+             LIMIT  #{recordCountPerPage} OFFSET #{firstIndex}
+
     </select>
 
-	<select id="selectAuthorRoleListTotCnt" parameterType="egovframework.com.sec.ram.service.AuthorRoleManageVO" resultType="int">
+    <select id="selectAuthorRoleListTotCnt" parameterType="egovframework.com.sec.ram.service.AuthorRoleManageVO" resultType="int">
 
-			SELECT COUNT(*) totcnt
-              FROM TB_ROLE_INFO A 
-                   LEFT OUTER JOIN (SELECT AUTHOR_CODE , ROLE_CODE, CREAT_DT FROM TB_AUTHOR_ROLE_RELATE WHERE AUTHOR_CODE = #{searchKeyword}) B
-                ON A.ROLE_CODE = B.ROLE_CODE
-	</select>
+            SELECT  COUNT(*) AS totcnt
+              FROM  TB_ROLE_INFO  A
+                    LEFT OUTER JOIN (SELECT AUTHOR_CODE, ROLE_CODE, CREAT_DT FROM TB_AUTHOR_ROLE_RELATE WHERE AUTHOR_CODE = #{searchKeyword}) B
+                ON  A.ROLE_CODE = B.ROLE_CODE
+
+    </select>
 
     <insert id="insertAuthorRole" parameterType="egovframework.com.sec.ram.service.AuthorRoleManage">
-        
-            INSERT INTO TB_AUTHOR_ROLE_RELATE 
+
+            INSERT  INTO TB_AUTHOR_ROLE_RELATE
                   ( AUTHOR_CODE
                   , ROLE_CODE
-                  , CREAT_DT)
-           VALUES ( #{authorCode}
-                  , #{roleCode}
-                  , now())
-        
+                  , CREAT_DT )
+            VALUES  ( #{authorCode}
+                    , #{roleCode}
+                    , now() )
+
     </insert>
 
     <delete id="deleteAuthorRole">
-        
-            DELETE FROM TB_AUTHOR_ROLE_RELATE 
-             WHERE AUTHOR_CODE=#{authorCode}
-               AND ROLE_CODE=#{roleCode}
-        
+
+            DELETE
+              FROM  TB_AUTHOR_ROLE_RELATE
+             WHERE  AUTHOR_CODE = #{authorCode}
+               AND  ROLE_CODE = #{roleCode}
+
     </delete>
-    
+
 </mapper>

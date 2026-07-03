@@ -4,57 +4,137 @@
 <mapper namespace="EventCmpgn">
 
     <sql id="eccCols">
-        A.EVENT_ID AS eventId, A.BSNS_YEAR AS bsnsYear, A.BSNS_CODE AS bsnsCode,
-        A.EVENT_SVC_BGNDE AS eventSvcBeginDe, A.EVENT_SVC_ENDDE AS eventSvcEndDe, A.SVC_USE_NMPR_CO AS svcUseNmprCo,
-        A.CHARGER_NM AS chargerNm, A.EVENT_CN AS eventCn, A.EVENT_TY_CODE AS eventTyCode, A.EVENT_TY_CODE AS eventTyCodeNm,
-        A.PRPARETG_CN AS prparetgCn, A.EVENT_CONFM_AT AS eventConfmAt, A.EVENT_CONFM_DE AS eventConfmDe,
-        (SELECT M.USER_NM FROM VW_USER_MASTER M WHERE M.ESNTL_ID = A.FRST_REGISTER_ID) AS frstRegisterNm,
-        A.FRST_REGISTER_ID AS frstRegisterId, TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS frstRegisterPnttm
+        A.EVENT_ID                                AS eventId
+      , A.BSNS_YEAR                               AS bsnsYear
+      , A.BSNS_CODE                               AS bsnsCode
+      , A.EVENT_SVC_BGNDE                         AS eventSvcBeginDe
+      , A.EVENT_SVC_ENDDE                         AS eventSvcEndDe
+      , A.SVC_USE_NMPR_CO                         AS svcUseNmprCo
+      , A.CHARGER_NM                              AS chargerNm
+      , A.EVENT_CN                                AS eventCn
+      , A.EVENT_TY_CODE                           AS eventTyCode
+      , A.EVENT_TY_CODE                           AS eventTyCodeNm
+      , A.PRPARETG_CN                             AS prparetgCn
+      , A.EVENT_CONFM_AT                          AS eventConfmAt
+      , A.EVENT_CONFM_DE                          AS eventConfmDe
+      , (SELECT M.USER_NM FROM VW_USER_MASTER M WHERE M.ESNTL_ID = A.FRST_REGISTER_ID) AS frstRegisterNm
+      , A.FRST_REGISTER_ID                        AS frstRegisterId
+      , TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') AS frstRegisterPnttm
     </sql>
 
     <sql id="eccSearch">
-        <if test="searchKeyword != null and searchKeyword != ''">AND A.EVENT_CN LIKE CONCAT(CONCAT('%', #{searchKeyword}),'%')</if>
+        <if test="searchKeyword != null and searchKeyword != ''">
+           AND  A.EVENT_CN LIKE CONCAT(CONCAT('%', #{searchKeyword}),'%')
+        </if>
     </sql>
 
     <select id="selectEventCmpgnList" parameterType="egovframework.com.uss.ion.ecc.service.EventCmpgnVO" resultType="egovframework.com.uss.ion.ecc.service.EventCmpgnVO">
-        SELECT <include refid="eccCols"/>
-        FROM TB_EVENT_INFO A WHERE 1=1
+        SELECT  <include refid="eccCols"/>
+          FROM  TB_EVENT_INFO A
+         WHERE  1=1
         <include refid="eccSearch"/>
-        ORDER BY A.EVENT_SVC_BGNDE DESC
-        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+         ORDER  BY A.EVENT_SVC_BGNDE DESC
+         LIMIT  #{recordCountPerPage} OFFSET #{firstIndex}
     </select>
 
     <select id="selectEventCmpgnListCnt" parameterType="egovframework.com.uss.ion.ecc.service.EventCmpgnVO" resultType="int">
-        SELECT COUNT(*) FROM TB_EVENT_INFO A WHERE 1=1
+        SELECT  COUNT(*)
+          FROM  TB_EVENT_INFO A
+         WHERE  1=1
         <include refid="eccSearch"/>
     </select>
 
     <select id="selectEventCmpgnDetail" parameterType="egovframework.com.uss.ion.ecc.service.EventCmpgnVO" resultType="egovframework.com.uss.ion.ecc.service.EventCmpgnVO">
-        SELECT <include refid="eccCols"/> FROM TB_EVENT_INFO A WHERE A.EVENT_ID = #{eventId}
+        SELECT  <include refid="eccCols"/>
+          FROM  TB_EVENT_INFO A
+         WHERE  A.EVENT_ID = #{eventId}
     </select>
 
     <insert id="insertEventCmpgn" parameterType="egovframework.com.uss.ion.ecc.service.EventCmpgnVO">
-        INSERT INTO TB_EVENT_INFO (EVENT_ID, BSNS_YEAR, BSNS_CODE, EVENT_SVC_BGNDE, EVENT_SVC_ENDDE, SVC_USE_NMPR_CO, CHARGER_NM, EVENT_CN, EVENT_TY_CODE, PRPARETG_CN, EVENT_CONFM_AT, EVENT_CONFM_DE, FRST_REGISTER_ID, FRST_REGIST_PNTTM)
-        VALUES (#{eventId}, #{bsnsYear}, #{bsnsCode}, #{eventSvcBeginDe}, #{eventSvcEndDe}, #{svcUseNmprCo}, #{chargerNm}, #{eventCn}, #{eventTyCode}, #{prparetgCn}, #{eventConfmAt}, #{eventConfmDe}, #{frstRegisterId}, CURRENT_TIMESTAMP)
+        INSERT  INTO TB_EVENT_INFO
+              ( EVENT_ID
+              , BSNS_YEAR
+              , BSNS_CODE
+              , EVENT_SVC_BGNDE
+              , EVENT_SVC_ENDDE
+              , SVC_USE_NMPR_CO
+              , CHARGER_NM
+              , EVENT_CN
+              , EVENT_TY_CODE
+              , PRPARETG_CN
+              , EVENT_CONFM_AT
+              , EVENT_CONFM_DE
+              , FRST_REGISTER_ID
+              , FRST_REGIST_PNTTM )
+        VALUES  ( #{eventId}
+                , #{bsnsYear}
+                , #{bsnsCode}
+                , #{eventSvcBeginDe}
+                , #{eventSvcEndDe}
+                , #{svcUseNmprCo}
+                , #{chargerNm}
+                , #{eventCn}
+                , #{eventTyCode}
+                , #{prparetgCn}
+                , #{eventConfmAt}
+                , #{eventConfmDe}
+                , #{frstRegisterId}
+                , CURRENT_TIMESTAMP )
     </insert>
 
     <update id="updateEventCmpgn" parameterType="egovframework.com.uss.ion.ecc.service.EventCmpgnVO">
-        UPDATE TB_EVENT_INFO SET EVENT_CN = #{eventCn}, EVENT_SVC_BGNDE = #{eventSvcBeginDe}, EVENT_SVC_ENDDE = #{eventSvcEndDe},
-               CHARGER_NM = #{chargerNm}, EVENT_CONFM_AT = #{eventConfmAt}, LAST_UPDUSR_ID = #{lastUpdusrId}, LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
-        WHERE EVENT_ID = #{eventId}
+        UPDATE  TB_EVENT_INFO
+           SET  EVENT_CN        = #{eventCn}
+              , EVENT_SVC_BGNDE = #{eventSvcBeginDe}
+              , EVENT_SVC_ENDDE = #{eventSvcEndDe}
+              , CHARGER_NM      = #{chargerNm}
+              , EVENT_CONFM_AT  = #{eventConfmAt}
+              , LAST_UPDUSR_ID  = #{lastUpdusrId}
+              , LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
+         WHERE  EVENT_ID = #{eventId}
     </update>
 
     <delete id="deleteEventCmpgn" parameterType="egovframework.com.uss.ion.ecc.service.EventCmpgnVO">
-        DELETE FROM TB_EVENT_INFO WHERE EVENT_ID = #{eventId}
+        DELETE
+          FROM  TB_EVENT_INFO
+         WHERE  EVENT_ID = #{eventId}
     </delete>
 
     <!-- 외부인력(Tnextrl) — 데모 단순화: 빈 결과/무동작 스텁 -->
-    <select id="selectTnextrlHrList" resultType="egovframework.com.uss.ion.ecc.service.EventCmpgnVO">SELECT <include refid="eccCols"/> FROM TB_EVENT_INFO A WHERE 1=0</select>
-    <select id="selectTnextrlHrListCnt" resultType="int">SELECT 0 FROM TB_EVENT_INFO WHERE 1=0</select>
-    <select id="selectTnextrlHrDetail" resultType="egovframework.com.uss.ion.ecc.service.EventCmpgnVO">SELECT <include refid="eccCols"/> FROM TB_EVENT_INFO A WHERE 1=0</select>
-    <insert id="insertTnextrlHr" parameterType="egovframework.com.uss.ion.ecc.service.EventCmpgnVO">UPDATE TB_EVENT_INFO SET LAST_UPDT_PNTTM = CURRENT_TIMESTAMP WHERE 1=0</insert>
-    <update id="updateTnextrlHr" parameterType="egovframework.com.uss.ion.ecc.service.EventCmpgnVO">UPDATE TB_EVENT_INFO SET LAST_UPDT_PNTTM = CURRENT_TIMESTAMP WHERE 1=0</update>
-    <delete id="deleteTnextrlHr" parameterType="egovframework.com.uss.ion.ecc.service.EventCmpgnVO">DELETE FROM TB_EVENT_INFO WHERE 1=0</delete>
-    <delete id="deleteEventCmpgnTnextrlHr" parameterType="egovframework.com.uss.ion.ecc.service.EventCmpgnVO">DELETE FROM TB_EVENT_INFO WHERE 1=0</delete>
+    <select id="selectTnextrlHrList" resultType="egovframework.com.uss.ion.ecc.service.EventCmpgnVO">
+        SELECT  <include refid="eccCols"/>
+          FROM  TB_EVENT_INFO A
+         WHERE  1=0
+    </select>
+    <select id="selectTnextrlHrListCnt" resultType="int">
+        SELECT  0
+          FROM  TB_EVENT_INFO
+         WHERE  1=0
+    </select>
+    <select id="selectTnextrlHrDetail" resultType="egovframework.com.uss.ion.ecc.service.EventCmpgnVO">
+        SELECT  <include refid="eccCols"/>
+          FROM  TB_EVENT_INFO A
+         WHERE  1=0
+    </select>
+    <insert id="insertTnextrlHr" parameterType="egovframework.com.uss.ion.ecc.service.EventCmpgnVO">
+        UPDATE  TB_EVENT_INFO
+           SET  LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
+         WHERE  1=0
+    </insert>
+    <update id="updateTnextrlHr" parameterType="egovframework.com.uss.ion.ecc.service.EventCmpgnVO">
+        UPDATE  TB_EVENT_INFO
+           SET  LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
+         WHERE  1=0
+    </update>
+    <delete id="deleteTnextrlHr" parameterType="egovframework.com.uss.ion.ecc.service.EventCmpgnVO">
+        DELETE
+          FROM  TB_EVENT_INFO
+         WHERE  1=0
+    </delete>
+    <delete id="deleteEventCmpgnTnextrlHr" parameterType="egovframework.com.uss.ion.ecc.service.EventCmpgnVO">
+        DELETE
+          FROM  TB_EVENT_INFO
+         WHERE  1=0
+    </delete>
 
 </mapper>

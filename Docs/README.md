@@ -26,3 +26,6 @@
 
 ## 스크린샷
 - [screenshots/](screenshots/) — README 화면 미리보기 이미지
+
+## SQL 코드 컨벤션
+- [sql-코드컨벤션.md](sql-코드컨벤션.md) — 전자정부 SQL 작성 규칙(sql-rule 기반)

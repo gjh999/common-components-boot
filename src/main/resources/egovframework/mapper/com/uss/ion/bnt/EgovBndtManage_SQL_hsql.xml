@@ -4,86 +4,172 @@
 <mapper namespace="bndtManageDAO">
 
     <select id="selectBndtManageList" parameterType="egovframework.com.uss.ion.bnt.service.BndtManageVO" resultType="egovframework.com.uss.ion.bnt.service.BndtManageVO">
-        SELECT manage.BNDT_ID AS bndtId, manage.BNDT_DE AS bndtDe, manage.RM AS remark,
-               (SELECT M.USER_NM FROM VW_USER_MASTER M WHERE M.ESNTL_ID = manage.FRST_REGISTER_ID) AS bndtTemp1,
-               (SELECT COUNT(diary.BNDT_ID) FROM TB_BNDT_DIARY diary WHERE diary.BNDT_ID = manage.BNDT_ID AND diary.BNDT_DE = manage.BNDT_DE) AS bndtTemp2
-        FROM TB_BNDT_MANAGE manage WHERE 1=1
-        <if test="bndtDe != null and bndtDe != ''">AND SUBSTRING(manage.BNDT_DE, 1, 6) LIKE CONCAT(CONCAT('%', #{bndtDe}),'%')</if>
-        ORDER BY manage.FRST_REGIST_PNTTM DESC
+        SELECT  MANAGE.BNDT_ID AS bndtId
+              , MANAGE.BNDT_DE AS bndtDe
+              , MANAGE.RM AS remark
+              , (SELECT M.USER_NM FROM VW_USER_MASTER M WHERE M.ESNTL_ID = MANAGE.FRST_REGISTER_ID) AS bndtTemp1
+              , (SELECT COUNT(DIARY.BNDT_ID) FROM TB_BNDT_DIARY DIARY WHERE DIARY.BNDT_ID = MANAGE.BNDT_ID AND DIARY.BNDT_DE = MANAGE.BNDT_DE) AS bndtTemp2
+          FROM  TB_BNDT_MANAGE MANAGE
+         WHERE  1=1
+        <if test="bndtDe != null and bndtDe != ''">AND SUBSTRING(MANAGE.BNDT_DE, 1, 6) LIKE CONCAT(CONCAT('%', #{bndtDe}),'%')</if>
+         ORDER  BY MANAGE.FRST_REGIST_PNTTM DESC
     </select>
 
     <select id="selectBndtManageListTotCnt" parameterType="egovframework.com.uss.ion.bnt.service.BndtManageVO" resultType="int">
-        SELECT COUNT(*) FROM TB_BNDT_MANAGE manage WHERE 1=1
-        <if test="bndtDe != null and bndtDe != ''">AND SUBSTRING(manage.BNDT_DE, 1, 6) LIKE CONCAT(CONCAT('%', #{bndtDe}),'%')</if>
+        SELECT  COUNT(*)
+          FROM  TB_BNDT_MANAGE MANAGE
+         WHERE  1=1
+        <if test="bndtDe != null and bndtDe != ''">AND SUBSTRING(MANAGE.BNDT_DE, 1, 6) LIKE CONCAT(CONCAT('%', #{bndtDe}),'%')</if>
     </select>
 
     <select id="selectBndtManage" parameterType="egovframework.com.uss.ion.bnt.service.BndtManageVO" resultType="egovframework.com.uss.ion.bnt.service.BndtManageVO">
-        SELECT BNDT_ID AS bndtId, BNDT_DE AS bndtDe, RM AS remark, FRST_REGISTER_ID AS frstRegisterId
-        FROM TB_BNDT_MANAGE WHERE BNDT_ID = #{bndtId} AND BNDT_DE = #{bndtDe}
+        SELECT  BNDT_ID AS bndtId
+              , BNDT_DE AS bndtDe
+              , RM AS remark
+              , FRST_REGISTER_ID AS frstRegisterId
+          FROM  TB_BNDT_MANAGE
+         WHERE  BNDT_ID = #{bndtId}
+           AND  BNDT_DE = #{bndtDe}
     </select>
 
     <select id="selectBndtManageBnde" parameterType="egovframework.com.uss.ion.bnt.service.BndtManageVO" resultType="egovframework.com.uss.ion.bnt.service.BndtManageVO">
-        SELECT BNDT_ID AS bndtId, BNDT_DE AS bndtDe, RM AS remark FROM TB_BNDT_MANAGE WHERE BNDT_DE = #{bndtDe}
+        SELECT  BNDT_ID AS bndtId
+              , BNDT_DE AS bndtDe
+              , RM AS remark
+          FROM  TB_BNDT_MANAGE
+         WHERE  BNDT_DE = #{bndtDe}
     </select>
 
     <select id="selectBndtManageMonthCnt" parameterType="egovframework.com.uss.ion.bnt.service.BndtManageVO" resultType="int">
-        SELECT COUNT(*) FROM TB_BNDT_MANAGE WHERE SUBSTRING(BNDT_DE, 1, 6) = #{bndtDe}
+        SELECT  COUNT(*)
+          FROM  TB_BNDT_MANAGE
+         WHERE  SUBSTRING(BNDT_DE, 1, 6) = #{bndtDe}
     </select>
 
     <insert id="insertBndtManage" parameterType="egovframework.com.uss.ion.bnt.service.BndtManageVO">
-        INSERT INTO TB_BNDT_MANAGE (BNDT_ID, BNDT_DE, RM, FRST_REGISTER_ID, FRST_REGIST_PNTTM)
-        VALUES (#{bndtId}, #{bndtDe}, #{remark}, #{frstRegisterId}, CURRENT_TIMESTAMP)
+        INSERT  INTO TB_BNDT_MANAGE
+              ( BNDT_ID
+              , BNDT_DE
+              , RM
+              , FRST_REGISTER_ID
+              , FRST_REGIST_PNTTM )
+        VALUES  ( #{bndtId}
+                , #{bndtDe}
+                , #{remark}
+                , #{frstRegisterId}
+                , CURRENT_TIMESTAMP )
     </insert>
 
     <update id="updtBndtManage" parameterType="egovframework.com.uss.ion.bnt.service.BndtManageVO">
-        UPDATE TB_BNDT_MANAGE SET RM = #{remark}, LAST_UPDUSR_ID = #{lastUpdusrId}, LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
-        WHERE BNDT_ID = #{bndtId} AND BNDT_DE = #{bndtDe}
+        UPDATE  TB_BNDT_MANAGE
+           SET  RM = #{remark}
+              , LAST_UPDUSR_ID = #{lastUpdusrId}
+              , LAST_UPDT_PNTTM = CURRENT_TIMESTAMP
+         WHERE  BNDT_ID = #{bndtId}
+           AND  BNDT_DE = #{bndtDe}
     </update>
 
     <delete id="deleteBndtManage" parameterType="egovframework.com.uss.ion.bnt.service.BndtManageVO">
-        DELETE FROM TB_BNDT_MANAGE WHERE BNDT_ID = #{bndtId} AND BNDT_DE = #{bndtDe}
+        DELETE
+          FROM  TB_BNDT_MANAGE
+         WHERE  BNDT_ID = #{bndtId}
+           AND  BNDT_DE = #{bndtDe}
     </delete>
 
     <!-- 당직 점검(Ceck) -->
     <select id="selectBndtCeckManageList" parameterType="egovframework.com.uss.ion.bnt.service.BndtManageVO" resultType="egovframework.com.uss.ion.bnt.service.BndtManageVO">
-        SELECT BNDT_ID AS bndtId, BNDT_DE AS bndtDe, RM AS remark FROM TB_BNDT_CECK_MANAGE WHERE BNDT_ID = #{bndtId} AND BNDT_DE = #{bndtDe}
+        SELECT  BNDT_ID AS bndtId
+              , BNDT_DE AS bndtDe
+              , RM AS remark
+          FROM  TB_BNDT_CECK_MANAGE
+         WHERE  BNDT_ID = #{bndtId}
+           AND  BNDT_DE = #{bndtDe}
     </select>
     <select id="selectBndtCeckManageListTotCnt" parameterType="egovframework.com.uss.ion.bnt.service.BndtManageVO" resultType="int">
-        SELECT COUNT(*) FROM TB_BNDT_CECK_MANAGE WHERE BNDT_ID = #{bndtId} AND BNDT_DE = #{bndtDe}
+        SELECT  COUNT(*)
+          FROM  TB_BNDT_CECK_MANAGE
+         WHERE  BNDT_ID = #{bndtId}
+           AND  BNDT_DE = #{bndtDe}
     </select>
     <select id="selectBndtCeckManage" parameterType="egovframework.com.uss.ion.bnt.service.BndtManageVO" resultType="egovframework.com.uss.ion.bnt.service.BndtManageVO">
-        SELECT BNDT_ID AS bndtId, BNDT_DE AS bndtDe, RM AS remark FROM TB_BNDT_CECK_MANAGE WHERE BNDT_ID = #{bndtId} AND BNDT_DE = #{bndtDe}
+        SELECT  BNDT_ID AS bndtId
+              , BNDT_DE AS bndtDe
+              , RM AS remark
+          FROM  TB_BNDT_CECK_MANAGE
+         WHERE  BNDT_ID = #{bndtId}
+           AND  BNDT_DE = #{bndtDe}
     </select>
     <select id="selectBndtCeckManageDplctAt" parameterType="egovframework.com.uss.ion.bnt.service.BndtManageVO" resultType="int">
-        SELECT COUNT(*) FROM TB_BNDT_CECK_MANAGE WHERE BNDT_ID = #{bndtId} AND BNDT_DE = #{bndtDe}
+        SELECT  COUNT(*)
+          FROM  TB_BNDT_CECK_MANAGE
+         WHERE  BNDT_ID = #{bndtId}
+           AND  BNDT_DE = #{bndtDe}
     </select>
     <insert id="insertBndtCeckManage" parameterType="egovframework.com.uss.ion.bnt.service.BndtManageVO">
-        INSERT INTO TB_BNDT_CECK_MANAGE (BNDT_ID, BNDT_DE, RM, FRST_REGISTER_ID, FRST_REGIST_PNTTM)
-        VALUES (#{bndtId}, #{bndtDe}, #{remark}, #{frstRegisterId}, CURRENT_TIMESTAMP)
+        INSERT  INTO TB_BNDT_CECK_MANAGE
+              ( BNDT_ID
+              , BNDT_DE
+              , RM
+              , FRST_REGISTER_ID
+              , FRST_REGIST_PNTTM )
+        VALUES  ( #{bndtId}
+                , #{bndtDe}
+                , #{remark}
+                , #{frstRegisterId}
+                , CURRENT_TIMESTAMP )
     </insert>
     <update id="updtBndtCeckManage" parameterType="egovframework.com.uss.ion.bnt.service.BndtManageVO">
-        UPDATE TB_BNDT_CECK_MANAGE SET RM = #{remark} WHERE BNDT_ID = #{bndtId} AND BNDT_DE = #{bndtDe}
+        UPDATE  TB_BNDT_CECK_MANAGE
+           SET  RM = #{remark}
+         WHERE  BNDT_ID = #{bndtId}
+           AND  BNDT_DE = #{bndtDe}
     </update>
     <delete id="deleteBndtCeckManage" parameterType="egovframework.com.uss.ion.bnt.service.BndtManageVO">
-        DELETE FROM TB_BNDT_CECK_MANAGE WHERE BNDT_ID = #{bndtId} AND BNDT_DE = #{bndtDe}
+        DELETE
+          FROM  TB_BNDT_CECK_MANAGE
+         WHERE  BNDT_ID = #{bndtId}
+           AND  BNDT_DE = #{bndtDe}
     </delete>
 
     <!-- 당직 일지(Diary) -->
     <select id="selectBndtDiary" parameterType="egovframework.com.uss.ion.bnt.service.BndtManageVO" resultType="egovframework.com.uss.ion.bnt.service.BndtManageVO">
-        SELECT BNDT_ID AS bndtId, BNDT_DE AS bndtDe, RM AS remark FROM TB_BNDT_DIARY WHERE BNDT_ID = #{bndtId} AND BNDT_DE = #{bndtDe}
+        SELECT  BNDT_ID AS bndtId
+              , BNDT_DE AS bndtDe
+              , RM AS remark
+          FROM  TB_BNDT_DIARY
+         WHERE  BNDT_ID = #{bndtId}
+           AND  BNDT_DE = #{bndtDe}
     </select>
     <select id="selectBndtDiaryTotCnt" parameterType="egovframework.com.uss.ion.bnt.service.BndtManageVO" resultType="int">
-        SELECT COUNT(*) FROM TB_BNDT_DIARY WHERE BNDT_ID = #{bndtId} AND BNDT_DE = #{bndtDe}
+        SELECT  COUNT(*)
+          FROM  TB_BNDT_DIARY
+         WHERE  BNDT_ID = #{bndtId}
+           AND  BNDT_DE = #{bndtDe}
     </select>
     <insert id="insertBndtDiary" parameterType="egovframework.com.uss.ion.bnt.service.BndtManageVO">
-        INSERT INTO TB_BNDT_DIARY (BNDT_ID, BNDT_DE, RM, FRST_REGISTER_ID, FRST_REGIST_PNTTM)
-        VALUES (#{bndtId}, #{bndtDe}, #{remark}, #{frstRegisterId}, CURRENT_TIMESTAMP)
+        INSERT  INTO TB_BNDT_DIARY
+              ( BNDT_ID
+              , BNDT_DE
+              , RM
+              , FRST_REGISTER_ID
+              , FRST_REGIST_PNTTM )
+        VALUES  ( #{bndtId}
+                , #{bndtDe}
+                , #{remark}
+                , #{frstRegisterId}
+                , CURRENT_TIMESTAMP )
     </insert>
     <update id="updtBndtDiary" parameterType="egovframework.com.uss.ion.bnt.service.BndtManageVO">
-        UPDATE TB_BNDT_DIARY SET RM = #{remark} WHERE BNDT_ID = #{bndtId} AND BNDT_DE = #{bndtDe}
+        UPDATE  TB_BNDT_DIARY
+           SET  RM = #{remark}
+         WHERE  BNDT_ID = #{bndtId}
+           AND  BNDT_DE = #{bndtDe}
     </update>
     <delete id="deleteBndtDiary" parameterType="egovframework.com.uss.ion.bnt.service.BndtManageVO">
-        DELETE FROM TB_BNDT_DIARY WHERE BNDT_ID = #{bndtId} AND BNDT_DE = #{bndtDe}
+        DELETE
+          FROM  TB_BNDT_DIARY
+         WHERE  BNDT_ID = #{bndtId}
+           AND  BNDT_DE = #{bndtDe}
     </delete>
 
 </mapper>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="loginPolicyDAO">
     <!-- 개정이력: 2026.06.17  구재호   레거시 테이블명(LETT*/COMT*/COMVN*) → TB_/VW_ 표준 명명 현행화 (Spring Boot + Thymeleaf 전환) -->
@@ -17,104 +17,96 @@
     </resultMap>
 
     <select id="selectLoginPolicyList" parameterType="egovframework.com.uat.uap.service.LoginPolicyVO" resultMap="loginPolicy">
-            
-            SELECT  * 
-              FROM  (
-            SELECT ROWNUM RNUM, ALL_LIST.* 
-              FROM  (
-            SELECT A.USER_ID,
-                   A.USER_NM,
-                   A.USER_SE,
-                   B.IP_INFO,
-                   B.DPLCT_PERM_AT,
-                   B.LMTT_AT,
-                   B.LAST_UPDUSR_ID,
-                   B.LAST_UPDT_PNTTM,
-                   DECODE(B.EMPLYR_ID, NULL, 'N', 'Y') AS REG_YN
-              FROM VW_USER_MASTER A LEFT OUTER JOIN TB_LOGIN_POLICY B
-                ON A.USER_ID = B.EMPLYR_ID   
-             WHERE 1 = 1
-                       
-            <if test="searchKeyword != null and searchKeyword != ''">
-                <if test='searchCondition == "1"'>AND
-                       A.USER_NM LIKE '%'||#{searchKeyword}||'%'
-                </if>
-            </if>
-                      
-                    ) ALL_LIST
-                    ) Z
-             WHERE  RNUM  &gt; #{firstIndex}
-               AND  RNUM &lt;= #{firstIndex} + #{recordCountPerPage}
-          
+        SELECT  *
+          FROM  ( SELECT  ROWNUM RNUM
+                        , ALL_LIST.*
+                    FROM  ( SELECT  A.USER_ID
+                                  , A.USER_NM
+                                  , A.USER_SE
+                                  , B.IP_INFO
+                                  , B.DPLCT_PERM_AT
+                                  , B.LMTT_AT
+                                  , B.LAST_UPDUSR_ID
+                                  , B.LAST_UPDT_PNTTM
+                                  , DECODE(B.EMPLYR_ID, NULL, 'N', 'Y')  AS REG_YN
+                              FROM  VW_USER_MASTER  A
+                                    LEFT OUTER JOIN TB_LOGIN_POLICY  B
+                                      ON  A.USER_ID = B.EMPLYR_ID
+                             WHERE  1 = 1
+                            <if test="searchKeyword != null and searchKeyword != ''">
+                                <if test='searchCondition == "1"'>
+                               AND  A.USER_NM LIKE '%'||#{searchKeyword}||'%'
+                                </if>
+                            </if>
+                          ) ALL_LIST ) Z
+         WHERE  RNUM &gt; #{firstIndex}
+           AND  RNUM &lt;= #{firstIndex} + #{recordCountPerPage}
     </select>
 
     <select id="selectLoginPolicyListTotCnt" parameterType="egovframework.com.uat.uap.service.LoginPolicyVO" resultType="int">
-            SELECT COUNT(*) AS totcnt                  
-              FROM VW_USER_MASTER A LEFT OUTER JOIN TB_LOGIN_POLICY B
-                ON A.USER_ID = B.EMPLYR_ID   
-             WHERE 1 = 1
-            <if test="searchKeyword != null and searchKeyword != ''">
-                <if test='searchCondition == "1"'>AND
-                       A.USER_NM LIKE '%'||#{searchKeyword}||'%'
-                </if>
+        SELECT  COUNT(*)  AS totcnt
+          FROM  VW_USER_MASTER  A
+                LEFT OUTER JOIN TB_LOGIN_POLICY  B
+                  ON  A.USER_ID = B.EMPLYR_ID
+         WHERE  1 = 1
+        <if test="searchKeyword != null and searchKeyword != ''">
+            <if test='searchCondition == "1"'>
+           AND  A.USER_NM LIKE '%'||#{searchKeyword}||'%'
             </if>
+        </if>
     </select>
-    
+
     <select id="selectLoginPolicy" resultMap="loginPolicy">
-            SELECT A.USER_ID,
-                   A.USER_NM,
-                   A.USER_SE,
-                   B.IP_INFO,
-                   B.DPLCT_PERM_AT,
-                   NVL(B.LMTT_AT,'N') AS LMTT_AT,
-                   B.LAST_UPDUSR_ID,
-                   B.LAST_UPDT_PNTTM,
-                   DECODE(B.EMPLYR_ID, NULL, 'N', 'Y') AS REG_YN
-              FROM VW_USER_MASTER A LEFT OUTER JOIN TB_LOGIN_POLICY B
-                ON A.USER_ID = B.EMPLYR_ID   
-             WHERE 1 = 1
-               AND A.USER_ID = #{emplyrId}
+        SELECT  A.USER_ID
+              , A.USER_NM
+              , A.USER_SE
+              , B.IP_INFO
+              , B.DPLCT_PERM_AT
+              , NVL(B.LMTT_AT,'N')  AS LMTT_AT
+              , B.LAST_UPDUSR_ID
+              , B.LAST_UPDT_PNTTM
+              , DECODE(B.EMPLYR_ID, NULL, 'N', 'Y')  AS REG_YN
+          FROM  VW_USER_MASTER  A
+                LEFT OUTER JOIN TB_LOGIN_POLICY  B
+                  ON  A.USER_ID = B.EMPLYR_ID
+         WHERE  1 = 1
+           AND  A.USER_ID = #{emplyrId}
     </select>
-    
+
     <insert id="insertLoginPolicy" parameterType="egovframework.com.uat.uap.service.LoginPolicy">
-        
-            INSERT INTO TB_LOGIN_POLICY 
-                   (EMPLYR_ID
-                   ,IP_INFO
-                   ,DPLCT_PERM_AT
-                   ,LMTT_AT
-                   ,FRST_REGISTER_ID
-                   ,FRST_REGIST_PNTTM
-                   ,LAST_UPDUSR_ID
-                   ,LAST_UPDT_PNTTM)
-            VALUES (#{emplyrId}
-                   ,#{ipInfo}
-                   ,#{dplctPermAt}
-                   ,#{lmttAt}
-                   ,#{userId}
-                   ,SYSDATETIME
-                   ,#{userId}
-                   ,SYSDATETIME)
-        
+        INSERT  INTO TB_LOGIN_POLICY
+              ( EMPLYR_ID
+              , IP_INFO
+              , DPLCT_PERM_AT
+              , LMTT_AT
+              , FRST_REGISTER_ID
+              , FRST_REGIST_PNTTM
+              , LAST_UPDUSR_ID
+              , LAST_UPDT_PNTTM )
+        VALUES  ( #{emplyrId}
+                , #{ipInfo}
+                , #{dplctPermAt}
+                , #{lmttAt}
+                , #{userId}
+                , SYSDATETIME
+                , #{userId}
+                , SYSDATETIME )
     </insert>
 
     <update id="updateLoginPolicy" parameterType="egovframework.com.uat.uap.service.LoginPolicy">
-        
-            UPDATE TB_LOGIN_POLICY 
-               SET IP_INFO = #{ipInfo}
-                  ,DPLCT_PERM_AT = #{dplctPermAt}
-                  ,LMTT_AT = #{lmttAt}
-                  ,LAST_UPDUSR_ID = #{userId}
-                  ,LAST_UPDT_PNTTM = SYSDATETIME
-             WHERE EMPLYR_ID = #{emplyrId}
-        
+        UPDATE  TB_LOGIN_POLICY
+           SET  IP_INFO         = #{ipInfo}
+              , DPLCT_PERM_AT   = #{dplctPermAt}
+              , LMTT_AT         = #{lmttAt}
+              , LAST_UPDUSR_ID  = #{userId}
+              , LAST_UPDT_PNTTM = SYSDATETIME
+         WHERE  EMPLYR_ID = #{emplyrId}
     </update>
 
     <delete id="deleteLoginPolicy">
-        
-            DELETE FROM TB_LOGIN_POLICY 
-             WHERE EMPLYR_ID = #{emplyrId}
-        
+        DELETE
+          FROM  TB_LOGIN_POLICY
+         WHERE  EMPLYR_ID = #{emplyrId}
     </delete>
 
 </mapper>

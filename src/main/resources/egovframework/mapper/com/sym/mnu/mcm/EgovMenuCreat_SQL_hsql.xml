@@ -5,92 +5,81 @@
     <!-- 개정이력: 2026.06.17  구재호   레거시 테이블명(LETT*/COMT*/COMVN*) → TB_/VW_ 표준 명명 현행화 (Spring Boot + Thymeleaf 전환) -->
 
 
-	<select id="selectMenuCreatManageList_D" parameterType="comDefaultVO" resultType="egovMap">
+    <select id="selectMenuCreatManageList_D" parameterType="comDefaultVO" resultType="egovMap">
+        SELECT  AUTHOR_CODE AS AUTHOR_CODE
+              , AUTHOR_NM AS AUTHOR_NM
+              , AUTHOR_DC AS AUTHOR_DC
+              , AUTHOR_CREAT_DE AS AUTHOR_CREAT_DE
+              , (
+                SELECT  COUNT(B.AUTHOR_CODE)
+                  FROM  TB_MENU_CREAT_DTLS B
+                 WHERE  B.AUTHOR_CODE = A.AUTHOR_CODE
+                ) AS CHK_YEO_BU
+          FROM  TB_AUTHOR_INFO A
+         WHERE  A.AUTHOR_CODE LIKE '%' || #{searchKeyword} || '%'
+         LIMIT  #{recordCountPerPage} OFFSET #{firstIndex}
+    </select>
 
-			SELECT  AUTHOR_CODE   AS AUTHOR_CODE,
-					AUTHOR_NM     AS AUTHOR_NM,
-					AUTHOR_DC     AS AUTHOR_DC,
-					AUTHOR_CREAT_DE AS AUTHOR_CREAT_DE,
-				   (SELECT COUNT(B.AUTHOR_CODE)
-					FROM   TB_MENU_CREAT_DTLS B
-					WHERE  B.AUTHOR_CODE = A.AUTHOR_CODE ) AS CHK_YEO_BU
-			FROM    TB_AUTHOR_INFO A
-			WHERE   A.AUTHOR_CODE like '%' || #{searchKeyword} || '%'
-			LIMIT  #{recordCountPerPage} OFFSET #{firstIndex}
+    <select id="selectMenuCreatManageTotCnt_S" parameterType="comDefaultVO" resultType="int">
+        SELECT  COUNT(AUTHOR_CODE) AS totcnt
+          FROM  TB_AUTHOR_INFO
+         WHERE  AUTHOR_CODE LIKE '%' || #{searchKeyword} || '%'
+    </select>
 
-	</select>
+    <select id="selectMenuCreatList_D" parameterType="egovframework.com.sym.mnu.mcm.service.MenuCreatVO" resultType="egovMap">
+        SELECT  A.MENU_NO AS MENU_NO
+              , A.MENU_ORDR AS MENU_ORDR
+              , A.MENU_NM AS MENU_NM
+              , A.UPPER_MENU_NO AS UPPER_MENU_ID
+              , (
+                SELECT  COUNT(B.MENU_NO)
+                  FROM  TB_MENU_CREAT_DTLS B
+                 WHERE  B.MENU_NO = A.MENU_NO
+                   AND  B.AUTHOR_CODE = #{authorCode}
+                ) AS CHK_YEO_BU
+          FROM  TB_MENU_INFO A
+         WHERE  A.MENU_NO &gt; 0
+         ORDER  BY A.MENU_ORDR
+    </select>
 
-	<select id="selectMenuCreatManageTotCnt_S" parameterType="comDefaultVO" resultType="int">
+    <insert id="insertMenuCreat_S">
+        INSERT  INTO TB_MENU_CREAT_DTLS
+              ( AUTHOR_CODE
+              , MENU_NO )
+        VALUES  ( #{authorCode}
+                , #{menuNo} )
+    </insert>
 
-			SELECT COUNT(AUTHOR_CODE) AS totcnt
-			  FROM TB_AUTHOR_INFO
-			 WHERE AUTHOR_CODE like '%' || #{searchKeyword} || '%'
+    <select id="selectMenuCreatCnt_S" parameterType="egovframework.com.sym.mnu.mcm.service.MenuCreatVO" resultType="int">
+        SELECT  COUNT(AUTHOR_CODE) AS totcnt
+          FROM  TB_AUTHOR_INFO
+         WHERE  AUTHOR_CODE = #{authorCode}
+    </select>
 
-	</select>
+    <delete id="updateMenuCreat_S">
+        UPDATE  TB_MENU_CREAT_DTLS
+           SET  MAPNG_CREAT_ID = #{mapCreatId}
+         WHERE  AUTHOR_CODE = #{authorCode}
+    </delete>
 
-	<select id="selectMenuCreatList_D" parameterType="egovframework.com.sym.mnu.mcm.service.MenuCreatVO" resultType="egovMap">
+    <delete id="deleteMenuCreat_S">
+        DELETE
+          FROM  TB_MENU_CREAT_DTLS
+         WHERE  AUTHOR_CODE = #{authorCode}
+    </delete>
 
-			SELECT
-				  A.MENU_NO AS MENU_NO
-				, A.MENU_ORDR AS MENU_ORDR
-				, A.MENU_NM AS MENU_NM
-				, A.UPPER_MENU_NO AS UPPER_MENU_ID
-			    , (SELECT count(B.MENU_NO)
-			         FROM TB_MENU_CREAT_DTLS B
-			        WHERE B.MENU_NO  = A.MENU_NO
-			          AND B.AUTHOR_CODE = #{authorCode}) AS CHK_YEO_BU
-			FROM TB_MENU_INFO A
-			WHERE A.MENU_NO &gt; 0
-			ORDER BY A.MENU_ORDR
+    <select id="selectAuthorByUsr" parameterType="comDefaultVO" resultType="egovframework.com.sym.mnu.mcm.service.MenuCreatVO">
+        SELECT  AUTHOR_CODE AS AUTHOR_CODE
+          FROM  TB_EMPLYR_SCRTY_ESTBS
+         WHERE  SCRTY_DTRMN_TRGET_ID = (SELECT ESNTL_ID FROM VW_USER_MASTER
+                                        WHERE user_id = #{searchKeyword})
+    </select>
 
-	</select>
-
-	<insert id="insertMenuCreat_S">
-
-			INSERT INTO TB_MENU_CREAT_DTLS ( AUTHOR_CODE ,MENU_NO )
-			VALUES (  #{authorCode}, #{menuNo} )
-
-	</insert>
-
-	<select id="selectMenuCreatCnt_S" parameterType="egovframework.com.sym.mnu.mcm.service.MenuCreatVO" resultType="int">
-
-			SELECT COUNT(AUTHOR_CODE) AS totcnt
-			  FROM TB_AUTHOR_INFO
-			 WHERE AUTHOR_CODE = #{authorCode}
-
-	</select>
-
-	<delete id="updateMenuCreat_S">
-
-		    UPDATE TB_MENU_CREAT_DTLS
-		       SET MAPNG_CREAT_ID=#{mapCreatId}
-		     WHERE AUTHOR_CODE=#{authorCode}
-
-	</delete>
-
-	<delete id="deleteMenuCreat_S">
-
-			DELETE FROM TB_MENU_CREAT_DTLS
-			 WHERE AUTHOR_CODE=#{authorCode}
-
-	</delete>
-
-	<select id="selectAuthorByUsr" parameterType="comDefaultVO" resultType="egovframework.com.sym.mnu.mcm.service.MenuCreatVO">
-
-		select AUTHOR_CODE AS AUTHOR_CODE from TB_EMPLYR_SCRTY_ESTBS
-		where SCRTY_DTRMN_TRGET_ID =
-			(select ESNTL_ID from VW_USER_MASTER
-			where user_id = #{searchKeyword} )
-
-	</select>
-
-	<select id="selectUsrByPk" parameterType="comDefaultVO" resultType="int">
-
-		select count(AUTHOR_CODE) from TB_EMPLYR_SCRTY_ESTBS
-		where SCRTY_DTRMN_TRGET_ID =
-			(select ESNTL_ID from VW_USER_MASTER
-			where user_id = #{searchKeyword} )
-
-	</select>
+    <select id="selectUsrByPk" parameterType="comDefaultVO" resultType="int">
+        SELECT  COUNT(AUTHOR_CODE)
+          FROM  TB_EMPLYR_SCRTY_ESTBS
+         WHERE  SCRTY_DTRMN_TRGET_ID = (SELECT ESNTL_ID FROM VW_USER_MASTER
+                                        WHERE user_id = #{searchKeyword})
+    </select>
 
 </mapper>
