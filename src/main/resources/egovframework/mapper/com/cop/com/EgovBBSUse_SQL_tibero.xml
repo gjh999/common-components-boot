@@ -120,10 +120,10 @@
               , A.USE_AT
               , A.FRST_REGISTER_ID
               , A.FRST_REGIST_PNTTM
-              , C.CMMNTY_ID
-              , C.CMMNTY_NM
-              , D.CLB_ID
-              , D.CLB_NM
+              , '시스템 활용'        AS CMMNTY_ID
+              , '시스템 활용'        AS CMMNTY_NM
+              , '시스템 활용'        AS CLB_ID
+              , '시스템 활용'        AS CLB_NM
               , E.BBS_TY_CODE
           FROM  TB_BBS_USE  A
           LEFT  OUTER JOIN TB_BBS_MASTER  E
