@@ -28,11 +28,12 @@
             <li class="breadcrumb-item active" th:text="#{mypage.title}">마이페이지</li>
         </ol></nav>
         <h1 class="h4 mb-2"><i class="bi bi-person-gear"></i> <span th:text="#{mypage.title}">마이페이지</span></h1>
-        <div class="alert alert-info mypage-demo py-2 mb-3"><i class="bi bi-info-circle"></i>
+        <!-- 로그인 본인은 데모 안내/전환 없이 본인 정보만 수정 -->
+        <div class="alert alert-info mypage-demo py-2 mb-3" th:unless="${loggedIn}"><i class="bi bi-info-circle"></i>
             <span th:text="#{mypage.demo.notice}">예제 환경에서는 데모 사용자(admin) 정보로 동작합니다.</span></div>
 
-        <!-- 예제용 회원유형 전환: 일반회원(GNR)/업무사용자(USR)/기업회원(ENT) 각각의 마이페이지 조회 -->
-        <div class="mypage-setoggle mb-3" role="group" th:with="cur=${demoSe != null ? demoSe : 'USR'}">
+        <!-- 예제용 회원유형 전환(비로그인 미리보기 전용): 일반회원(GNR)/업무사용자(USR)/기업회원(ENT) -->
+        <div class="mypage-setoggle mb-3" role="group" th:unless="${loggedIn}" th:with="cur=${demoSe != null ? demoSe : 'USR'}">
             <span class="me-2 text-muted small" th:text="#{mypage.demo.type}">회원유형(데모):</span>
             <a class="krds-btn small" th:classappend="${cur == 'GNR'} ? 'primary' : 'tertiary'"
                th:href="@{/uss/umt/mypage.do(demoSe='GNR')}" th:text="#{mber.ty.gnr}">일반회원</a>

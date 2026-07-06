@@ -38,13 +38,15 @@ public class EgovMypageController {
 	 * 예제 환경에서는 demoSe(GNR/USR/ENT)로 3유형 회원의 마이페이지를 각각 조회할 수 있다.
 	 */
 	@GetMapping("/uss/umt/mypage.do")
-	public String mypage(@RequestParam(value = "demoSe", required = false) String demoSe, ModelMap model) {
-		LoginVO loginVO = effectiveUser(demoSe);
+	public String mypage(@RequestParam(value = "demoSe", required = false) String demoSe,
+			ModelMap model, HttpServletRequest request) {
+		LoginVO loginVO = effectiveUser(demoSe, request);
 		if (loginVO == null) {
 			return "redirect:/examples";
 		}
 		model.addAttribute("myInfo", loadMyInfo(loginVO));
 		model.addAttribute("demoSe", loginVO.getUserSe());
+		model.addAttribute("loggedIn", isRealLogin(request));
 		return "cmm/uss/umt/EgovMberMypage";
 	}
 
@@ -52,7 +54,7 @@ public class EgovMypageController {
 	@PostMapping("/uss/umt/mypage/info.do")
 	public String updateInfo(@RequestParam(value = "demoSe", required = false) String demoSe,
 			MypageVO form, ModelMap model, HttpServletRequest request) {
-		LoginVO loginVO = effectiveUser(demoSe);
+		LoginVO loginVO = effectiveUser(demoSe, request);
 		if (loginVO == null) {
 			return "redirect:/examples";
 		}
@@ -72,6 +74,7 @@ public class EgovMypageController {
 
 		model.addAttribute("myInfo", loadMyInfo(loginVO));
 		model.addAttribute("demoSe", loginVO.getUserSe());
+		model.addAttribute("loggedIn", isRealLogin(request));
 		model.addAttribute("activeTab", "info");
 		model.addAttribute("resultMsg", "mypage.msg.info.success");
 		return "cmm/uss/umt/EgovMberMypage";
@@ -83,9 +86,9 @@ public class EgovMypageController {
 			@RequestParam("oldPassword") String oldPassword,
 			@RequestParam("newPassword") String newPassword,
 			@RequestParam("newPassword2") String newPassword2,
-			ModelMap model) throws Exception {
+			ModelMap model, HttpServletRequest request) throws Exception {
 
-		LoginVO loginVO = effectiveUser(demoSe);
+		LoginVO loginVO = effectiveUser(demoSe, request);
 		if (loginVO == null) {
 			return "redirect:/examples";
 		}
@@ -110,17 +113,37 @@ public class EgovMypageController {
 
 		model.addAttribute("myInfo", loadMyInfo(loginVO));
 		model.addAttribute("demoSe", loginVO.getUserSe());
+		model.addAttribute("loggedIn", isRealLogin(request));
 		model.addAttribute("activeTab", "password");
 		model.addAttribute("resultMsg", resultMsg);
 		return "cmm/uss/umt/EgovMberMypage";
 	}
 
+	/** 세션에 실제 로그인 사용자(loginVO)가 있는지 여부. */
+	private boolean isRealLogin(HttpServletRequest request) {
+		if (request.getSession(false) == null) {
+			return false;
+		}
+		Object sessionLogin = request.getSession().getAttribute("loginVO");
+		return sessionLogin instanceof LoginVO
+				&& ((LoginVO) sessionLogin).getId() != null
+				&& !((LoginVO) sessionLogin).getId().isEmpty();
+	}
+
 	/**
-	 * 예제용: demoSe(GNR/USR/ENT)에 해당하는 샘플 회원의 LoginVO를 만든다.
-	 * demoSe가 없으면 로그인 본인(기본 데모 사용자=업무사용자 admin)을 사용한다.
-	 * GNR=user1, USR=admin, ENT=bizapproved (shtdb 시드의 ESNTL_ID 기준).
+	 * 대상 회원 LoginVO 결정.
+	 * <pre>
+	 * 1) 실제 로그인 사용자가 있으면 항상 '본인'을 사용한다(demoSe는 무시 — 폼 위변조로 타 회원 수정 방지).
+	 * 2) 비로그인(익명) 예제 브라우징 시에만 demoSe(GNR/USR/ENT)로 샘플 회원을 미리보기한다.
+	 *    GNR=user1, USR=admin, ENT=bizapproved (shtdb 시드의 ESNTL_ID 기준).
+	 * </pre>
 	 */
-	private LoginVO effectiveUser(String demoSe) {
+	private LoginVO effectiveUser(String demoSe, HttpServletRequest request) {
+		// 1) 실제 로그인 사용자 우선 — 본인만 조회/수정
+		if (isRealLogin(request)) {
+			return (LoginVO) request.getSession().getAttribute("loginVO");
+		}
+		// 2) 익명 예제 미리보기
 		if (demoSe != null) {
 			String se = demoSe.trim().toUpperCase();
 			LoginVO vo = new LoginVO();

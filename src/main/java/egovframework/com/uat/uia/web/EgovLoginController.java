@@ -88,10 +88,10 @@ public class EgovLoginController {
 		request.getSession().setAttribute("LoginVO", resultVO);
 		request.getSession().setAttribute("loginVO", resultVO);
 
-		// 권한 결정: 데모 단순화 — 관리자 성격의 업무사용자(admin/TEST1/webmaster)만 ROLE_ADMIN, 그 외 ROLE_USER
-		// (공통컴포넌트 표준 샘플 계정 TEST1/webmaster 는 관리자 그룹 소속이라 관리 기능 시연 가능하도록 ADMIN 부여)
-		List<String> adminIds = List.of("admin", "TEST1", "webmaster");
-		boolean isAdmin = adminIds.stream().anyMatch(a -> a.equalsIgnoreCase(resultVO.getId()));
+		// 권한 결정: 데모 단순화 — 'admin' 계정만 관리자(ROLE_ADMIN).
+		// 표준 샘플 업무사용자(TEST1/webmaster)와 일반/기업 사용자는 모두 일반 권한(ROLE_USER)이라
+		// 관리자 전용 메뉴(회원·권한/코드·메뉴/시스템관리)는 노출되지 않고, 본인은 마이페이지에서 정보수정만 가능하다.
+		boolean isAdmin = "admin".equalsIgnoreCase(resultVO.getId());
 		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(isAdmin ? "ROLE_ADMIN" : "ROLE_USER"));
 
 		EgovUserDetails principal = new EgovUserDetails(
