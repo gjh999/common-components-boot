@@ -48,8 +48,28 @@ mvn spring-boot:run
 
 - 접속: **http://localhost:38080**
 - 예제 카탈로그: **http://localhost:38080/examples**
-- 관리자 계정: `admin` / `1`
+- 로그인: **http://localhost:38080/uat/uia/egovLoginUsr.do**
 - 모든 예제는 **로그인 없이도** 실제 DB와 연동되어 조회·검색·페이징이 동작합니다.
+
+---
+
+## 테스트 계정 · 로그인 · 권한
+
+전자정부 표준프레임워크 공통컴포넌트 [일반로그인 가이드](https://www.egovframe.go.kr/wiki/doku.php?id=egovframework:com:v2:uat:일반로그인)의 **표준 샘플 계정**을 그대로 제공합니다. 비밀번호는 공통 `rhdxhd12`(=`공통12`를 영문 자판으로 입력) 이며 **대소문자를 구분**합니다.
+
+| 사용자 구분 | ID | 비밀번호 | 권한 |
+|------|-----|---------|------|
+| 업무사용자(직원) | `TEST1` | `rhdxhd12` | 일반 사용자(ROLE_USER) |
+| 업무사용자(직원) | `webmaster` | `rhdxhd12` | 일반 사용자(ROLE_USER) |
+| 일반회원 | `USER` | `rhdxhd12` | 일반 사용자(ROLE_USER) |
+| 기업회원 | `ENTERPRISE` | `rhdxhd12` | 일반 사용자(ROLE_USER) |
+| 관리자 | `admin` | `1` | 관리자(ROLE_ADMIN) |
+
+- **로그인 화면**에서 사용자 구분(업무사용자/일반회원/기업회원)을 선택한 뒤 ID·비밀번호를 입력합니다. 구분별로 대상 테이블(`TB_EMPLYR_INFO`/`TB_GNRL_MBER`/`TB_ENTRPRS_MBER`)이 분기됩니다.
+- **권한 기반 접근제어(RBAC)**: `admin` 계정만 **관리자(ROLE_ADMIN)** 로, 관리자 전용 메뉴(회원·권한 / 코드·메뉴 / 시스템관리)가 노출됩니다. 표준 샘플 계정(TEST1/webmaster/USER/ENTERPRISE)은 **일반 사용자(ROLE_USER)** 입니다.
+- **헤더 사용자 구분 표시**: 로그인하면 헤더에 사용자 구분(업무사용자/일반회원/기업회원) 배지가 표시됩니다.
+- **본인 정보수정(마이페이지)**: 로그인한 모든 사용자는 헤더의 **"내 정보수정"** 에서 본인 정보를 조회·수정할 수 있습니다.
+- 비밀번호 해시는 `EgovFileScrty.encryptPassword(pw, id)` = `Base64(SHA-256(id ‖ pw))` 방식이며, 공식 배포 DML(`script/dml/**/com_DML_*.sql`)의 값과 동일합니다.
 
 ---
 
@@ -75,7 +95,7 @@ mvn spring-boot:run
 
 ### 마이페이지
 
-로그인 본인의 회원정보 수정·비밀번호 변경. 회원 유형(일반/기업/업무사용자)에 따라 대상 테이블이 분기됩니다.
+로그인 본인의 회원정보 수정·비밀번호 변경. 회원 유형(일반/기업/업무사용자)에 따라 대상 테이블이 분기되며, 세션 본인 기준으로만 동작합니다(헤더 "내 정보수정" 진입).
 
 ![마이페이지](Docs/screenshots/04-mypage.png)
 
@@ -158,6 +178,7 @@ common-components-boot/
 
 ## 참고
 
+- 로그인·테스트 계정·권한: [`Docs/로그인-테스트계정-가이드.md`](Docs/로그인-테스트계정-가이드.md)
 - 상세 규칙·가이드: [`Docs/`](Docs/) (용어/단어/도메인 규칙, KRDS 가이드·자체검증 체크리스트, DB 스키마·한글명 매핑, context 변환 문서)
 - 등재: [awesome-egovframe](https://github.com/eGovFramework/awesome-egovframe) — 공통 컴포넌트 / 확장 모듈
 

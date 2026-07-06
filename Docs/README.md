@@ -2,6 +2,9 @@
 
 전자정부 표준프레임워크 공통컴포넌트(Spring Boot + Thymeleaf + KRDS) 전환 프로젝트의 규칙·가이드·전환 참고 문서 모음입니다.
 
+## 로그인·계정·권한
+- [로그인-테스트계정-가이드.md](로그인-테스트계정-가이드.md) — 표준 샘플 계정(TEST1/webmaster/USER/ENTERPRISE·admin), 로그인 방법, 비밀번호 암호화, 권한(RBAC), 헤더 구분·마이페이지
+
 ## 데이터베이스
 - [db-schema-guide.md](db-schema-guide.md) — DB 명명 표준, 6종 DBMS DDL/DML 현황, 매퍼
 - [db-컬럼-한글명-매핑.md](db-컬럼-한글명-매핑.md) — 물리 컬럼명 ↔ 한글 논리명 매핑(87테이블·1,002컬럼)
